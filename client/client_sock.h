@@ -1,8 +1,5 @@
-//
-// Created by baryk on 21.12.2021.
-//
+#pragma once
 
-#ifndef MAIL_CLIENT_SOCK_H
-#define MAIL_CLIENT_SOCK_H
+namespace Socket {
 
-#endif //MAIL_CLIENT_SOCK_H
+}

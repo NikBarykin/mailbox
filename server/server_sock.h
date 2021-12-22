@@ -1,12 +1,12 @@
+#include "../socket.h"
+
 #include <string>
 
 
 namespace Socket {
     class Client;
 
-    class Listener {
-    private:
-        SOCKET socket_;
+    class Listener : public Base {
     public:
         Listener(std::string port);
 

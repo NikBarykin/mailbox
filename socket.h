@@ -1,8 +1,29 @@
-//
-// Created by baryk on 21.12.2021.
-//
+#include <string>
 
-#ifndef MAIL_SOCKET_H
-#define MAIL_SOCKET_H
 
-#endif //MAIL_SOCKET_H
+class WSASetuper {
+    WSASetuper() {
+        WSADATA wsaData;
+        WSASetup(MAKEWORD(2,2), &wsaData);
+    }
+    ~WSASetuper() {
+        WSACleanup();
+    }
+};
+
+
+namespace Socket {
+    class Base {
+    protected:
+        SOCKET sock_;
+    public:
+        ~BaseSocket() {
+            closesocket(sock_);
+        }
+    };
+
+    class Communication {
+        std::string Recv();
+        void Send(std::string);
+    };
+}
