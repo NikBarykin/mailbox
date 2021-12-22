@@ -14,6 +14,12 @@ WSALib::~WSALib()  {
 
 
 namespace Socket {
+    Base::Base(SOCKET sock): sock_(sock) {
+        if (sock_ == INVALID_SOCKET) {
+            throw std::runtime_error("INVALID_SOCKET construction is forbidden");
+        }
+    }
+
     Base::Base(int af, int type, int protocol) {
         sock_ = socket(af, type, protocol);
         if (sock_ == INVALID_SOCKET) {
@@ -25,4 +31,3 @@ namespace Socket {
         closesocket(sock_);
     }
 }
--
