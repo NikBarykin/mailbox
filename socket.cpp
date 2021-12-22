@@ -17,7 +17,7 @@ namespace Socket {
     Base::Base(int af, int type, int protocol) {
         sock_ = socket(af, type, protocol);
         if (sock_ == INVALID_SOCKET) {
-            throw std::runtime_error("Socket construction failed: " + std::to_string(WSAGetLastError()));
+            throw std::runtime_error("socket failed: " + std::to_string(WSAGetLastError()));
         }
     }
 
@@ -25,3 +25,4 @@ namespace Socket {
         closesocket(sock_);
     }
 }
+-
