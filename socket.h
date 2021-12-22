@@ -21,7 +21,7 @@ namespace Socket {
     class Base {
     protected:
         SOCKET sock_;
-        Base(SOCKET sock);
+        explicit Base(SOCKET sock);
     public:
         // TODO: maybe af, type, protocol -> struct SocketArgs,
         //  though it is boring to type 3 variables in constructor every time you want to inherit new socket type
