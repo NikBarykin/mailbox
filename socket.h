@@ -32,7 +32,7 @@ namespace Socket {
 
     class Communication : public Base {
     protected:
-        Communication(SOCKET sock);
+        explicit Communication(SOCKET sock);
     public:
 
         std::string Recv();
