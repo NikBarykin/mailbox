@@ -1,14 +1,15 @@
+#pragma once
+
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #include <string>
 
+#pragma comment(lib, "Ws2_32.lib")
 
-class WSASetuper {
-    WSASetuper() {
-        WSADATA wsaData;
-        WSASetup(MAKEWORD(2,2), &wsaData);
-    }
-    ~WSASetuper() {
-        WSACleanup();
-    }
+
+class WSALib {
+    WSALib();
+    ~WSALib();
 };
 
 
@@ -17,13 +18,15 @@ namespace Socket {
     protected:
         SOCKET sock_;
     public:
-        ~BaseSocket() {
-            closesocket(sock_);
-        }
+        Base(int af, int type, int protocol);
+        ~Base();
     };
 
-    class Communication {
-        std::string Recv();
+    class Communication : public Base {
+    public:
+        std::string Recv() {
+            socket()
+        }
         void Send(std::string);
     };
 }
