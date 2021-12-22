@@ -30,4 +30,7 @@ namespace Socket {
     Base::~Base() {
         closesocket(sock_);
     }
+
+    
+    Communication::Communication(SOCKET sock): Base(sock) {}
 }

@@ -31,10 +31,11 @@ namespace Socket {
     };
 
     class Communication : public Base {
+    protected:
+        Communication(SOCKET sock);
     public:
-        std::string Recv() {
-            socket()
-        }
+
+        std::string Recv();
         void Send(std::string);
     };
 }
