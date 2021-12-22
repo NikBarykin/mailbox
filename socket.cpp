@@ -31,6 +31,6 @@ namespace Socket {
         closesocket(sock_);
     }
 
-    
+
     Communication::Communication(SOCKET sock): Base(sock) {}
 }

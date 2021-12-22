@@ -1,25 +1,25 @@
+#pragma once
+
 #include "../socket.h"
 
 #include <string>
 
 
 namespace Socket {
-    class Client;
+    class Listener;
+
+    class Client : public Communication {
+        friend Listener;
+    private:
+        explicit Client(SOCKET sock);
+    };
 
     class Listener : public Base {
     public:
-        Listener(std::string port);
+        // TODO: maybe Socket::Base as and argument
+        explicit Listener(std::string port, int af = AF_INET, int type = SOCK_STREAM,
+                          int protocol = IPPROTO_TCP, int backlog = SOMAXCONN);
 
-        Client AcceptConnection();
-
-        ~Listener();
-    };
-
-    class Client {
-        friend Listener;
-    private:
-
-        SOCKET socket_;
-
+        Client Accept();
     };
 }
