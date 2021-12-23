@@ -33,4 +33,6 @@ namespace Socket {
 
 
     Communication::Communication(SOCKET sock): Base(sock) {}
+
+    Communication::Communication(SocketArgs sock_args): Base(sock_args) {}
 }

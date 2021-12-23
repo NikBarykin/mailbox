@@ -15,6 +15,7 @@ public:
 
 
 namespace Socket {
+    // TODO: unit-tests
     // Probably it would be more correct to use SocketView instead of Socket,
     // though we don't really have a socket, we only have its descriptor,
     // but at this point I don't care, I want to used as if it was a complete class that my program own
@@ -34,16 +35,18 @@ namespace Socket {
     public:
         // TODO: maybe af, type, protocol -> struct SocketArgs,
         //  though it is boring to type 3 variables in constructor every time you want to inherit new socket type
-        Base(SocketArgs);
+        explicit Base(SocketArgs);
         ~Base();
         // TODO: delete copy constructor, though socket descriptor shouldn't be copied
     };
 
     class Communication : public Base {
     public:
+        // TODO: Process string of any size
         const size_t MAX_STR_SZ = 1024;
     protected:
         explicit Communication(SOCKET);
+        explicit Communication(SocketArgs);
     public:
         std::string Recv();
         void Send(std::string);
