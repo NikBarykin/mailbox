@@ -20,8 +20,8 @@ namespace Socket {
         }
     }
 
-    Base::Base(int af, int type, int protocol) {
-        sock_ = socket(af, type, protocol);
+    Base::Base(SocketArgs sock_args) {
+        sock_ = socket(sock_args.af, sock_args.type, sock_args.protocol);
         if (sock_ == INVALID_SOCKET) {
             throw std::runtime_error("socket failed: " + std::to_string(WSAGetLastError()));
         }
