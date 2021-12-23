@@ -1,4 +1,8 @@
-//
-// Created by baryk on 22.12.2021.
-//
+#include "client_sock.h"
 
+
+namespace Socket {
+    Server::Server(SocketArgs sock_args): Communication(sock_args) {
+
+    }
+}

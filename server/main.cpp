@@ -1,4 +1,4 @@
-#include "socket.h"
+#include "server_sock.h"
 #include "../letter.h"
 
 #include <unordered_map>
@@ -19,9 +19,9 @@ public:
         mailboxes[letter.to].push_back(letters.size());
         letters.push_back(move(letter));
     }
-    vector<Letter> GetLetters(const string& login) const {
+    vector<Letter> GetLetters(const string& user_id) const {
         vector<Letter> result;
-        for (LetterId id : mailboxes.at(login)) {
+        for (LetterId id : mailboxes.at(user_id)) {
             result.push_back(letters[id]);
         }
         return result;
@@ -32,11 +32,11 @@ public:
 int main() {
     Socket::Listener listen_sock("8080");
     unordered_map<string, Letter> data;
-    for (size_t i = 0; i < 100; ++i) {
+    for (size_t i = 0; i < 5; ++i) {
         Socket::Client client_sock = listen_sock.AcceptConnection();
-        string login = client_sock.recv();
+        string login = client_sock.Recv();
         while (true) {
-            string query = client_sock.recv();
+            string query = client_sock.Recv();
             if (query == "terminate") {
                 break;
             } else if (query == "GetMail") {
