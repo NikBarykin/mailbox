@@ -41,10 +41,10 @@ namespace Socket {
     class Communication : public Base {
     public:
         // TODO: Process string of any size
-        const size_t MAX_STR_SZ = 1024;
+        static const size_t MAX_STR_SZ = 1024;
     protected:
         explicit Communication(SOCKET);
-        explicit Communication(SocketArgs);
+//        explicit Communication(SocketArgs);
     public:
         std::string Recv();
         void Send(std::string);
