@@ -1,5 +1,10 @@
 #pragma once
 
-namespace Socket {
+#include "../socket.h"
 
+
+namespace Socket {
+    class Server : public Communication {
+
+    };
 }
