@@ -16,8 +16,9 @@ namespace Socket {
 
     class Listener : public Base {
     public:
-        // TODO: maybe Socket::Base as and argument
-        Listener(std::string port, SocketArgs, int backlog = SOMAXCONN);
+        // TODO: maybe Socket::Base as an argument
+        explicit Listener(std::string servname, SocketArgs = {AF_INET, SOCK_STREAM, IPPROTO_TCP},
+                          int backlog = SOMAXCONN);
 
         Client Accept();
     };
