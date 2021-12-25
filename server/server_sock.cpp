@@ -7,13 +7,13 @@ namespace Socket {
     Client::Client(SOCKET sock): Communication(sock) {}
 
 
-    Listener::Listener(std::string port, int af, int type, int protocol,
-                       int backlog): Base(af, type, protocol) {
+    Listener::Listener(std::string port, SocketArgs sock_args,
+                       int backlog): Base(sock_args) {
         addrinfo *addr_info = nullptr, hints;
         ZeroMemory(&hints, sizeof(hints));
-        hints.ai_family = af;
-        hints.ai_socktype = type;
-        hints.ai_protocol = protocol;
+        hints.ai_family = sock_args.af;
+        hints.ai_socktype = sock_args.type;
+        hints.ai_protocol = sock_args.protocol;
         int i_result = getaddrinfo(nullptr, port.c_str(), &hints, &addr_info);
         if (i_result != 0) {
             throw std::runtime_error("getaddrinfo failed: " + std::to_string(i_result));

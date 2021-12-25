@@ -22,9 +22,7 @@ namespace Socket {
     // TODO: struct AddrInfo
 
     struct SocketArgs {
-        int af = AF_INET;
-        int type = SOCK_STREAM;
-        int protocol = IPPROTO_TCP;
+        int af, type, protocol;
     };
 
 
