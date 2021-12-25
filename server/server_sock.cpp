@@ -14,6 +14,7 @@ namespace Socket {
         hints.ai_family = sock_args.af;
         hints.ai_socktype = sock_args.type;
         hints.ai_protocol = sock_args.protocol;
+        hints.ai_flags = AI_PASSIVE;
         int i_result = getaddrinfo(nullptr, port.c_str(), &hints, &addr_info);
         if (i_result != 0) {
             throw std::runtime_error("getaddrinfo failed: " + std::to_string(i_result));

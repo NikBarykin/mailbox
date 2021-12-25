@@ -14,17 +14,23 @@ namespace Socket {
         if (i_result != 0) {
             throw std::runtime_error("getaddrinfo failed: " + std::to_string(i_result));
         }
-        for (addrinfo* ptr = addr_info; ptr != nullptr; ptr = ptr->ai_next) {
-            SOCKET connect_sock = socket(sock_args.af, sock_args.type, sock_args.protocol);
+        SOCKET connect_sock = INVALID_SOCKET;
+        for (addrinfo* ptr = addr_info; ptr != nullptr && connect_sock == INVALID_SOCKET; ptr = ptr->ai_next) {
+            connect_sock = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
             if (connect_sock == INVALID_SOCKET) {
                 throw std::runtime_error("socket failed: " + std::to_string(WSAGetLastError()));
             }
             i_result = connect(connect_sock, ptr->ai_addr, ptr->ai_addrlen);
-            if (i_result == 0) {
-                return connect_sock;
+            if (i_result == SOCKET_ERROR) {
+                closesocket(connect_sock);
+                connect_sock = INVALID_SOCKET;
             }
         }
-        return INVALID_SOCKET;
+        freeaddrinfo(addr_info);
+        if (connect_sock == INVALID_SOCKET) {
+            throw std::runtime_error("failed to connect");
+        }
+        return connect_sock;
     }
 
     Server::Server(std::string ip, std::string port, SocketArgs sock_args)

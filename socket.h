@@ -14,6 +14,9 @@ public:
 };
 
 
+void Server();
+void Client();
+
 namespace Socket {
     // TODO: unit-tests
     // Probably it would be more correct to use SocketView instead of Socket,
@@ -25,14 +28,13 @@ namespace Socket {
         int af, type, protocol;
     };
 
-
     class Base {
+        friend void ::Server();
+        friend void ::Client();
     protected:
         SOCKET sock_;
         explicit Base(SOCKET);
     public:
-        // TODO: maybe af, type, protocol -> struct SocketArgs,
-        //  though it is boring to type 3 variables in constructor every time you want to inherit new socket type
         explicit Base(SocketArgs);
         ~Base();
         // TODO: delete copy constructor, though socket descriptor shouldn't be copied

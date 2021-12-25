@@ -10,6 +10,6 @@ namespace Socket {
     private:
         static SOCKET MakeConnectionSock(std::string ip, std::string port, SocketArgs);
     public:
-        Server(std::string ip, std::string port, SocketArgs = {AF_UNSPEC, SOCK_STREAM, IPPROTO_TCP});
+        Server(std::string ip, std::string port, SocketArgs = {AF_INET, SOCK_STREAM, IPPROTO_TCP});
     };
 }

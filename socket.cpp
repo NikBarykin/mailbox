@@ -38,7 +38,7 @@ namespace Socket {
 
     std::string Communication::Recv() {
         char data[MAX_STR_SZ] = {0};
-        int i_recv_result = recv(sock_, data, strlen(data), 0);
+        int i_recv_result = recv(sock_, data, MAX_STR_SZ, 0);
         if (i_recv_result < 0) {
             throw std::runtime_error("recv error: " + std::to_string(WSAGetLastError()));
         }
@@ -51,6 +51,7 @@ namespace Socket {
                                      "(" + std::to_string(data.size()) + ") is greater than maximal allowed size "
                                                                          "(" + std::to_string(MAX_STR_SZ) + ")");
         }
+//        int i_send_result = send(sock_, data.c_str(), data.size(), 0);
         int i_send_result = send(sock_, data.c_str(), data.size(), 0);
         if (i_send_result == SOCKET_ERROR) {
             throw std::runtime_error("send error: " + std::to_string(WSAGetLastError()));
