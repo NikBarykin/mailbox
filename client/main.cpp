@@ -28,8 +28,8 @@ int main() {
             sock.Send("GetMail");
             cout << sock.Recv() << endl;
         } else if (command == "Send") {
-            sock.Send("bibaboba");
-            cout << sock.Recv() << endl;
+            sock.Send("Send");
+//            cout << sock.Recv() << endl;
         } else {
             cout << "Unknown command!" << endl;
         }
