@@ -8,15 +8,16 @@
 using namespace std;
 
 
-void SendLetter(Letter);
+//void SendLetter(Letter);
 
-vector<Letter> GetMail();
+//vector<Letter> GetMail();
 
 int main() {
+    WSALib wsa_lib;
     Socket::Server sock("localhost", "8080");
     cout << "Login?" << endl;
     string login;
-    cin >> login;
+    getline(cin, login);
     sock.Send(login);
     while (true) {
         string command;
