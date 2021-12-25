@@ -1,0 +1,3 @@
+How this project can be improved:
+1. Logging
+2. Unit-testing
