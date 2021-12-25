@@ -7,7 +7,9 @@
 
 namespace Socket {
     class Server : public Communication {
+    private:
+        static SOCKET MakeConnectionSock(std::string ip, std::string port, SocketArgs);
     public:
-        Server(std::string ip, )
+        Server(std::string ip, std::string port, SocketArgs = {AF_UNSPEC, SOCK_STREAM, IPPROTO_TCP});
     };
 }
