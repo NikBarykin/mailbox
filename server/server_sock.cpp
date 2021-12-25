@@ -31,6 +31,9 @@ namespace Socket {
 
     Client Listener::Accept() {
         SOCKET client_sock = accept(sock_, nullptr, nullptr);
+        if (client_sock == INVALID_SOCKET) {
+            throw std::runtime_error("accept failed: " + std::to_string(WSAGetLastError()));
+        }
         return Client(client_sock);
     }
 }
