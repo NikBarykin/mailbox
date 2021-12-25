@@ -14,11 +14,7 @@ public:
 };
 
 
-void Server();
-void Client();
-
 namespace Socket {
-    // TODO: unit-tests
     // Probably it would be more correct to use SocketView instead of Socket,
     // though we don't really have a socket, we only have its descriptor,
     // but at this point I don't care, I want to used as if it was a complete class that my program own
@@ -29,8 +25,6 @@ namespace Socket {
     };
 
     class Base {
-        friend void ::Server();
-        friend void ::Client();
     protected:
         SOCKET sock_;
         explicit Base(SOCKET);
@@ -42,11 +36,10 @@ namespace Socket {
 
     class Communication : public Base {
     public:
-        // TODO: Process string of any size
+        // TODO: Process string of any size by sending buf size first and but itself later
         static const size_t MAX_STR_SZ = 1024;
     protected:
         explicit Communication(SOCKET);
-//        explicit Communication(SocketArgs);
     public:
         std::string Recv();
         void Send(std::string);

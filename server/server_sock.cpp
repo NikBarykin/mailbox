@@ -7,7 +7,7 @@ namespace Socket {
     Client::Client(SOCKET sock): Communication(sock) {}
 
 
-    Listener::Listener(std::string port, SocketArgs sock_args,
+    Listener::Listener(std::string servname, SocketArgs sock_args,
                        int backlog): Base(sock_args) {
         addrinfo *addr_info = nullptr, hints;
         ZeroMemory(&hints, sizeof(hints));
@@ -15,7 +15,7 @@ namespace Socket {
         hints.ai_socktype = sock_args.type;
         hints.ai_protocol = sock_args.protocol;
         hints.ai_flags = AI_PASSIVE;
-        int i_result = getaddrinfo(nullptr, port.c_str(), &hints, &addr_info);
+        int i_result = getaddrinfo(nullptr, servname.c_str(), &hints, &addr_info);
         if (i_result != 0) {
             throw std::runtime_error("getaddrinfo failed: " + std::to_string(i_result));
         }

@@ -4,13 +4,13 @@
 
 
 namespace Socket {
-    SOCKET Server::MakeConnectionSock(std::string ip, std::string port, SocketArgs sock_args) {
+    SOCKET Server::MakeConnectionSock(std::string nodename, std::string servname, SocketArgs sock_args) {
         addrinfo* addr_info = nullptr, hints;
         ZeroMemory(&hints, sizeof(hints));
         hints.ai_family = sock_args.af;
         hints.ai_socktype = sock_args.type;
         hints.ai_protocol = sock_args.protocol;
-        int i_result = getaddrinfo(ip.c_str(), port.c_str(), &hints, &addr_info);
+        int i_result = getaddrinfo(nodename.c_str(), servname.c_str(), &hints, &addr_info);
         if (i_result != 0) {
             throw std::runtime_error("getaddrinfo failed: " + std::to_string(i_result));
         }
