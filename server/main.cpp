@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <sstream>
 
 using namespace std;
 
@@ -31,33 +32,54 @@ using namespace std;
 //};
 
 
-string GetFriend(string name) {
-    return name == "Nikita" ? "Tumen" : "Nikita";
+vector<string> ParseQuery(string query) {
+    vector<string> tokens;
+    istringstream input(query);
+    for (string token; getline(input, token, ' '); ) {
+        if (!token.empty()) {
+            tokens.push_back(token);
+        }
+    }
+    return tokens;
 }
 
 
-int main() {
+int main(int argc, char* argv[]) {
     WSALib wsa_lib;
     Socket::Listener listen_sock("8080");
-    unordered_map<string, vector<string>> data;
-    for (size_t i = 0; i < 5; ++i) {
+    int n_clients_to_process = argc < 2 ? 5 : stoi(argv[1]);
+    unordered_map<string, string> passwords;
+    unordered_map<string, vector<pair<string, string>>> mail;
+    for (size_t i = 0; i < n_clients_to_process; ++i) {
         Socket::Client client_sock = listen_sock.Accept();
-        string login = client_sock.Recv();
+        auto authorize_tokens = ParseQuery(client_sock.Recv());
+        string login = authorize_tokens[1], password = authorize_tokens[2];
+        if (passwords.count(login) && passwords[login] != password) {
+            client_sock.Send("Wrong password");
+            continue;
+        }
+        if (!passwords.count(login)) {
+            passwords.emplace(login, password);
+        }
+        client_sock.Send("Password correct");
         while (true) {
-            string query = client_sock.Recv();
-            if (query == "terminate") {
+            auto query_tokens = ParseQuery(client_sock.Recv());
+            string q_type = query_tokens[0];
+            if (q_type == "Exit") {
                 break;
-            } else if (query == "GetMail") {
-                ostringstream answer_out;
-                for (string record : data[login]) {
-                    answer_out << record << endl;
+            } else if (q_type == "GetMail") {
+                ostringstream answer;
+                for (auto [sender, body] : mail[login]) {
+                    answer << sender << ":\n";
+                    answer << body << "\n";
                 }
-                client_sock.Send(answer_out.str());
-            } else if (query == "Send") {
-                string friend_name = GetFriend(login);
-                data[friend_name].push_back(login + " send you \"Hello!\"");
+                client_sock.Send(answer.str());
+            } else if (q_type == "SendLetter") {
+                string destination = query_tokens[1];
+                string body = query_tokens[2];
+                mail[destination].emplace_back(login, body);
             } else {
-                throw runtime_error("Bad query: " + query);
+                throw runtime_error("Bad query: " + q_type);
             }
         }
     }
