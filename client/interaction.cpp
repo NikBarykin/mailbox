@@ -1,5 +1,6 @@
 #include "interaction.h"
 #include "client_sock.h"
+#include "../query.h"
 #include "../letter.h"
 
 #include <string>
@@ -17,24 +18,19 @@ void RunInteraction() {
     cout << "password:" << endl;
     string password;
     getline(cin, password);
-    server_sock.Send("Authorize " + login + " " + password);
-    if (server_sock.Recv() == "Wrong password") {
+    server_sock.Send(Query::Authorize(login, password).TransferString());
+    auto answer = Answer::ParseTranfer(server_sock.Recv());
+    if (/* failed to authorize */) {
         cout << "Wrong password!" << endl;
         return;
     }
     while (true) {
-        string command;
-        getline(cin, command);
-        if (command == "Exit") {
-            server_sock.Send("Exit");
+        Query::Base& query = ParseQuery(cin);
+        server_sock.Send(query.TransferString());
+        auto answer = Answer::ParseTranfer(server_sock.Recv());
+        ProcessAnswer(answer);
+        if (/* type(query) == Query::Terminate */) {
             break;
-        } else if (command == "GetMail") {
-            server_sock.Send("GetMail");
-            cout << server_sock.Recv() << endl;
-        } else if (command.rfind("SendLetter", 0) == 0) {
-            server_sock.Send(command);
-        } else {
-            cout << "Unknown command!" << endl;
         }
     }
 }

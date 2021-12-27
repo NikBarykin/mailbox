@@ -6,6 +6,7 @@
 
 
 namespace Query {
+
     class Base {
         virtual std::string TransferString() const = 0;
     };
