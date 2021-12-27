@@ -3,31 +3,32 @@
 #include "letter.h"
 
 #include <string>
+#include <variant>
 
 
 namespace Query {
+    // TODO: design similarity by inheritance, not by std::variant
+    struct GetMail {
+        std::string SerializeForTransfer() const {
 
-    class Base {
-        virtual std::string TransferString() const = 0;
+        }
+        static GetMail DeserializeTransfer(std::string);
     };
 
-    class Authorize : public Base {
+    struct SendLetter {
+        Letter letter;
+        std::string SerializeForTransfer() const;
+        static SendLetter DeserializeTransfer();
+    };
+
+    struct Authorize {
         std::string login, password;
     };
 
-    class GetMail : public  Base {
+    using QueryT = std::variant<GetMail, SendLetter, Authorize>;
 
-    };
-
-    class SendMail : public Base {
-        Letter letter;
-    };
-
-    class Terminate : public Base {
-
-    };
-
-    Base& ParseTransfer(std::string);
+    QueryT DeserializeTransfer(std::string);
+    std::string SerializeForTransfer(QueryT);
 }
 
 
