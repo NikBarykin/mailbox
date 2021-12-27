@@ -9,6 +9,7 @@
 namespace Answer {
     struct Authorize {
         bool authorization_succeed;
+        static Authorize DeserializeTransfer(std::string);
     };
 
     struct GetMail {

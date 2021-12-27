@@ -1,11 +1,13 @@
 #include "interaction.h"
 #include "client_sock.h"
 #include "../query.h"
+#include "../answer.h"
 #include "../letter.h"
 
 #include <string>
 #include <vector>
 #include <iostream>
+#include <variant>
 
 using namespace std;
 
@@ -18,18 +20,19 @@ void RunInteraction() {
     cout << "password:" << endl;
     string password;
     getline(cin, password);
-    server_sock.Send(Query::Authorize(login, password).TransferString());
-    auto answer = Answer::ParseTranfer(server_sock.Recv());
-    if (/* failed to authorize */) {
+    server_sock.Send(Query::Authorize{login, password}.SerializeForTransfer());
+    Answer::Authorize answer = Answer::Authorize::DeserializeTransfer(server_sock.Recv());
+    if (!answer.authorization_succeed) {
         cout << "Wrong password!" << endl;
         return;
     }
+
     while (true) {
-        Query::Base& query = ParseQuery(cin);
-        server_sock.Send(query.TransferString());
-        auto answer = Answer::ParseTranfer(server_sock.Recv());
+        Query::QueryT query = ParseQuery(cin);
+        server_sock.Send(Query::SerializeForTransfer(query));
+        Answer::AnswerT answer = Answer::DeserializeTransfer(server_sock.Recv());
         ProcessAnswer(answer);
-        if (/* type(query) == Query::Terminate */) {
+        if (holds_alternative<Query::Terminate>(query)) {
             break;
         }
     }
