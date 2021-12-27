@@ -1,0 +1,11 @@
+Query:
+query_name
+arg1
+arg2
+arg3
+...
+argn
+
+Answer:
+error_message (empty if there is no error)
+answer_body
