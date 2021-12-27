@@ -1,3 +1,5 @@
-How this project can be improved:
-1. Logging
-2. Unit-testing
+Logging
+GetMail filter argument
+Encryption by RSA
+Data compression by Huffman's algorithm
+Unit-testing
