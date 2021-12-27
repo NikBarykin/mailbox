@@ -30,7 +30,7 @@ namespace Query {
 
     };
 
-    using QueryT = std::variant<GetMail, SendLetter, Authorize, Terminate>;
+    using QType = std::variant<GetMail, SendLetter, Authorize, Terminate>;
 
     QueryT DeserializeTransfer(std::string);
     std::string SerializeForTransfer(QueryT);

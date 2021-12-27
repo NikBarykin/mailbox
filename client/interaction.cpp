@@ -12,6 +12,23 @@
 using namespace std;
 
 
+Query::QueryT ReadQuery(istream& input = cin) {
+    string query_type;
+    getline(input, query_type);
+    if (query_type == "Terminate") {
+        return Query::Terminate{};
+    }
+}
+
+void ProcessAnswer(Answer::AnswerT answer, ostream& output = cout) {
+    auto letters = get<Answer::GetMail>(answer).mail;
+    for (const Letter& letter : letters) {
+        output << "From: " << letter.from << endl;
+        output << "Body:\n" << letter.body << endl;
+        output << string(30, '-') << endl;
+    }
+}
+
 void RunInteraction() {
     Socket::Server server_sock("localhost", "8080");
     cout << "login:" << endl;
@@ -28,7 +45,11 @@ void RunInteraction() {
     }
 
     while (true) {
-        Query::QueryT query = ParseQuery(cin);
+        Query::QueryT query = ReadQuery();
+        if (holds_alternative<Query::Authorize>(query)) {
+            cout << "You've already authorized!" << endl;
+            continue;
+        }
         server_sock.Send(Query::SerializeForTransfer(query));
         Answer::AnswerT answer = Answer::DeserializeTransfer(server_sock.Recv());
         ProcessAnswer(answer);

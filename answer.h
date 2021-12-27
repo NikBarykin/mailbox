@@ -24,7 +24,7 @@ namespace Answer {
 
     };
 
-    using AnswerT = std::variant<Authorize, GetMail, SendMail, Terminate>;
+    using AnsT = std::variant<Authorize, GetMail, SendMail, Terminate>;
 
     std::string SerializeForTransfer(AnswerT);
     AnswerT DeserializeTransfer(std::string);
