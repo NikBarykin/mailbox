@@ -1,35 +1,12 @@
 #include "server_sock.h"
-#include "../letter.h"
+#include "database.h"
 
 #include <unordered_map>
 #include <string>
 #include <vector>
 #include <sstream>
-#include <sstream>
 
 using namespace std;
-
-
-//
-//class Server {
-//public:
-//    using LetterId = size_t;
-//private:
-//    unordered_map<string, vector<LetterId>> mailboxes;
-//    vector<Letter> letters;
-//public:
-//    void AddLetter(Letter letter) {
-//        mailboxes[letter.to].push_back(letters.size());
-//        letters.push_back(move(letter));
-//    }
-//    vector<Letter> GetLetters(const string& user_id) const {
-//        vector<Letter> result;
-//        for (LetterId id : mailboxes.at(user_id)) {
-//            result.push_back(letters[id]);
-//        }
-//        return result;
-//    }
-//};
 
 
 vector<string> ParseQuery(string query) {
