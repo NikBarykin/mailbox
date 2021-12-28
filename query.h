@@ -1,6 +1,7 @@
 #pragma once
 
 #include "letter.h"
+#include "answer.h"
 
 #include <string>
 #include <variant>
@@ -9,6 +10,7 @@
 namespace Query {
     // TODO: design similarity by inheritance, not by std::variant
     struct GetMail {
+        using AnsT = Answer::GetMail;
         std::string SerializeForTransfer() const {
 
         }

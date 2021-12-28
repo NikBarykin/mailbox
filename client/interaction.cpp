@@ -51,8 +51,12 @@ void RunInteraction() {
             continue;
         }
         server_sock.Send(Query::SerializeForTransfer(query));
-        Answer::AnswerT answer = Answer::DeserializeTransfer(server_sock.Recv());
-        ProcessAnswer(answer);
+        string serialized_answer = server_sock.Recv();
+        auto process_answer = [&serialized_answer](auto query) {
+            auto answer = Answer::DeserializeTransfer<query::AnsT>(serialized_answer);
+            ProcessAnswer(answer);
+        };
+        visit(process_answer, query);
         if (holds_alternative<Query::Terminate>(query)) {
             break;
         }

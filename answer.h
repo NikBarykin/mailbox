@@ -1,6 +1,7 @@
 #pragma once
 
 #include "letter.h"
+#include "protocol.h"
 
 #include <vector>
 #include <variant>
@@ -24,8 +25,20 @@ namespace Answer {
 
     };
 
-    using AnsT = std::variant<Authorize, GetMail, SendMail, Terminate>;
+    struct Error {
+        std::string error_message;
+    };
 
-    std::string SerializeForTransfer(AnswerT);
-    AnswerT DeserializeTransfer(std::string);
+
+    using AnsT = std::variant<Authorize, GetMail, SendMail, Terminate, Error>;
+
+    std::string SerializeForTransfer(AnsT);
+    template<class ExpectedT>
+    AnsT DeserializeTransfer(std::string transfer) {
+        auto [error_message, body] = Protocol::DeserializeAnswer(transfer);
+        if (!error_message.empty()) {
+            return Error{error_message};
+        }
+        return ExpectedT::DeserializeTransfer(transfer);
+    }
 }
