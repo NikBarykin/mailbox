@@ -7,25 +7,12 @@
 
 
 struct AnswerProcessor {
-    void operator ()(Answer::GetMail answer) {
-        for (Letter letter : answer.mail) {
-            std::cout << letter.from << std::endl;
-            std::cout << letter.body << std::endl;
-        }
-    }
-    void operator ()(Answer::Authorize answer) {
 
-    }
-    void operator ()(Answer::Error answer) {
-
-    }
-    void operator ()(Answer::SendMail answer) {
-
-    }
-    void operator ()(Answer::Terminate answer) {
-
-    }
-
+    void operator ()(Answer::GetMail answer);
+    void operator ()(Answer::Authorize answer);
+    void operator ()(Answer::Error answer);
+    void operator ()(Answer::SendLetter answer);
+    void operator ()(Answer::Terminate answer);
 };
 
 

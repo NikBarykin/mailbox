@@ -1,11 +1,11 @@
 #include "../socket.h"
-#include "interaction.h"
+#include "session.h"
 
 using namespace std;
 
 
 int main() {
     WSALib wsa_lib;
-    RunInteraction();
+    RunSession();
     return 0;
 }

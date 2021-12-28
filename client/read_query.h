@@ -8,20 +8,29 @@
 #include <optional>
 
 
-Query::QType ReadGetMail(std::istream& input = std::cin) {
+class QueryReader {
+private:
+    std::istream& input_;
+    std::ostream& output_;
 
-}
+    Query::QType ReadGetMail();
+    Query::QType ReadSendLetter();
+    Query::QType ReadAuthorize();
+    Query::QType ReadTerminate();
 
-
-std::optional<Query::QType> ReadQuery(std::istream& input = std::cin) {
-    using ReadQueryPtr = Query::QType (*)(std::istream&);
+    typedef Query::QType (QueryReader::*ReadQueryPtr)();
     const std::unordered_map<std::string, ReadQueryPtr> read_query_funcs = {
-            {"GetMail", ReadGetMail}
+            {"GetMail", &QueryReader::ReadGetMail}, {"SendLetter", &QueryReader::ReadSendLetter}
     };
-    std::string query_name;
-    std::getline(input, query_name);
-    if (!read_query_funcs.count(query_name)) {
-        return std::nullopt;
-    }
-    return read_query_funcs.at(query_name)(input);
-}
+public:
+    QueryReader(std::istream& input, std::ostream& output);
+    Query::QType operator ()();
+};
+
+Query::QType ReadGetMail(std::istream& input, std::ostream& output);
+Query::QType ReadSendLetter(std::istream& input, std::ostream& output);
+Query::QType ReadAuthorize(std::istream& input, std::ostream& output);
+Query::QType ReadTerminate(std::istream& input, std::ostream& output);
+
+
+Query::QType ReadQuery(std::istream& input);

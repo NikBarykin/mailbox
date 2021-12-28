@@ -1,5 +1,5 @@
-#include "interaction.h"
 #include "../socket.h"
+#include "database.h"
 #include "server.h"
 
 using namespace std;
@@ -7,7 +7,8 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
     WSALib wsa_lib;
-    Server server;
+    Database db;
+    Server server(db);
     server.Run();
     return 0;
 }

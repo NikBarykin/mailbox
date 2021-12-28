@@ -11,19 +11,11 @@
 class Database {
 public:
     using LetterId = size_t;
-    using UserId = size_t;
+    using UserId = std::string;
 private:
     std::vector<Letter> letters_;
-//    std::vector<std::string> users_;
-
-    std::unordered_map<std::string, std::vector<LetterId>> mailboxes_;
+    std::unordered_map<UserId, std::vector<LetterId>> letters_by_destination_;
 public:
-    std::vector<Letter> GetMail(std::string login) const {
-        std::vector<Letter> result;
-        result.reserve(mailboxes_.at(login).size());
-        for (LetterId letter_id : mailboxes_.at(login)) {
-            result.push_back(letters_[letter_id]);
-        }
-        return result;
-    }
+    std::vector<Letter> GetMail(UserId user_id) const;
+    Database& AddLetter(Letter letter);
 };

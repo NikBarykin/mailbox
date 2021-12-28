@@ -4,15 +4,9 @@
 QueryProcessor::QueryProcessor(Database &db, SessionState &session_state)
 : db_(db), session_state_(session_state) {}
 
-
-Answer::GetMail QueryProcessor::operator()(Query::GetMail) {
-    return {db_.GetMail(session_state_.user_login)};
+Answer::AnsT QueryProcessor::operator()(Query::GetMail) {
+    return Query::GetMail::AnsT{db_.GetMail(session_state_.user_login)};
 }
-
-Answer::AnsT QueryProcessor::operator()(Query::QType query) {
-    std::visit(this, query);
-}
-
 
 
 void Server::ProcessClient(Socket::Client &&client_sock) {
