@@ -59,16 +59,23 @@
 
 
 struct SessionState {
-    std::string login;
+    std::string user_login;
     bool running = true;
 };
 
+
 class QueryProcessor {
+private:
     Database& db_;
     SessionState& session_state_;
+public:
+    Answer::GetMail operator ()(Query::GetMail);
+    Answer::SendLetter operator ()(Query::SendLetter);
+    Answer::Authorize operator ()(Query::Authorize);
+    Answer::Terminate operator ()(Query::Terminate);
+public:
     QueryProcessor(Database& db, SessionState& session_state);
-
-    void operator ()(Query::)
+    Answer::AnsT operator ()(Query::QType);
 };
 
 
@@ -76,12 +83,10 @@ class Server {
 private:
     Database& db_;
 
-
-
     void ProcessClient(Socket::Client&& client_sock);
 
 public:
     Server(Database& db);
 
-    [[noreturn]] void Run();
+    void Run();
 };

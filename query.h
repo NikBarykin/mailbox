@@ -18,24 +18,27 @@ namespace Query {
     };
 
     struct SendLetter {
+        using AnsT = Answer::GetMail;
         Letter letter;
         std::string SerializeForTransfer() const;
         static SendLetter DeserializeTransfer();
     };
 
     struct Authorize {
+        using AnsT = Answer::GetMail;
         std::string login, password;
         std::string SerializeForTransfer() const;
     };
 
     struct Terminate {
+        using AnsT = Answer::GetMail;
 
     };
 
     using QType = std::variant<GetMail, SendLetter, Authorize, Terminate>;
 
-    QueryT DeserializeTransfer(std::string);
-    std::string SerializeForTransfer(QueryT);
+    QType DeserializeTransfer(std::string);
+    std::string SerializeForTransfer(QType);
 }
 
 

@@ -3,6 +3,8 @@
 #include "../query.h"
 #include "../answer.h"
 #include "../letter.h"
+#include "read_query.h"
+#include "process_answer.h"
 
 #include <string>
 #include <vector>
@@ -11,23 +13,6 @@
 
 using namespace std;
 
-
-Query::QueryT ReadQuery(istream& input = cin) {
-    string query_type;
-    getline(input, query_type);
-    if (query_type == "Terminate") {
-        return Query::Terminate{};
-    }
-}
-
-void ProcessAnswer(Answer::AnswerT answer, ostream& output = cout) {
-    auto letters = get<Answer::GetMail>(answer).mail;
-    for (const Letter& letter : letters) {
-        output << "From: " << letter.from << endl;
-        output << "Body:\n" << letter.body << endl;
-        output << string(30, '-') << endl;
-    }
-}
 
 void RunInteraction() {
     Socket::Server server_sock("localhost", "8080");
@@ -45,18 +30,20 @@ void RunInteraction() {
     }
 
     while (true) {
-        Query::QueryT query = ReadQuery();
-        if (holds_alternative<Query::Authorize>(query)) {
+        optional<Query::QType> query = ReadQuery();
+        if (!query) {
+            cout << "Failed to read query!";
+        }
+        if (holds_alternative<Query::Authorize>(*query)) {
             cout << "You've already authorized!" << endl;
             continue;
         }
-        server_sock.Send(Query::SerializeForTransfer(query));
+        server_sock.Send(Query::SerializeForTransfer(*query));
         string serialized_answer = server_sock.Recv();
-        auto process_answer = [&serialized_answer](auto query) {
-            auto answer = Answer::DeserializeTransfer<query::AnsT>(serialized_answer);
-            ProcessAnswer(answer);
+        auto get_answer = [&serialized_answer]<class QueryType>(QueryType query) {
+            return Answer::DeserializeTransfer<typename QueryType::AnsT>(serialized_answer);
         };
-        visit(process_answer, query);
+        auto answer = visit(get_answer, *query);
         if (holds_alternative<Query::Terminate>(query)) {
             break;
         }

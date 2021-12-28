@@ -14,10 +14,10 @@ namespace Answer {
     };
 
     struct GetMail {
-        std::vector<Letter> mail;
+        std::vector<Letter> letters;
     };
 
-    struct SendMail {
+    struct SendLetter {
 
     };
 
@@ -30,7 +30,7 @@ namespace Answer {
     };
 
 
-    using AnsT = std::variant<Authorize, GetMail, SendMail, Terminate, Error>;
+    using AnsT = std::variant<Authorize, GetMail, SendLetter, Terminate, Error>;
 
     std::string SerializeForTransfer(AnsT);
     template<class ExpectedT>
