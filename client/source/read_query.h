@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../query.h"
+#include "../../query.h"
 
 #include <iostream>
 #include <string>

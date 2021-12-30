@@ -10,6 +10,7 @@
 namespace Answer {
     struct Authorize {
         bool authorization_succeed;
+
         static Authorize DeserializeTransfer(std::string);
     };
 
@@ -29,12 +30,11 @@ namespace Answer {
         std::string error_message;
     };
 
+    using Any = std::variant<Authorize, GetMail, SendLetter, Terminate, Error>;
 
-    using AnsT = std::variant<Authorize, GetMail, SendLetter, Terminate, Error>;
-
-    std::string SerializeForTransfer(AnsT);
+    std::string SerializeForTransfer(Any);
     template<class ExpectedT>
-    AnsT DeserializeTransfer(std::string transfer) {
+    Any DeserializeTransfer(std::string transfer) {
         auto [error_message, body] = Protocol::DeserializeAnswer(transfer);
         if (!error_message.empty()) {
             return Error{error_message};

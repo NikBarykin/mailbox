@@ -1,8 +1,8 @@
 #include "interaction.h"
 #include "client_sock.h"
-#include "../query.h"
-#include "../answer.h"
-#include "../letter.h"
+#include "../../query.h"
+#include "../../answer.h"
+#include "../../letter.h"
 #include "read_query.h"
 #include "process_answer.h"
 

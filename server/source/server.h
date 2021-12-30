@@ -2,8 +2,8 @@
 
 #include "database.h"
 #include "server_sock.h"
-#include "../query.h"
-#include "../answer.h"
+#include "../../query.h"
+#include "../../answer.h"
 
 #include <future>
 #include <string>
@@ -22,10 +22,12 @@ private:
 public:
     QueryProcessor(Database& db, SessionState& session_state);
 
-    Answer::AnsT operator ()(Query::GetMail);
-    Answer::AnsT operator ()(Query::SendLetter);
-    Answer::AnsT operator ()(Query::Authorize);
-    Answer::AnsT operator ()(Query::Terminate);
+    Answer::Any operator ()(Query::GetMail);
+    Answer::Any operator ()(Query::SendLetter);
+    Answer::Any operator ()(Query::Authorize);
+    Answer::Any operator ()(Query::Terminate);
+
+    Answer::Any operator ()(Query::Any);
 };
 
 

@@ -1,5 +1,7 @@
-#include "server/server_sock.h"
-#include "client/client_sock.h"
+#include "server/source/server_sock.h"
+#include "client/source/client_sock.h"
+#include "server/test/test.h"
+
 
 #include <cassert>
 #include <future>
@@ -36,6 +38,14 @@ void TestSocket() {
 }
 
 
-int main() {
+void TestAll() {
     TestSocket();
+    TestAllServer();
+    TestAllClient();
+}
+
+
+int main() {
+    TestAll();
+    return 0;
 }
