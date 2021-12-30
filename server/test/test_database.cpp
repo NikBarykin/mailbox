@@ -82,7 +82,7 @@ namespace {
 void TestDatabase() {
     TestDatabaseSimple();
     // We have to run this test multiple times to increase chances of catching multithread error
-    for (int i = 0; i < 100; ++i) {
+    for (int i = 0; i < 25; ++i) {
         TestDatabaseMultipleThreads();
     }
     std::cerr << "TestDatabase: OK" << std::endl;
