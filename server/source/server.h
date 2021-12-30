@@ -10,7 +10,7 @@
 
 
 struct SessionState {
-    std::string user_login;
+    std::optional<Database::UserId> user_id = std::nullopt;
     bool running = true;
 };
 

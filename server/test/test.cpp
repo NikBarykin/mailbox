@@ -6,6 +6,7 @@
 
 
 int main() {
-    TestDatabase();
+//    TestDatabase();
+    TestQueryProcessor();
     return 0;
 }

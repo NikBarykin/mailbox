@@ -10,7 +10,7 @@
 namespace Query {
     // TODO: design similarity by inheritance, not by std::variant
     struct GetMail {
-        using Any = Answer::GetMail;
+        using Answer = Answer::GetMail;
         std::string SerializeForTransfer() const {
 
         }
@@ -18,20 +18,20 @@ namespace Query {
     };
 
     struct SendLetter {
-        using Any = Answer::GetMail;
+        using Answer = Answer::GetMail;
         Letter letter;
         std::string SerializeForTransfer() const;
         static SendLetter DeserializeTransfer();
     };
 
     struct Authorize {
-        using Any = Answer::GetMail;
+        using Answer = Answer::Authorize;
         std::string login, password;
         std::string SerializeForTransfer() const;
     };
 
     struct Terminate {
-        using Any = Answer::GetMail;
+        using Answer = Answer::Terminate;
 
     };
 
