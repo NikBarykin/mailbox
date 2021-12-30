@@ -10,8 +10,10 @@
 #include <optional>
 
 
-// TODO: Make multi-thread support better by choosing more appropriate data structures
+// TODO: Make multi-thread support better by choosing more appropriate data structures,
+//  wrapping data in proxy data structures with mutex inside
 // TODO: Constructor from Letter container
+// TODO: Maybe. Separate authorization and registration, remove opportunity to write letters to nonexistent users
 
 class Database {
 public:
@@ -26,6 +28,9 @@ private:
     UserId GiveId(std::string login);
 
 public:
+    // If user doesn't have and id GetId creates new id and returns it
+    UserId GetId(std::string login);
+
     std::optional<UserId> Authorize(std::string login, std::string password);
 
 private:

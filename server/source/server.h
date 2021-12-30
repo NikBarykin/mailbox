@@ -9,6 +9,7 @@
 #include <string>
 
 
+// TODO: class Session instead
 struct SessionState {
     std::optional<Database::UserId> user_id = std::nullopt;
     bool running = true;
@@ -21,6 +22,7 @@ private:
     std::string servname_;
 
     void ProcessClient(Socket::Client&& client_sock);
+
 public:
     explicit Server(Database& db, std::string servname);
 

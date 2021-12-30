@@ -24,7 +24,7 @@ Answer::Any QueryProcessor::operator()(Query::Authorize authorize_q) {
     if (!user_id) {
         return Answer::Error{"Wrong password"};
     }
-    session_state_.user_id = *user_id;
+    session_state_.user_id = db_.GetId(authorize_q.login);
     return Answer::Authorize{.authorization_succeed = true};
 }
 
