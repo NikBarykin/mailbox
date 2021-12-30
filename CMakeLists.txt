@@ -15,7 +15,7 @@ target_link_libraries(client wsock32 ws2_32)
 
 add_executable(test test.cpp server/source/server_sock.cpp server/source/server_sock.h
         client/source/client_sock.cpp client/source/client_sock.h
-        socket.h socket.cpp query.cpp query.h answer.cpp answer.h protocol.cpp protocol.h utils.cpp utils.h)
+        socket.h socket.cpp query.cpp query.h answer.cpp answer.h protocol.cpp protocol.h utils.cpp utils.h letter.cpp)
 target_link_libraries(test wsock32 ws2_32)
 
 
