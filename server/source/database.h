@@ -17,7 +17,7 @@ public:
     using LetterId = size_t;
     using UserId = std::string;
 private:
-    std::mutex data_mutex_;
+    mutable std::mutex data_mutex_;
     std::vector<Letter> letters_;
     std::unordered_map<UserId, std::vector<LetterId>> letters_by_destination_;
 public:

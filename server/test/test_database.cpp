@@ -6,8 +6,17 @@
 #include <cassert>
 #include <vector>
 
+bool operator ==(const Letter& lhs, const Letter& rhs) {
+    return std::tie(lhs.from, lhs.to, lhs.body) ==
+           std::tie(rhs.from, rhs.to, rhs.body);
+}
 
 namespace {
+//    bool operator ==(const Letter& lhs, const Letter& rhs) {
+//        return std::tie(lhs.from, lhs.to, lhs.body) ==
+//               std::tie(rhs.from, rhs.to, rhs.body);
+//    }
+
     void TestDatabaseSimple() {
         Database db;
         Letter l1{"a", "b", "hey, a"};
@@ -35,5 +44,6 @@ namespace {
 
 
 void TestDatabase() {
+    TestDatabaseSimple();
     std::cerr << "TestDatabase: OK" << std::endl;
 }
