@@ -5,7 +5,7 @@
 
 struct Letter {
     std::string from, to, body;
-
-//    std::string Serialize() const;
-//    static Letter Deserialize(std::string);
 };
+
+
+bool operator ==(const Letter& lhs, const Letter& rhs);
