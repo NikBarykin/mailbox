@@ -6,8 +6,8 @@
 
 namespace Protocol {
     struct Query {
-        std::string name_;
-        std::vector<std::string> arguments_;
+        std::string name;
+        std::vector<std::string> arguments;
 
         Query(std::string name);
 
@@ -22,10 +22,10 @@ namespace Protocol {
     };
 
     struct Answer {
-        std::string error_message_;
-        std::string body_;
+        std::string error_message;
+        std::string body;
 
-        Answer(std::string error_message_, std::string body_);
+        Answer(std::string error_message, std::string body);
 
         std::string Serialize() const;
         static Answer Deserialize(std::string);
@@ -38,7 +38,7 @@ namespace Protocol {
 namespace Protocol {
     template<class StringIt>
     Query::Query(std::string name, StringIt arg_begin, StringIt arg_end)
-    : name_(name), arguments_(arg_begin, arg_end) {}
+    : name(name), arguments(arg_begin, arg_end) {}
 
     template<class StringContainer>
     Query::Query(std::string name, StringContainer arguments)

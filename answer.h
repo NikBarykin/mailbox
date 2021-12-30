@@ -49,10 +49,10 @@ namespace Answer {
 namespace Answer {
     template<class ExpectedAnswer>
     Any DeserializeTransfer(std::string serialized_ans) {
-        auto [error_message, body] = Protocol::DeserializeAnswer(serialized_ans);
-        if (!error_message.empty()) {
-            return Error{error_message};
+        Protocol::Answer ans_proto = Protocol::Answer::Deserialize(serialized_ans);
+        if (!ans_proto.error_message.empty()) {
+            return Error{ans_proto.error_message};
         }
-        return ExpectedAnswer::DeserializeTransfer(serialized_ans);
+        return ExpectedAnswer::DeserializeTransfer(ans_proto.body);
     }
 }
