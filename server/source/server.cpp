@@ -1,16 +1,5 @@
 #include "server.h"
-
-
-QueryProcessor::QueryProcessor(Database &db, SessionState &session_state)
-: db_(db), session_state_(session_state) {}
-
-Answer::Any QueryProcessor::operator()(Query::GetMail) {
-    return Query::GetMail::Any{db_.GetMail(session_state_.user_login)};
-}
-
-Answer::Any QueryProcessor::operator()(Query::Any query) {
-    return std::visit(*this, query);
-}
+#include "query_processor.h"
 
 
 void Server::ProcessClient(Socket::Client &&client_sock) {
@@ -23,12 +12,13 @@ void Server::ProcessClient(Socket::Client &&client_sock) {
     }
 }
 
-Server::Server(Database &db): db_(db) {}
+Server::Server(Database &db, std::string servname)
+: db_(db), servname_(servname) {}
 
-void Server::Run() {
-    Socket::Listener listen_sock("8080");
+void Server::Run(size_t n_clients_to_process) {
+    Socket::Listener listen_sock(servname_);
     std::vector<std::future<void>> client_futures;
-    for (int _ = 0; _ < 10; ++_) {
+    while (n_clients_to_process--) {
         client_futures.push_back(std::async(&Server::ProcessClient, this, listen_sock.Accept()));
     }
 }

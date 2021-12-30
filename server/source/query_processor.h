@@ -1,8 +1,23 @@
-//
-// Created by baryk on 30.12.2021.
-//
+#pragma once
 
-#ifndef MAILBOX_QUERY_PROCESSOR_H
-#define MAILBOX_QUERY_PROCESSOR_H
 
-#endif //MAILBOX_QUERY_PROCESSOR_H
+#include "server.h"
+#include "database.h"
+#include "../../query.h"
+#include "../../answer.h"
+
+
+class QueryProcessor {
+private:
+    Database& db_;
+    SessionState& session_state_;
+public:
+    QueryProcessor(Database& db, SessionState& session_state);
+
+    Answer::Any operator ()(Query::GetMail);
+    Answer::Any operator ()(Query::SendLetter);
+    Answer::Any operator ()(Query::Authorize);
+    Answer::Any operator ()(Query::Terminate);
+
+    Answer::Any operator ()(Query::Any);
+};
