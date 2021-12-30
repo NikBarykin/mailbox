@@ -6,13 +6,18 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
+#include <mutex>
 
+
+// TODO: Make multi-thread support better by choosing more appropriate data structures
+// TODO: Constructor from Letter container
 
 class Database {
 public:
     using LetterId = size_t;
     using UserId = std::string;
 private:
+    std::mutex data_mutex_;
     std::vector<Letter> letters_;
     std::unordered_map<UserId, std::vector<LetterId>> letters_by_destination_;
 public:
