@@ -14,7 +14,6 @@ std::vector<Letter> Database::GetMail(UserId user_id) const {
     return result;
 }
 
-
 Database &Database::AddLetter(Letter letter) {
     std::lock_guard guard(data_mutex_);
     LetterId letter_id = letters_.size();
