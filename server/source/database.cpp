@@ -1,5 +1,5 @@
 #include "database.h"
-#include "../../utils.h"
+#include "general/source/utils.h"
 
 #include <mutex>
 #include <cassert>
@@ -19,12 +19,14 @@ Database::UserId Database::GetId(std::string login) {
 }
 
 std::optional<Database::UserId> Database::Authorize(std::string login, std::string password) {
-    std::lock_guard guard(user_mutex_);
-    if (!user_passwords_.count(login)) {
-        user_passwords_.emplace(login, password);
-    }
-    if (user_passwords_[login] != password) {
-        return std::nullopt;
+    {
+        std::lock_guard guard(user_mutex_);
+        if (!user_passwords_.count(login)) {
+            user_passwords_.emplace(login, password);
+        }
+        if (user_passwords_[login] != password) {
+            return std::nullopt;
+        }
     }
     return GetId(login);
 }
@@ -33,7 +35,7 @@ std::optional<Database::UserId> Database::Authorize(std::string login, std::stri
 std::vector<Letter> Database::GetMail(UserId user_id) const {
     std::lock_guard guard(letter_mutex_);
     std::vector<Letter> result;
-    const std::vector<LetterId>* letter_ids = GetVal(letters_by_destination_, user_id);
+    const std::vector<LetterId>* letter_ids = GetVal(letters_by_recipient_, user_id);
     if (letter_ids == nullptr) {
         return {};
     }
@@ -47,8 +49,8 @@ std::vector<Letter> Database::GetMail(UserId user_id) const {
 Database &Database::AddLetter(Letter letter) {
     std::lock_guard guard(letter_mutex_);
     LetterId letter_id = letters_.size();
-    UserId destination_id = GetId(letter.to);
-    letters_by_destination_[destination_id].push_back(letter_id);
+    UserId recipient_id = GetId(letter.to);
+    letters_by_recipient_[recipient_id].push_back(letter_id);
     letters_.push_back(letter);
     return *this;
 }

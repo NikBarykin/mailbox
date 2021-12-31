@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../letter.h"
+#include "general/source/letter.h"
 
 
 #include <vector>
@@ -36,9 +36,23 @@ public:
 private:
     mutable std::mutex letter_mutex_;
     std::vector<Letter> letters_;
-    std::unordered_map<UserId, std::vector<LetterId>> letters_by_destination_;
+    std::unordered_map<UserId, std::vector<LetterId>> letters_by_recipient_;
 
 public:
     std::vector<Letter> GetMail(UserId user_id) const;
+
     Database& AddLetter(Letter letter);
+    template<class LetterIt>
+    Database& AddLetters(LetterIt letter_begin, LetterIt letter_end);
 };
+
+
+// Implementations
+
+template<class LetterIt>
+Database& Database::AddLetters(LetterIt letter_begin, LetterIt letter_end) {
+    for (LetterIt letter_it = letter_begin; letter_it != letter_end; ++letter_it) {
+        AddLetter(*letter_it);
+    }
+    return *this;
+}

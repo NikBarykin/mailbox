@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include "../../answer.h"
+#include "general/source/answer.h"
 #include "session.h"
 
 #include <variant>

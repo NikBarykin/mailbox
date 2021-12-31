@@ -2,8 +2,8 @@
 
 #include "database.h"
 #include "server_sock.h"
-#include "../../query.h"
-#include "../../answer.h"
+#include "general/source/query.h"
+#include "general/source/answer.h"
 
 #include <future>
 #include <string>

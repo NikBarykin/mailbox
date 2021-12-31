@@ -1,5 +1,5 @@
 #include "session.h"
-#include "../../socket.h"
+#include "general/source/socket.h"
 #include "client_sock.h"
 #include "query_reader.h"
 #include "answer_processor.h"

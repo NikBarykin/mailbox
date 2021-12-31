@@ -3,8 +3,8 @@
 
 #include "server.h"
 #include "database.h"
-#include "../../query.h"
-#include "../../answer.h"
+#include "general/source/query.h"
+#include "general/source/answer.h"
 
 
 class QueryProcessor {
