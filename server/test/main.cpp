@@ -3,8 +3,6 @@
 #include "test_query_processor.h"
 
 
-
-
 int main() {
     TestDatabase();
     TestQueryProcessor();

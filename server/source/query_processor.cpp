@@ -11,6 +11,7 @@ Answer::Any QueryProcessor::operator()(Query::GetMail) {
     return Query::GetMail::Answer{db_.GetMail(*session_state_.user_id)};
 }
 
+// TODO:: maybe forbid sending letter to yourself
 Answer::Any QueryProcessor::operator()(Query::SendLetter send_letter_q) {
     if (!session_state_.user_id) {
         return Answer::Error{"Not authorized"};
@@ -28,6 +29,7 @@ Answer::Any QueryProcessor::operator()(Query::Authorize authorize_q) {
     return Answer::Authorize{.authorization_succeed = true};
 }
 
+// TODO: maybe return Answer::Error if trying to terminate already terminated session (like it is strange)
 Answer::Any QueryProcessor::operator()(Query::Terminate) {
     session_state_.running = false;
     return Answer::Terminate{};
