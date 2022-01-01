@@ -11,7 +11,9 @@ Answer::Any QueryProcessor::operator()(Query::GetMail) {
     return Query::GetMail::Answer{db_.GetMail(*session_state_.user_id)};
 }
 
-// TODO:: maybe forbid sending letter to yourself
+// TODO: maybe forbid sending letter to yourself
+// TODO: check if letter sender id differs from *session_state.user_id.
+//  Also, add corresponding unit-test
 Answer::Any QueryProcessor::operator()(Query::SendLetter send_letter_q) {
     if (!session_state_.user_id) {
         return Answer::Error{"Not authorized"};
@@ -20,6 +22,7 @@ Answer::Any QueryProcessor::operator()(Query::SendLetter send_letter_q) {
     return Answer::SendLetter{};
 }
 
+// TODO: maybe forbid 2 clients to be authorized in one account at the same time
 Answer::Any QueryProcessor::operator()(Query::Authorize authorize_q) {
     std::optional<Database::UserId> user_id = db_.Authorize(authorize_q.login, authorize_q.password);
     if (!user_id) {

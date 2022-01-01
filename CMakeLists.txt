@@ -24,4 +24,5 @@ add_executable(test_server server/test/main.cpp server/test/test_database.h serv
         server/source/database.h server/source/database.cpp general/source/utils.cpp general/source/utils.h
         general/source/letter.h general/source/letter.cpp general/test/test_tools.cpp general/test/test_tools.h
         server/source/query_processor.h server/source/query_processor.cpp
-        server/test/test_query_processor.h server/test/test_query_processor.cpp)
+        server/test/test_query_processor.h server/test/test_query_processor.cpp
+        server/test/test_server.h server/test/test_server.cpp)
