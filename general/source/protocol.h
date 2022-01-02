@@ -9,7 +9,7 @@ namespace Protocol {
         std::string name;
         std::vector<std::string> arguments;
 
-        Query(std::string name);
+        explicit Query(std::string name);
 
         template<class StringIt>
         Query(std::string name, StringIt arg_begin, StringIt arg_end);

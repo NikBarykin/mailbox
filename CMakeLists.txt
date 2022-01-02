@@ -14,10 +14,10 @@ add_executable(client client/source/main.cpp client/source/client_sock.h
         client/source/client_sock.cpp general/source/query.cpp general/source/query.h general/source/answer.cpp general/source/answer.h general/source/protocol.cpp general/source/protocol.h client/source/session.cpp client/source/session.h client/source/query_reader.cpp client/source/query_reader.h client/source/answer_processor.cpp client/source/answer_processor.h general/source/utils.cpp general/source/utils.h)
 target_link_libraries(client wsock32 ws2_32)
 
-add_executable(test general/test/test.cpp server/source/server_sock.cpp server/source/server_sock.h
+add_executable(test_general general/test/test.cpp server/source/server_sock.cpp server/source/server_sock.h
         client/source/client_sock.cpp client/source/client_sock.h
-        general/source/socket.h general/source/socket.cpp general/source/query.cpp general/source/query.h general/source/answer.cpp general/source/answer.h general/source/protocol.cpp general/source/protocol.h general/source/utils.cpp general/source/utils.h general/source/letter.cpp general/test/test_tools.cpp general/test/test_tools.h)
-target_link_libraries(test wsock32 ws2_32)
+        general/source/socket.h general/source/socket.cpp general/source/protocol.cpp general/source/protocol.h general/source/utils.cpp general/source/utils.h general/source/letter.cpp general/test/test_tools.cpp general/test/test_tools.h general/test/test_protocol.cpp general/test/test_protocol.h general/test/test_socket.cpp general/test/test_socket.h)
+target_link_libraries(test_general wsock32 ws2_32)
 
 
 add_executable(test_server server/test/main.cpp server/test/test_database.h server/test/test_database.cpp

@@ -10,12 +10,14 @@
 namespace Answer {
     struct Authorize {
         bool authorization_succeed;
+
         std::string SerializeForTransfer() const;
         static Authorize DeserializeTransfer(std::string);
     };
 
     struct GetMail {
         std::vector<Letter> mail;
+
         std::string SerializeForTransfer() const;
         static GetMail DeserializeTransfer(std::string);
     };
@@ -32,6 +34,7 @@ namespace Answer {
 
     struct Error {
         std::string message;
+
         std::string SerializeForTransfer() const;
         static Error DeserializeTransfer(std::string);
     };
