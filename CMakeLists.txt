@@ -20,7 +20,8 @@ add_executable(test_general general/test/main.cpp server/source/server_sock.cpp 
         general/source/utils.cpp general/source/utils.h general/source/letter.cpp general/test/testtools.cpp
         general/test/testtools.h general/test/test_protocol.cpp general/test/test_protocol.h general/test/test_socket.cpp
         general/test/test_socket.h general/test/test_query.cpp general/test/test_query.h
-        general/source/query.h general/source/query.cpp)
+        general/source/query.h general/source/query.cpp general/test/test_answer.cpp general/test/test_answer.h
+        general/source/answer.h general/source/answer.cpp)
 target_link_libraries(test_general wsock32 ws2_32)
 
 

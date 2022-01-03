@@ -21,6 +21,7 @@ namespace Answer {
     };
 
     struct Authorize {
+        // TODO: add something like SUCCESS_STR = "OK"; FAILURE_STR = "FAIL"
         bool authorization_succeed;
 
         std::string SerializeForTransfer() const;
