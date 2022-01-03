@@ -32,12 +32,14 @@ Answer::Any QueryProcessor::operator()(Query::Authorize authorize_q) {
     return Answer::Authorize{.authorization_succeed = true};
 }
 
-// TODO: maybe return Answer::Error if trying to terminate already terminated session (like it is strange)
 Answer::Any QueryProcessor::operator()(Query::Terminate) {
     session_state_.running = false;
     return Answer::Terminate{};
 }
 
 Answer::Any QueryProcessor::operator()(Query::Any query) {
+    if (!session_state_.running) {
+        return Answer::Error{"Query in terminated session"};
+    }
     return std::visit(*this, query);
 }

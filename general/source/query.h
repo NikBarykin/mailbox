@@ -10,35 +10,45 @@
 namespace Query {
     // TODO: maybe design similarity by inheritance, not by std::variant
     struct GetMail {
+        static inline const std::string name = "GetMail";
         using Answer = Answer::GetMail;
+
         std::string SerializeForTransfer() const;
         static GetMail DeserializeTransfer(std::string);
     };
 
     struct SendLetter {
+        static inline const std::string name = "SendLetter";
         using Answer = Answer::GetMail;
+
         Letter letter;
+
         std::string SerializeForTransfer() const;
-        static SendLetter DeserializeTransfer();
+        static SendLetter DeserializeTransfer(std::string);
     };
 
     struct Authorize {
+        static inline const std::string name = "Authorize";
         using Answer = Answer::Authorize;
+
         std::string login, password;
+
         std::string SerializeForTransfer() const;
-        static Authorize DeserializeTransfer();
+        static Authorize DeserializeTransfer(std::string);
     };
 
     struct Terminate {
+        static inline const std::string name = "Terminate";
         using Answer = Answer::Terminate;
+
         std::string SerializeForTransfer() const;
-        static Terminate DeserializeTransfer();
+        static Terminate DeserializeTransfer(std::string);
     };
 
     using Any = std::variant<GetMail, SendLetter, Authorize, Terminate>;
 
-    Any DeserializeTransfer(std::string);
     std::string SerializeForTransfer(Any query);
+    Any DeserializeTransfer(std::string);
 
-    Answer::Any DeserializeQueryAnswer(Any query, std::string serialized_answer);
+//    Answer::Any DeserializeQueryAnswer(Any query, std::string serialized_answer);
 }

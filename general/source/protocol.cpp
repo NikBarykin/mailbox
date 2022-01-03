@@ -20,7 +20,7 @@ namespace Protocol {
     }
 
 
-    Query::Query(std::string name): name(name) {}
+//    Query::Query(std::string name): name(name) {}
 
     std::string Query::Serialize() const {
         std::ostringstream oss;
@@ -47,8 +47,8 @@ namespace Protocol {
     }
 
 
-    Answer::Answer(std::string error_message, std::string body)
-    : error_message(error_message), body(body) {}
+//    Answer::Answer(std::string error_message, std::string body)
+//    : error_message(error_message), body(body) {}
 
     std::string Answer::Serialize() const {
         std::ostringstream oss;
