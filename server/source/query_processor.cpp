@@ -25,11 +25,10 @@ Answer::Any QueryProcessor::operator()(Query::SendLetter send_letter_q) {
 // TODO: maybe forbid 2 clients to be authorized in one account at the same time
 Answer::Any QueryProcessor::operator()(Query::Authorize authorize_q) {
     std::optional<Database::UserId> user_id = db_.Authorize(authorize_q.login, authorize_q.password);
-    if (!user_id) {
-        return Answer::Error{"Wrong password"};
+    if (user_id) {
+        session_state_.user_id = user_id;
     }
-    session_state_.user_id = db_.GetId(authorize_q.login);
-    return Answer::Authorize{.authorization_succeed = true};
+    return Answer::Authorize{.authorization_succeed = user_id.has_value()};
 }
 
 Answer::Any QueryProcessor::operator()(Query::Terminate) {

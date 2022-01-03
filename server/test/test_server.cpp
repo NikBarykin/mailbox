@@ -39,10 +39,10 @@ namespace {
         assert(std::holds_alternative<Answer::Error>(ans1));
 
         Answer::Any ans2 = send_query(a_serv_sock, Query::Authorize{a_name, a_name});
-        assert(std::holds_alternative<Answer::Authorize>(ans2));
+        assert(std::get<Answer::Authorize>(ans2).authorization_succeed);
 
         Answer::Any ans3 = send_query(a_serv_sock, Query::Authorize{a_name, b_name});
-        assert(std::holds_alternative<Answer::Error>(ans3));
+        assert(!std::get<Answer::Authorize>(ans3).authorization_succeed);
 
         Letter l1{a_name, b_name, "Hey, " + b_name};
         Answer::Any ans4 = send_query(a_serv_sock, Query::SendLetter{l1});

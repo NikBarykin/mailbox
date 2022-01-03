@@ -5,6 +5,7 @@
 
 
 namespace Protocol {
+    // TODO: elegant constructors for different usage cases (for example, if query doesn't have arguments)
     struct Query {
         std::string name;
         std::vector<std::string> arguments;
