@@ -18,12 +18,12 @@ namespace {
     }
 
     void TestAnswer() {
-        Protocol::Answer initial_answer{"A\n\nBA", "C\nA\nBA"};
+        Protocol::Answer initial_answer{"A\n\nBA", {"C\nA\nBA", "AMO\\\nGUS"}};
         std::string serialized_answer = initial_answer.Serialize();
-        assert(serialized_answer == "A\\n\\nBA\nC\\nA\\nBA");
+        assert(serialized_answer == "A\\n\\nBA\nC\\nA\\nBA\nAMO\\\\\\nGUS");
         Protocol::Answer deserialized_answer = Protocol::Answer::Deserialize(serialized_answer);
         assert(deserialized_answer.error_message == initial_answer.error_message);
-        assert(deserialized_answer.body == initial_answer.body);
+        assert(deserialized_answer.fields == initial_answer.fields);
     }
 }
 

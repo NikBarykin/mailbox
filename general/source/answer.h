@@ -8,13 +8,6 @@
 
 
 namespace Answer {
-    struct Authorize {
-        bool authorization_succeed;
-
-        std::string SerializeForTransfer() const;
-        static Authorize DeserializeTransfer(std::string);
-    };
-
     struct GetMail {
         std::vector<Letter> mail;
 
@@ -25,6 +18,13 @@ namespace Answer {
     struct SendLetter {
         std::string SerializeForTransfer() const;
         static SendLetter DeserializeTransfer(std::string);
+    };
+
+    struct Authorize {
+        bool authorization_succeed;
+
+        std::string SerializeForTransfer() const;
+        static Authorize DeserializeTransfer(std::string);
     };
 
     struct Terminate {
@@ -48,14 +48,14 @@ namespace Answer {
 
 
 // Implementations
-
-namespace Answer {
-    template<class ExpectedAnswer>
-    Any DeserializeTransfer(std::string serialized_ans) {
-        Protocol::Answer ans_proto = Protocol::Answer::Deserialize(serialized_ans);
-        if (!ans_proto.error_message.empty()) {
-            return Error{ans_proto.error_message};
-        }
-        return ExpectedAnswer::DeserializeTransfer(ans_proto.body);
-    }
-}
+//
+//namespace Answer {
+//    template<class ExpectedAnswer>
+//    Any DeserializeTransfer(std::string serialized_ans) {
+//        Protocol::Answer ans_proto = Protocol::Answer::Deserialize(serialized_ans);
+//        if (!ans_proto.error_message.empty()) {
+//            return Error{ans_proto.error_message};
+//        }
+//        return ExpectedAnswer::DeserializeTransfer(ans_proto.body);
+//    }
+//}

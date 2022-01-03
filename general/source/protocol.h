@@ -26,7 +26,7 @@ namespace Protocol {
 
     struct Answer {
         std::string error_message;
-        std::string body;
+        std::vector<std::string> fields;
 
 //        Answer(std::string error_message, std::string body);
 

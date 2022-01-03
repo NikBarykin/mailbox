@@ -5,9 +5,7 @@
 #include <string>
 
 
-bool Replace(std::string& source, const std::string& from, const std::string& to);
-
-void ReplaceAll(std::string& source, const std::string& from, const std::string& to);
+std::string Replace(const std::string& source, const std::string& from, const std::string& to);
 
 
 template <class Key, class Val>

@@ -9,12 +9,14 @@
 namespace Protocol {
     namespace {
         std::string EncodeSpecialSymbols(std::string str) {
-            ReplaceAll(str, "\n", "\\n");
+            str = Replace(str, "\\", "\\\\");
+            str = Replace(str, "\n", "\\n");
             return str;
         }
 
         std::string DecodeSpecialSymbols(std::string str) {
-            ReplaceAll(str, "\\n", "\n");
+            str = Replace(str, "\\\\", "\\");
+            str = Replace(str, "\\n", "\n");
             return str;
         }
     }
@@ -52,8 +54,10 @@ namespace Protocol {
 
     std::string Answer::Serialize() const {
         std::ostringstream oss;
-        oss << EncodeSpecialSymbols(error_message) << "\n";
-        oss << EncodeSpecialSymbols(body);
+        oss << EncodeSpecialSymbols(error_message);
+        for (const std::string& field : fields) {
+            oss << "\n" << EncodeSpecialSymbols(field);
+        }
         return oss.str();
     }
 
@@ -61,8 +65,11 @@ namespace Protocol {
         std::istringstream iss(serialized_answer);
         std::string error_message;
         std::getline(iss, error_message);
-        std::string body;
-        std::getline(iss, body);
-        return {DecodeSpecialSymbols(error_message), DecodeSpecialSymbols(body)};
+        error_message = DecodeSpecialSymbols(error_message);
+        std::vector<std::string> fields;
+        for (std::string field; std::getline(iss, field); ) {
+            fields.push_back(DecodeSpecialSymbols(field));
+        }
+        return {error_message, fields};
     }
 }

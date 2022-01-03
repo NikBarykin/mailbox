@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <cassert>
+#include <stdexcept>
 
 
 namespace {
@@ -51,7 +52,15 @@ namespace {
         Query::Any deserialized2 = Query::DeserializeTransfer("Terminate");
         assert(std::holds_alternative<Query::Terminate>(deserialized2));
 
+        // Invalid query name
+        try {
+            Query::DeserializeTransfer("getmail");
+            assert(false);
+        } catch (std::exception&) {}
+    }
 
+    void TestQueryAnswerDeserialization() {
+        // TODO: implement
     }
 }
 

@@ -8,11 +8,14 @@ argn
 
 Answer:
 error_message (empty if there is no error)
-answer_body
+field1
+field2
+field3
+...
+fieldn
 
 TODO: make new answer protocol, to query and answer become independent
  (currently we deduct answer type from query)
 Answer:
 answer_type
-error_message
-answer_body
+...
