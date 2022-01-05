@@ -42,5 +42,6 @@ add_executable(test_server server/test/main.cpp server/test/test_database.h serv
 target_link_libraries(test_server wsock32 ws2_32)
 
 
-add_executable(test_client client/test/main.cpp client/test/test_query_reader.cpp client/test/test_query_reader.h)
+add_executable(test_client client/test/main.cpp client/test/test_query_reader.cpp client/test/test_query_reader.h
+        client/source/query_reader.h client/source/query_reader.cpp general/source/letter.h general/source/letter.cpp)
 target_link_libraries(test_client wsock32 ws2_32)

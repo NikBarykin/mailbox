@@ -24,9 +24,15 @@ Query::Any QueryReader::ReadSendLetter() {
     std::getline(input_, query.letter.to);
 
     output_ << "Letter body:" << std::endl;
+    bool first_line = true;
     for (std::string letter_line; std::getline(input_, letter_line); ) {
         if (letter_line == "\\end of letter") {
             break;
+        }
+        if (first_line) {
+            first_line = false;
+        } else {
+            query.letter.body += "\n";
         }
         query.letter.body += letter_line;
     }
@@ -54,7 +60,9 @@ Query::Any QueryReader::ReadTerminate() {
 Query::Any QueryReader::operator()() {
     output_ << "Query name:" << std::endl;
     std::string query_name;
-    std::getline(input_, query_name);
+    if (!std::getline(input_, query_name)) {
+        throw std::runtime_error("Failed to read query name");
+    }
 
     typedef Query::Any (QueryReader::*ReadQueryPtr)();
     static const std::unordered_map<std::string, ReadQueryPtr> read_query_methods {
