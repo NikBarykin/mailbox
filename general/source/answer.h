@@ -21,7 +21,7 @@ namespace Answer {
     };
 
     struct Authorize {
-        bool authorization_succeed;
+        std::string authorized_login; // empty if authorization failed
 
         std::string SerializeForTransfer() const;
         static Authorize DeserializeTransfer(std::string);

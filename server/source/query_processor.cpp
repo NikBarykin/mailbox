@@ -28,7 +28,7 @@ Answer::Any QueryProcessor::operator()(Query::Authorize authorize_q) {
     if (user_id) {
         session_state_.user_id = user_id;
     }
-    return Answer::Authorize{.authorization_succeed = user_id.has_value()};
+    return Answer::Authorize{user_id.has_value() ? authorize_q.login : ""};
 }
 
 Answer::Any QueryProcessor::operator()(Query::Terminate) {
