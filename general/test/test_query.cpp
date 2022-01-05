@@ -60,7 +60,19 @@ namespace {
     }
 
     void TestQueryAnswerDeserialization() {
-        // TODO: implement
+        std::string serialized1 = "\na\nb\nHey, b!\\nLove, a";
+        auto deserialized1 = Query::DeserializeQueryAnswer(Query::GetMail{}, serialized1);
+        assert(std::holds_alternative<Answer::GetMail>(deserialized1));
+        std::vector<Letter> expected_mail = {{"a", "b", "Hey, b!\nLove, a"}};
+        assert(std::get<Answer::GetMail>(deserialized1).mail == expected_mail);
+
+        Query::SendLetter query2 = {{"pupa", "lupa", ":)"}};
+        auto deserialized2 = Query::DeserializeQueryAnswer(query2, "");
+        assert(std::holds_alternative<Answer::SendLetter>(deserialized2));
+
+        auto deserialized3 = Query::DeserializeQueryAnswer(Query::Terminate{}, "Error");
+        assert(std::holds_alternative<Answer::Error>(deserialized3));
+        assert(std::get<Answer::Error>(deserialized3).message == "Error");
     }
 }
 
@@ -71,5 +83,6 @@ void TestQuery() {
     TestAuthorize();
     TestTerminate();
     TestGeneralTransfer();
+    TestQueryAnswerDeserialization();
     std::cerr << "TestQuery: OK" << std::endl;
 }

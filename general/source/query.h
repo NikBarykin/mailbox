@@ -19,7 +19,7 @@ namespace Query {
 
     struct SendLetter {
         static inline const std::string name = "SendLetter";
-        using Answer = Answer::GetMail;
+        using Answer = Answer::SendLetter;
 
         Letter letter;
 
@@ -50,5 +50,5 @@ namespace Query {
     std::string SerializeForTransfer(Any query);
     Any DeserializeTransfer(std::string);
 
-//    Answer::Any DeserializeQueryAnswer(Any query, std::string serialized_answer);
+    Answer::Any DeserializeQueryAnswer(Any query, std::string serialized_answer);
 }

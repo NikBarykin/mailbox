@@ -74,10 +74,10 @@ namespace Query {
         }
     }
 
-//    Answer::Any DeserializeQueryAnswer(Any query, std::string serialized_answer) {
-//        auto answer_deserializer = [&serialized_answer]<class QueryType>(QueryType query) {
-//            return Answer::DeserializeTransfer<typename QueryType::Answer>(serialized_answer);
-//        };
-//        return std::visit(answer_deserializer, query);
-//    }
+    Answer::Any DeserializeQueryAnswer(Any query, std::string serialized_answer) {
+        auto answer_deserializer = [&serialized_answer]<class QueryType>(QueryType query) {
+            return Answer::DeserializeTransfer<typename QueryType::Answer>(serialized_answer);
+        };
+        return std::visit(answer_deserializer, query);
+    }
 }
