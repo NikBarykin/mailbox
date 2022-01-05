@@ -30,4 +30,17 @@ add_executable(test_server server/test/main.cpp server/test/test_database.h serv
         general/source/letter.h general/source/letter.cpp general/test/testtools.cpp general/test/testtools.h
         server/source/query_processor.h server/source/query_processor.cpp
         server/test/test_query_processor.h server/test/test_query_processor.cpp
-        server/test/test_server.h server/test/test_server.cpp)
+        server/test/test_server.h server/test/test_server.cpp
+        server/source/server.h server/source/server.cpp
+        server/test/test_server.h server/test/test_server.cpp
+        general/source/answer.h general/source/answer.cpp
+        general/source/protocol.h general/source/protocol.cpp
+        general/source/socket.h general/source/socket.cpp
+        client/source/client_sock.h client/source/client_sock.cpp
+        server/source/server_sock.h server/source/server_sock.cpp
+        general/source/query.h general/source/query.cpp)
+target_link_libraries(test_server wsock32 ws2_32)
+
+
+add_executable(test_client client/test/main.cpp client/test/test_query_reader.cpp client/test/test_query_reader.h)
+target_link_libraries(test_client wsock32 ws2_32)

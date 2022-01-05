@@ -1,6 +1,7 @@
 #pragma once
 
 #include "general/source/query.h"
+#include "session.h"
 
 #include <iostream>
 #include <string>
@@ -10,19 +11,20 @@
 
 class QueryReader {
 private:
+    const SessionState& session_state_;
     std::istream& input_;
     std::ostream& output_;
 
-    Query::QType ReadGetMail();
-    Query::QType ReadSendLetter();
-    Query::QType ReadAuthorize();
-    Query::QType ReadTerminate();
-
-    typedef Query::QType (QueryReader::*ReadQueryPtr)();
-    const std::unordered_map<std::string, ReadQueryPtr> read_query_methods = {
-            {"GetMail", &QueryReader::ReadGetMail}, {"SendLetter", &QueryReader::ReadSendLetter}
-    };
 public:
-    QueryReader(std::istream& input, std::ostream& output);
-    Query::QType operator ()();
+    QueryReader(const SessionState&, std::istream& input, std::ostream& output);
+
+private:
+    // These methods don't read query name, only it's arguments
+    Query::Any ReadGetMail();
+    Query::Any ReadSendLetter();
+    Query::Any ReadAuthorize();
+    Query::Any ReadTerminate();
+
+public:
+    Query::Any operator ()();
 };

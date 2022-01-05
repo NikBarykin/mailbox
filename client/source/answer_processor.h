@@ -13,13 +13,13 @@ private:
     SessionState& session_state_;
     std::ostream& output_;
 public:
-    AnswerProcessor(SessionState& session_state, std::ostream& output);
+    AnswerProcessor(SessionState&, std::ostream& output);
 
-    void operator ()(Answer::GetMail answer);
-    void operator ()(Answer::Authorize answer);
-    void operator ()(Answer::Error answer);
-    void operator ()(Answer::SendLetter answer);
-    void operator ()(Answer::Terminate answer);
+    void operator ()(Answer::GetMail);
+    void operator ()(Answer::SendLetter);
+    void operator ()(Answer::Authorize);
+    void operator ()(Answer::Terminate);
+    void operator ()(Answer::Error);
 
-    void operator ()(Answer::AnsT answer);
+    void operator ()(Answer::Any answer);
 };
