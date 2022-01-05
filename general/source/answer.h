@@ -21,7 +21,6 @@ namespace Answer {
     };
 
     struct Authorize {
-        // TODO: add something like SUCCESS_STR = "OK"; FAILURE_STR = "FAIL"
         bool authorization_succeed;
 
         std::string SerializeForTransfer() const;
@@ -43,20 +42,21 @@ namespace Answer {
     using Any = std::variant<Authorize, GetMail, SendLetter, Terminate, Error>;
 
     std::string SerializeForTransfer(Any);
+
     template<class ExpectedAnswer>
     Any DeserializeTransfer(std::string);
 }
 
 
 // Implementations
-//
-//namespace Answer {
-//    template<class ExpectedAnswer>
-//    Any DeserializeTransfer(std::string serialized_ans) {
-//        Protocol::Answer ans_proto = Protocol::Answer::Deserialize(serialized_ans);
-//        if (!ans_proto.error_message.empty()) {
-//            return Error{ans_proto.error_message};
-//        }
-//        return ExpectedAnswer::DeserializeTransfer(ans_proto.body);
-//    }
-//}
+
+namespace Answer {
+    template<class ExpectedAnswer>
+    Any DeserializeTransfer(std::string serialized_ans) {
+        auto error_message = Protocol::Answer::Deserialize(serialized_ans).error_message;
+        if (!error_message.empty()) {
+            return Error::DeserializeTransfer(serialized_ans);
+        }
+        return ExpectedAnswer::DeserializeTransfer(serialized_ans);
+    }
+}

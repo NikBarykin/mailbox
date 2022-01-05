@@ -66,4 +66,11 @@ namespace Answer {
         auto answer_proto = Protocol::Answer::Deserialize(serialized);
         return {answer_proto.error_message};
     }
+
+    std::string SerializeForTransfer(Any answer) {
+        auto answer_serializer = [](auto answer) {
+            return answer.SerializeForTransfer();
+        };
+        return std::visit(answer_serializer, answer);
+    }
 }
