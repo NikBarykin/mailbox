@@ -31,7 +31,12 @@ namespace Socket {
     public:
         explicit Base(SocketArgs);
         ~Base();
-        // TODO: delete copy constructor, though socket descriptor shouldn't be copied
+
+        Base(Base&& other);
+
+        Base(const Base&) = delete;
+        Base& operator=(const Base&) = delete;
+        Base& operator=(Base&&) = delete;
     };
 
     class Communication : public Base {

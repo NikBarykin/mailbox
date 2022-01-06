@@ -31,6 +31,11 @@ namespace Socket {
         closesocket(sock_);
     }
 
+    Base::Base(Base &&other) {
+        sock_ = INVALID_SOCKET;
+        std::swap(sock_, other.sock_);
+    }
+
 
     Communication::Communication(SOCKET sock): Base(sock) {}
 

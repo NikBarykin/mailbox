@@ -29,7 +29,6 @@ void TestClientOneThread() {
 
 
 void TestSocket() {
-    WSALib wsa_lib;
     std::vector<std::future<void>> futures;
     futures.push_back(std::async(TestServerOneThread));
     futures.push_back(std::async(TestClientOneThread));
@@ -37,5 +36,6 @@ void TestSocket() {
 
 
 int main() {
+    WSALib wsa_lib;
     TestSocket();
 }
