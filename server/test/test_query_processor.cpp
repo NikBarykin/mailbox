@@ -58,11 +58,29 @@ namespace {
     }
 
     void TestAuthorizeProcessing() {
+        Database db;
+        SessionState sst;
+        QueryProcessor query_processor(db, sst);
 
+
+        Answer::Any ans1 = query_processor(Query::Authorize{"a", "a"});
+        assert(std::get<Answer::Authorize>(ans1).authorized_login == "a");
+
+        Answer::Any ans2 = query_processor(Query::Authorize{"a", "b"});
+        assert(std::get<Answer::Authorize>(ans2).authorized_login.empty());
     }
 
     void TestTerminateProcessing() {
+        Database db;
+        SessionState sst;
+        QueryProcessor query_processor(db, sst);
 
+        Answer::Any ans1 = query_processor(Query::Terminate{});
+        assert(std::holds_alternative<Answer::Terminate>(ans1));
+
+        // Query in terminated session
+        Answer::Any ans2 = query_processor(Query::GetMail{});
+        assert(std::holds_alternative<Answer::Error>(ans2));
     }
 }
 
