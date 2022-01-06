@@ -12,14 +12,14 @@ namespace {
                                 {"\\S\nU\\S", "\\A\nMO", "G\nU\\\\S"}}};
 
         std::string serialized = answer.SerializeForTransfer();
-        assert(serialized == "\na\nb\nc\nx\ny\nz\n\\\\S\\nU\\\\S\n\\\\A\\nMO\nG\\nU\\\\\\\\S");
+        assert(serialized == "\na\nb\nc\nx\ny\nz\n\\\\S\\nU\\\\S\n\\\\A\\nMO\nG\\nU\\\\\\\\S\n");
 
         auto deserialized = Answer::GetMail::DeserializeTransfer(serialized);
         assert(deserialized.mail == answer.mail);
     }
 
     void TestSendLetter() {
-        assert(Answer::SendLetter{}.SerializeForTransfer() == "");
+        assert(Answer::SendLetter{}.SerializeForTransfer() == "\n");
         Answer::SendLetter::DeserializeTransfer("");
     }
 
@@ -27,14 +27,14 @@ namespace {
         Answer::Authorize answer{"Amogus"};
 
         std::string serialized = answer.SerializeForTransfer();
-        assert(serialized == "\nAmogus");
+        assert(serialized == "\nAmogus\n");
 
         auto deserialized = Answer::Authorize::DeserializeTransfer(serialized);
         assert(deserialized.authorized_login == answer.authorized_login);
     }
 
     void TestTerminate() {
-        assert(Answer::Terminate{}.SerializeForTransfer() == "");
+        assert(Answer::Terminate{}.SerializeForTransfer() == "\n");
         Answer::Terminate::DeserializeTransfer("");
     }
 
@@ -42,7 +42,7 @@ namespace {
         Answer::Error answer{"A terrible error!"};
 
         std::string serialized = answer.SerializeForTransfer();
-        assert(serialized == "A terrible error!");
+        assert(serialized == "A terrible error!\n");
 
         auto deserialized = Answer::Error::DeserializeTransfer(serialized);
         assert(deserialized.message == answer.message);
@@ -52,10 +52,10 @@ namespace {
         Answer::GetMail ans1{{{"a\n", "b", "c"},
                               {"\\x", "\ny\n", "z"}}};
         auto serialized1 = Answer::SerializeForTransfer(ans1);
-        assert(serialized1 == "\na\\n\nb\nc\n\\\\x\n\\ny\\n\nz");
+        assert(serialized1 == "\na\\n\nb\nc\n\\\\x\n\\ny\\n\nz\n");
 
         auto serialized2 = Answer::SerializeForTransfer(Answer::SendLetter{});
-        assert(serialized2.empty());
+        assert(serialized2 == "\n");
 
         auto deserialized1 = Answer::DeserializeTransfer<Answer::Authorize>("\nSus");
         assert(std::holds_alternative<Answer::Authorize>(deserialized1));
