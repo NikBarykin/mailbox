@@ -35,7 +35,7 @@ namespace Socket {
     Communication::Communication(SOCKET sock): Base(sock) {}
 
     std::string Communication::Recv() {
-        char data[MAX_STR_SZ] = {0};
+        char data[MAX_STR_SZ + 1] = {0};
         int i_recv_result = recv(sock_, data, MAX_STR_SZ + 1, 0);
         if (i_recv_result < 0) {
             throw std::runtime_error("recv error: " + std::to_string(WSAGetLastError()));
