@@ -30,16 +30,14 @@ namespace {
         } catch (std::exception&) {}
     }
 
-
-    void TestSocket() {
-        WSALib wsa_lib;
-        std::vector<std::future<void>> futures;
-        futures.push_back(std::async(TestServerOneThread));
-        futures.push_back(std::async(TestClientOneThread));
+    void Test() {
+        std::future<void> server_fut = std::async(TestServerOneThread);
+        TestClientOneThread();
     }
 }
 
 
 void TestSocket() {
+    Test();
     std::cerr << "TestSocket: OK" << std::endl;
 }

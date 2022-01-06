@@ -9,7 +9,7 @@ void RunSession(std::string nodename, std::string servname,
                 std::istream& input, std::ostream& output) {
     Socket::Server server_sock(nodename, servname);
     SessionState session_state;
-    QueryReader query_reader(input, output);
+    QueryReader query_reader(session_state, input, output);
     AnswerProcessor answer_processor(session_state, output);
 
     while (session_state.running) {

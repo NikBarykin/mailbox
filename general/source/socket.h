@@ -36,7 +36,7 @@ namespace Socket {
 
     class Communication : public Base {
     public:
-        // TODO: Process string of any size by sending buf size first and but itself later
+        // TODO: Process string of any size by sending buf size first and buf itself later
         static const size_t MAX_STR_SZ = 1024;
     protected:
         explicit Communication(SOCKET);

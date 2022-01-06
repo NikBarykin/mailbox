@@ -39,13 +39,13 @@ namespace Answer {
 
     std::string Authorize::SerializeForTransfer() const {
         Protocol::Answer answer_proto;
-        answer_proto.fields.push_back(std::to_string(authorization_succeed));
+        answer_proto.fields.push_back(authorized_login);
         return answer_proto.Serialize();
     }
 
     Authorize Authorize::DeserializeTransfer(std::string serialized) {
         auto answer_proto = Protocol::Answer::Deserialize(serialized);
-        return {answer_proto.fields[0] == "1"};
+        return {answer_proto.fields[0]};
     }
 
 

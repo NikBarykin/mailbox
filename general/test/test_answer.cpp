@@ -24,13 +24,13 @@ namespace {
     }
 
     void TestAuthorize() {
-        Answer::Authorize answer{true};
+        Answer::Authorize answer{"Amogus"};
 
         std::string serialized = answer.SerializeForTransfer();
-        assert(serialized == "\n1");
+        assert(serialized == "\nAmogus");
 
         auto deserialized = Answer::Authorize::DeserializeTransfer(serialized);
-        assert(deserialized.authorization_succeed == answer.authorization_succeed);
+        assert(deserialized.authorized_login == answer.authorized_login);
     }
 
     void TestTerminate() {
@@ -57,9 +57,9 @@ namespace {
         auto serialized2 = Answer::SerializeForTransfer(Answer::SendLetter{});
         assert(serialized2.empty());
 
-        auto deserialized1 = Answer::DeserializeTransfer<Answer::Authorize>("\n1");
+        auto deserialized1 = Answer::DeserializeTransfer<Answer::Authorize>("\nSus");
         assert(std::holds_alternative<Answer::Authorize>(deserialized1));
-        assert(std::get<Answer::Authorize>(deserialized1).authorization_succeed);
+        assert(std::get<Answer::Authorize>(deserialized1).authorized_login == "Sus");
 
         auto deserialized2 = Answer::DeserializeTransfer<Answer::Terminate>("");
         assert(std::holds_alternative<Answer::Terminate>(deserialized2));
