@@ -1,11 +1,11 @@
 #include "general/source/socket.h"
 #include "session.h"
 
-using namespace std;
+#include <iostream>
 
 
-int main() {
+int main(int argc, char* argv[]) {
     WSALib wsa_lib;
-    RunSession();
+    RunSession(argv[1], argv[2], std::cin, std::cout);
     return 0;
 }
