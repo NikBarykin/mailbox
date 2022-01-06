@@ -6,6 +6,7 @@
 #include <stdexcept>
 
 
+// TODO: discard repeating strings like "output << EncodeSpecialSymbols(str) << "\n""
 namespace Protocol {
     namespace {
         std::string EncodeSpecialSymbols(std::string str) {
@@ -26,9 +27,9 @@ namespace Protocol {
 
     std::string Query::Serialize() const {
         std::ostringstream oss;
-        oss << EncodeSpecialSymbols(name);
+        oss << EncodeSpecialSymbols(name) << "\n";
         for (const std::string& argument : arguments) {
-            oss << "\n" << EncodeSpecialSymbols(argument);
+            oss << EncodeSpecialSymbols(argument) << "\n";
         }
         return oss.str();
     }
@@ -54,9 +55,9 @@ namespace Protocol {
 
     std::string Answer::Serialize() const {
         std::ostringstream oss;
-        oss << EncodeSpecialSymbols(error_message);
+        oss << EncodeSpecialSymbols(error_message) << "\n";
         for (const std::string& field : fields) {
-            oss << "\n" << EncodeSpecialSymbols(field);
+            oss << EncodeSpecialSymbols(field) << "\n";
         }
         return oss.str();
     }
