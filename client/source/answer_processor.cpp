@@ -14,9 +14,9 @@ void AnswerProcessor::operator()(Answer::GetMail answer) {
     }
     for (const Letter& letter : answer.mail) {
         output_ << "From: " << letter.from << std::endl;
-        output_ << "Body: " << std::endl;
+        output_ << "Body:" << std::endl;
         output_ << letter.body << std::endl;
-        output_ << std::string(20, '-');
+        output_ << std::string(20, '-') << std::endl;
     }
 }
 
@@ -25,7 +25,8 @@ void AnswerProcessor::operator()(Answer::SendLetter) {
 }
 
 void AnswerProcessor::operator()(Answer::Authorize answer) {
-    if (answer.authorization_succeed) {
+    if (!answer.authorized_login.empty()) {
+        session_state_.user_login = answer.authorized_login;
         output_ << "Authorized successfully" << std::endl;
     } else {
         output_ << "Wrong password" << std::endl;
@@ -33,13 +34,16 @@ void AnswerProcessor::operator()(Answer::Authorize answer) {
 }
 
 void AnswerProcessor::operator()(Answer::Terminate) {
+    session_state_.running = false;
     output_ << "Session terminated" << std::endl;
 }
 
 void AnswerProcessor::operator()(Answer::Error answer) {
-    output_ << "Error: " << answer.message << std::endl;
+    output_ << "Server error: " << answer.message << std::endl;
 }
 
 void AnswerProcessor::operator()(Answer::Any answer) {
-    std::visit(*this, answer);
+    std::visit([this](auto answer) {
+        this->operator()(answer);
+    }, answer);
 }
