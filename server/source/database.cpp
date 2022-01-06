@@ -14,7 +14,11 @@ Database::UserId Database::GiveId(std::string login) {
 }
 
 Database::UserId Database::GetId(std::string login) {
-    auto id_ptr = GetVal(user_ids_, login);
+    const size_t* id_ptr;
+    {
+        std::lock_guard guard(user_mutex_);
+        id_ptr = GetVal(user_ids_, login);
+    }
     return id_ptr == nullptr ? GiveId(login) : *id_ptr;
 }
 

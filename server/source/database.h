@@ -42,6 +42,7 @@ public:
     std::vector<Letter> GetMail(UserId user_id) const;
 
     Database& AddLetter(Letter letter);
+
     template<class LetterIt>
     Database& AddLetters(LetterIt letter_begin, LetterIt letter_end);
 };
