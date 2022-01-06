@@ -26,7 +26,7 @@ Query::Any QueryReader::ReadSendLetter() {
     output_ << "Letter body:" << std::endl;
     bool first_line = true;
     for (std::string letter_line; std::getline(input_, letter_line); ) {
-        if (letter_line == "\\end of letter") {
+        if (letter_line == "\\End-of-letter") {
             break;
         }
         if (first_line) {
@@ -77,5 +77,7 @@ Query::Any QueryReader::operator()() {
     }
 
     auto read_query_ptr = read_query_methods.at(query_name);
-    return ((*this).*read_query_ptr)();
+    Query::Any read_query = ((*this).*read_query_ptr)();
+    output_ << std::endl;
+    return read_query;
 }

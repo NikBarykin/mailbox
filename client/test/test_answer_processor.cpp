@@ -36,23 +36,28 @@ namespace {
         assert(!sst.running);
 
         std::string expected_output = R"(Your mailbox is empty
+
 From: a
-Body:
 c
 d\e
---------------------
+---------------
 From: x
-Body:
 z
 z
 
---------------------
+
 Letter sent successfully
+
 Server error: Fatal error
+
 Authorized successfully
+
 Wrong password
+
 Authorized successfully
+
 Session terminated
+
 )";
         assert(output.str() == expected_output);
     }

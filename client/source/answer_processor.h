@@ -15,11 +15,16 @@ private:
 public:
     AnswerProcessor(SessionState&, std::ostream& output);
 
-    void operator ()(Answer::GetMail);
-    void operator ()(Answer::SendLetter);
-    void operator ()(Answer::Authorize);
-    void operator ()(Answer::Terminate);
-    void operator ()(Answer::Error);
+private:
+    // Not operator() cause it makes invocations like AnswerProcessor(Answer::GetMail{}) impossible,
+    // compiler just doesn't want to cast concrete answer type to Answer::Any if there is a corresponding private operator()
 
+    void Process(Answer::GetMail);
+    void Process(Answer::SendLetter);
+    void Process(Answer::Authorize);
+    void Process(Answer::Terminate);
+    void Process(Answer::Error);
+
+public:
     void operator ()(Answer::Any answer);
 };

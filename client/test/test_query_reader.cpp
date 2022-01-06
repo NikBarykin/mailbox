@@ -15,7 +15,7 @@ SendLetter
 BestFriend
 Yo, Bro
 What da dog doin?
-\end of letter
+\End-of-letter
 Authorize
 Biba
 Boba
@@ -53,13 +53,17 @@ InvalidQueryName)");
         } catch(std::exception&) {}
 
         std::string expected_output = R"(Query name:
+
 Query name:
 Letter recipient:
 Letter body:
+
 Query name:
 Login:
 Password:
+
 Query name:
+
 Query name:
 Query name:
 )";

@@ -26,14 +26,14 @@ namespace {
         std::istringstream input(R"(SendLetter
 B
 C
-\end of letter
+\End-of-letter
 Authorize
 A
 A
 SendLetter
 B
 C
-\end of letter
+\End-of-letter
 GetMail
 Authorize
 B
@@ -42,7 +42,7 @@ GetMail
 SendLetter
 A
 D
-\end of letter
+\End-of-letter
 Authorize
 A
 A
@@ -56,41 +56,57 @@ Terminate
         std::string expected_output = R"(Query name:
 Letter recipient:
 Letter body:
+
 Server error: Not authorized
+
 Query name:
 Login:
 Password:
+
 Authorized successfully
+
 Query name:
 Letter recipient:
 Letter body:
+
 Letter sent successfully
+
 Query name:
+
 Your mailbox is empty
+
 Query name:
 Login:
 Password:
+
 Authorized successfully
+
 Query name:
+
 From: A
-Body:
 C
---------------------
+
 Query name:
 Letter recipient:
 Letter body:
+
 Letter sent successfully
+
 Query name:
 Login:
 Password:
+
 Authorized successfully
+
 Query name:
+
 From: B
-Body:
 D
---------------------
+
 Query name:
+
 Session terminated
+
 )";
         assert(output.str() == expected_output);
     }
