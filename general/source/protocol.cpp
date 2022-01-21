@@ -9,16 +9,25 @@
 // TODO: discard repeating strings like "output << EncodeSpecialSymbols(str) << "\n""
 namespace Protocol {
     namespace {
-        std::string EncodeSpecialSymbols(std::string str) {
-            str = Replace(str, "\\", "\\\\");
-            str = Replace(str, "\n", "\\n");
-            return str;
+        std::string SerializeTokens(const std::vector<std::string> & tokens) {
+            std::ostringstream output;
+            for (const std::string & token : tokens) {
+                output << token.size() << "\n" << token;
+            }
+            return output.str();
         }
 
-        std::string DecodeSpecialSymbols(std::string str) {
-            str = Replace(str, "\\\\", "\\");
-            str = Replace(str, "\\n", "\n");
-            return str;
+        std::vector<std::string> DeserializeTokens(const std::string & serialized_tokens) {
+            std::istringstream input(serialized_tokens);
+            std::vector<std::string> tokens;
+            for (size_t token_sz; input >> token_sz; ) {
+                input.ignore();
+                tokens.emplace_back(token_sz, 0);
+                for (char & token_ch : tokens.back()) {
+                    input >> token_ch;
+                }
+            }
+            return tokens;
         }
     }
 
@@ -26,51 +35,32 @@ namespace Protocol {
 //    Query::Query(std::string name): name(name) {}
 
     std::string Query::Serialize() const {
-        std::ostringstream oss;
-        oss << EncodeSpecialSymbols(name) << "\n";
-        for (const std::string& argument : arguments) {
-            oss << EncodeSpecialSymbols(argument) << "\n";
-        }
-        return oss.str();
+        std::vector<std::string> tokens(1 + arguments.size());
+        tokens[0] = name;
+        std::copy(arguments.begin(), arguments.end(), tokens.begin() + 1);
+        return SerializeTokens(tokens);
     }
 
     Query Query::Deserialize(std::string serialized_query) {
-        if (serialized_query.empty()) {
+        std::vector<std::string> tokens = DeserializeTokens(serialized_query);
+        if (tokens.empty()) {
             throw std::runtime_error("Serialized query is empty");
         }
-        std::istringstream iss(serialized_query);
-        std::string query_name;
-        std::getline(iss, query_name);
-        query_name = DecodeSpecialSymbols(query_name);
-        std::vector<std::string> query_args;
-        for (std::string line; std::getline(iss, line); ) {
-            query_args.push_back(DecodeSpecialSymbols(line));
-        }
-        return {query_name, query_args};
+        return {tokens.front(), {tokens.begin() + 1, tokens.end()}};
     }
 
-
-//    Answer::Answer(std::string error_message, std::string body)
-//    : error_message(error_message), body(body) {}
-
     std::string Answer::Serialize() const {
-        std::ostringstream oss;
-        oss << EncodeSpecialSymbols(error_message) << "\n";
-        for (const std::string& field : fields) {
-            oss << EncodeSpecialSymbols(field) << "\n";
-        }
-        return oss.str();
+        std::vector<std::string> tokens(1 + fields.size());
+        tokens[0] = error_message;
+        std::copy(fields.begin(), fields.end(), tokens.begin() + 1);
+        return SerializeTokens(tokens);
     }
 
     Answer Answer::Deserialize(std::string serialized_answer) {
-        std::istringstream iss(serialized_answer);
-        std::string error_message;
-        std::getline(iss, error_message);
-        error_message = DecodeSpecialSymbols(error_message);
-        std::vector<std::string> fields;
-        for (std::string field; std::getline(iss, field); ) {
-            fields.push_back(DecodeSpecialSymbols(field));
+        std::vector<std::string> tokens = DeserializeTokens(serialized_answer);
+        if (tokens.empty()) {
+            throw std::runtime_error("Serialized query is empty");
         }
-        return {error_message, fields};
+        return {tokens.front(), {tokens.begin() + 1, tokens.end()}};
     }
 }
