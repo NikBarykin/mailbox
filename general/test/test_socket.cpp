@@ -16,6 +16,8 @@ namespace {
         std::string input = client_sock.Recv();
         assert(input == "Hello, server!");
         client_sock.Send("Hello, client!");
+        std::string large_str = client_sock.Recv();
+        assert(large_str == std::string(2048, 'n'));
     }
 
     void TestClientOneThread() {
@@ -24,10 +26,7 @@ namespace {
         std::string input = server_sock.Recv();
         assert(input == "Hello, client!");
         std::string large_str(2048, 'n');
-        try {
-            server_sock.Send(large_str);
-            assert(false);
-        } catch (std::exception&) {}
+        server_sock.Send(large_str);
     }
 
     void Test() {
