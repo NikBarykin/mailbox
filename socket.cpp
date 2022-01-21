@@ -1,6 +1,7 @@
 #include "socket.h"
 
 #include <stdexcept>
+#include <iostream>
 
 
 WSALib::WSALib()  {
@@ -40,23 +41,32 @@ namespace Socket {
     Communication::Communication(SOCKET sock): Base(sock) {}
 
     std::string Communication::Recv() {
-        char data[MAX_STR_SZ] = {0};
-        int i_recv_result = recv(sock_, data, MAX_STR_SZ, 0);
+        char sz_bytes[sizeof(size_t)];
+        int i_recv_result = recv(sock_, sz_bytes, sizeof(size_t), 0);
         if (i_recv_result < 0) {
-            throw std::runtime_error("recv error: " + std::to_string(WSAGetLastError()));
+            throw std::runtime_error("data size recv error: " + std::to_string(WSAGetLastError()));
         }
-        return data;
+        size_t sz = *static_cast<size_t *>(static_cast<void *>(sz_bytes));
+
+        char data[sz];
+        i_recv_result = recv(sock_, data, sz, 0);
+        if (i_recv_result < 0) {
+            throw std::runtime_error("data recv error: " + std::to_string(WSAGetLastError()));
+        }
+        return {data, data + sz};
     }
 
     void Communication::Send(std::string data) {
-        if (data.size() > MAX_STR_SZ) {
-            throw std::runtime_error("failed to send, string is too large, its size "
-                                     "(" + std::to_string(data.size()) + ") is greater than maximal allowed size "
-                                                                         "(" + std::to_string(MAX_STR_SZ) + ")");
-        }
-        int i_send_result = send(sock_, data.c_str(), data.size(), 0);
+        char sz_bytes[sizeof(size_t)];
+        *static_cast<size_t *>(static_cast<void *>(sz_bytes)) = data.size();
+        int i_send_result = send(sock_, sz_bytes, sizeof(size_t), 0);
         if (i_send_result == SOCKET_ERROR) {
-            throw std::runtime_error("send error: " + std::to_string(WSAGetLastError()));
+            throw std::runtime_error("data size send error: " + std::to_string(WSAGetLastError()));
+        }
+
+        i_send_result = send(sock_, data.c_str(), data.size(), 0);
+        if (i_send_result == SOCKET_ERROR) {
+            throw std::runtime_error("data send error: " + std::to_string(WSAGetLastError()));
         }
     }
 }
