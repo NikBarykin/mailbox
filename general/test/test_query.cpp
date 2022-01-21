@@ -8,16 +8,16 @@
 
 namespace {
     void TestGetMail() {
-        assert(Query::GetMail{}.SerializeForTransfer() == "GetMail\n");
-        Query::GetMail{}.DeserializeTransfer("GetMail");
+        assert(Query::GetMail{}.SerializeForTransfer() == "7\nGetMail");
+        Query::GetMail{}.DeserializeTransfer("7\nGetMail");
     }
 
     void TestSendMail() {
-        Query::SendLetter query{{"A", "bin\ngus", "AB\nO\nBA"}};
+        Query::SendLetter query{{"A", "B", "x\ny"}};
 
         std::string serialized = query.SerializeForTransfer();
 
-        assert(serialized == "SendLetter\nA\nbin\\ngus\nAB\\nO\\nBA\n");
+        assert(serialized == "10\nSendLetter1\nA1\nB3\nx\ny");
         assert(query.letter == Query::SendLetter::DeserializeTransfer(serialized).letter);
     }
 
@@ -25,7 +25,7 @@ namespace {
         Query::Authorize query{"bi\nba", "bo\nba"};
 
         std::string serialized = query.SerializeForTransfer();
-        assert(serialized == "Authorize\nbi\\nba\nbo\\nba\n");
+        assert(serialized == "9\nAuthorize5\nbi\nba5\nbo\nba");
 
         Query::Authorize deserialized = Query::Authorize::DeserializeTransfer(serialized);
         assert(deserialized.login == query.login);
@@ -33,23 +33,23 @@ namespace {
     }
 
     void TestTerminate() {
-        assert(Query::Terminate{}.SerializeForTransfer() == "Terminate\n");
-        Query::Terminate{}.DeserializeTransfer("Terminate");
+        assert(Query::Terminate{}.SerializeForTransfer() == "9\nTerminate");
+        Query::Terminate{}.DeserializeTransfer("9\nTerminate");
     }
 
     void TestGeneralTransfer() {
         std::string serialized1 = Query::SerializeForTransfer(Query::GetMail{});
-        assert(serialized1 == "GetMail\n");
+        assert(serialized1 == "7\nGetMail");
 
         std::string serialized2 = Query::SerializeForTransfer(Query::SendLetter{{"a", "b", "c"}});
-        assert(serialized2 == "SendLetter\na\nb\nc\n");
+        assert(serialized2 == "10\nSendLetter1\na1\nb1\nc");
 
-        Query::Any deserialized1 = Query::DeserializeTransfer("Authorize\nnikita\nnikita_kot");
+        Query::Any deserialized1 = Query::DeserializeTransfer("9\nAuthorize6\nnikita10\nnikita_kot");
         assert(std::holds_alternative<Query::Authorize>(deserialized1));
         assert(std::get<Query::Authorize>(deserialized1).login == "nikita");
         assert(std::get<Query::Authorize>(deserialized1).password == "nikita_kot");
 
-        Query::Any deserialized2 = Query::DeserializeTransfer("Terminate");
+        Query::Any deserialized2 = Query::DeserializeTransfer("9\nTerminate");
         assert(std::holds_alternative<Query::Terminate>(deserialized2));
 
         // Invalid query name
@@ -60,17 +60,17 @@ namespace {
     }
 
     void TestQueryAnswerDeserialization() {
-        std::string serialized1 = "\na\nb\nHey, b!\\nLove, a";
+        std::string serialized1 = "0\n1\na1\nb8\nHey, b!\n";
         auto deserialized1 = Query::DeserializeQueryAnswer(Query::GetMail{}, serialized1);
         assert(std::holds_alternative<Answer::GetMail>(deserialized1));
-        std::vector<Letter> expected_mail = {{"a", "b", "Hey, b!\nLove, a"}};
+        std::vector<Letter> expected_mail = {{"a", "b", "Hey, b!\n"}};
         assert(std::get<Answer::GetMail>(deserialized1).mail == expected_mail);
 
         Query::SendLetter query2 = {{"pupa", "lupa", ":)"}};
-        auto deserialized2 = Query::DeserializeQueryAnswer(query2, "");
+        auto deserialized2 = Query::DeserializeQueryAnswer(query2, "0\n");
         assert(std::holds_alternative<Answer::SendLetter>(deserialized2));
 
-        auto deserialized3 = Query::DeserializeQueryAnswer(Query::Terminate{}, "Error");
+        auto deserialized3 = Query::DeserializeQueryAnswer(Query::Terminate{}, "5\nError");
         assert(std::holds_alternative<Answer::Error>(deserialized3));
         assert(std::get<Answer::Error>(deserialized3).message == "Error");
     }
