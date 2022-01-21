@@ -24,7 +24,7 @@ namespace Protocol {
                 input.ignore();
                 tokens.emplace_back(token_sz, 0);
                 for (char & token_ch : tokens.back()) {
-                    input >> token_ch;
+                    input.get(token_ch);
                 }
             }
             return tokens;
