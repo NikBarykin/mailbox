@@ -17,7 +17,7 @@ public:
 namespace Socket {
     // Probably it would be more elegant to use SocketView instead of Socket,
     // though we don't really have a socket, we only have its descriptor,
-    // but at this point I don't care, I want to used as if it was a complete class that my program own
+    // but at this point I don't care, I want to use it as if it was a complete class that my program own
     // TODO: struct AddrInfo
 
     struct SocketArgs {
@@ -46,4 +46,6 @@ namespace Socket {
         std::string Recv();
         void Send(std::string);
     };
+
+    class CompressComunicate
 }
