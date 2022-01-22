@@ -3,3 +3,7 @@ GetMail filter argument
 Encryption by RSA
 Data compression by Huffman's algorithm
 Unit-testing
+Letter data
+Server command line
+Block query
+File transfer
