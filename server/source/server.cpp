@@ -1,6 +1,8 @@
 #include "server.h"
 #include "query_processor.h"
 
+// TODO: function instead of query_processor,
+//  though it would be more elegant (query processing isn't an entity)
 void Server::ProcessClient(Socket::Client &&client_sock) {
     SessionState session_state;
     QueryProcessor query_processor(db_, session_state);

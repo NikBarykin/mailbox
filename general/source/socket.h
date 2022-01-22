@@ -47,5 +47,4 @@ namespace Socket {
         void Send(std::string);
     };
 
-    class CompressComunicate
 }
