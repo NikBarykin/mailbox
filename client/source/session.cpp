@@ -1,23 +1,21 @@
 #include "session.h"
 #include "general/source/socket.h"
 #include "client_sock.h"
-#include "query_reader.h"
-#include "answer_processor.h"
+#include "build_query.h"
+#include "cycle_outcome_processing.h"
 
 
 void RunSession(std::string nodename, std::string servname,
                 std::istream& input, std::ostream& output) {
     Socket::Server server_sock(nodename, servname);
     SessionState session_state;
-    QueryReader query_reader(session_state, input, output);
-    AnswerProcessor answer_processor(session_state, output);
 
     while (session_state.running) {
-        Query::Any query = query_reader();
+        Query::Any query = BuildQuery(input, output, session_state);
         server_sock.Send(Query::SerializeForTransfer(query));
 
         std::string serialized_answer = server_sock.Recv();
         Answer::Any answer = Query::DeserializeQueryAnswer(query, serialized_answer);
-        answer_processor(answer);
+        ProcessCycleOutcome(query, answer, session_state, output);
     }
 }

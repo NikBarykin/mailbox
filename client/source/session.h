@@ -2,8 +2,9 @@
 
 #include <iostream>
 
+// NOTE: client is just an interface. It doesn't do any work by itself
+// NOTE: there is no class Session because session is a process not an entity
 
-// TODO: create class Session and make input and output its members
 struct SessionState {
     std::string user_login;
     bool running = true;
