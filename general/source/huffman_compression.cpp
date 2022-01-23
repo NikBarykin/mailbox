@@ -2,26 +2,34 @@
 
 #include <memory>
 
-//
-//namespace {
-//    struct Node {
-//        size_t weight;
-//        virtual std::string Serialize() = 0;
-//
-//    };
-//
-//    struct TransitNode : public Node {
-//        std::unique_ptr<Node> left, right;
-//    };
-//
-//    struct LeafNode : public Node {
-//        char symbol;
-//    };
-//
-//    std::unique_ptr<Node> BuildTree(std::vector<std::pair<char, size_t>> frequencies) {
-//
-//    }
-//}
+
+namespace {
+    using CharConversion = std::vector<std::pair<char, std::vector<bool>>>;
+
+    class Node {
+    public:
+        virtual CharConversion BuildConversion() const = 0;
+        virtual std::string Serialize() const = 0;
+    };
+
+    class LeafNode : public Node{
+    private:
+        char ch;
+    public:
+        virtual CharConversion BuildConversion() const override;
+        virtual std::string Serialize() const override;
+    };
+
+    class TransitNode : public Node {
+    private:
+        std::unique_ptr<Node> left_child, right_child ;
+    public:
+        TransitNode()
+
+        virtual CharConversion BuildConversion() const override;
+        virtual std::string Serialize() const override;
+    };
+}
 
 std::string PerformHuffmanCompression(const std::string & str) {
     // TODO: implement
