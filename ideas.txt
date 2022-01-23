@@ -10,5 +10,6 @@ File transfer
 TODO:
 * filter
 * compression
+* database elegant multithreading 
 * date 
 * server new architecture (not obligatory)
