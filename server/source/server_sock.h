@@ -8,7 +8,7 @@
 namespace Socket {
     class Listener;
 
-    class Client : public Communication {
+    class Client : public Communicator {
         friend Listener;
     private:
         explicit Client(SOCKET sock);

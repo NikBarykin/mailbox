@@ -33,5 +33,5 @@ namespace Socket {
     }
 
     Server::Server(std::string ip, std::string port, SocketArgs sock_args)
-    : Communication(MakeConnectionSock(ip, port, sock_args)) {}
+    : Communicator(MakeConnectionSock(ip, port, sock_args)) {}
 }

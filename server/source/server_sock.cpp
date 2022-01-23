@@ -4,7 +4,7 @@
 
 
 namespace Socket {
-    Client::Client(SOCKET sock): Communication(sock) {}
+    Client::Client(SOCKET sock): Communicator(sock) {}
 
     Listener::Listener(std::string servname, SocketArgs sock_args,
                        int backlog): Base(sock_args) {

@@ -6,7 +6,7 @@
 
 
 namespace Socket {
-    class Server : public Communication {
+    class Server : public Communicator {
     private:
         static SOCKET MakeConnectionSock(std::string nodename, std::string servname, SocketArgs);
     public:

@@ -39,12 +39,11 @@ namespace Socket {
         Base& operator=(Base&&) = delete;
     };
 
-    class Communication : public Base {
+    class Communicator : public Base {
     protected:
-        explicit Communication(SOCKET);
+        explicit Communicator(SOCKET);
     public:
+        void Send(std::string, bool compress = false, bool encode = false);
         std::string Recv();
-        void Send(std::string);
     };
-
 }

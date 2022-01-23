@@ -38,9 +38,23 @@ namespace Socket {
     }
 
 
-    Communication::Communication(SOCKET sock): Base(sock) {}
+    Communicator::Communicator(SOCKET sock): Base(sock) {}
 
-    std::string Communication::Recv() {
+    void Communicator::Send(std::string data, bool compress, bool encode) {
+        char sz_bytes[sizeof(size_t)];
+        *static_cast<size_t *>(static_cast<void *>(sz_bytes)) = data.size();
+        int i_send_result = send(sock_, sz_bytes, sizeof(size_t), 0);
+        if (i_send_result == SOCKET_ERROR) {
+            throw std::runtime_error("data size send error: " + std::to_string(WSAGetLastError()));
+        }
+
+        i_send_result = send(sock_, data.c_str(), data.size(), 0);
+        if (i_send_result == SOCKET_ERROR) {
+            throw std::runtime_error("data send error: " + std::to_string(WSAGetLastError()));
+        }
+    }
+
+    std::string Communicator::Recv() {
         char sz_bytes[sizeof(size_t)];
         int i_recv_result = recv(sock_, sz_bytes, sizeof(size_t), 0);
         if (i_recv_result < 0) {
@@ -54,19 +68,5 @@ namespace Socket {
             throw std::runtime_error("data recv error: " + std::to_string(WSAGetLastError()));
         }
         return {data, data + sz};
-    }
-
-    void Communication::Send(std::string data) {
-        char sz_bytes[sizeof(size_t)];
-        *static_cast<size_t *>(static_cast<void *>(sz_bytes)) = data.size();
-        int i_send_result = send(sock_, sz_bytes, sizeof(size_t), 0);
-        if (i_send_result == SOCKET_ERROR) {
-            throw std::runtime_error("data size send error: " + std::to_string(WSAGetLastError()));
-        }
-
-        i_send_result = send(sock_, data.c_str(), data.size(), 0);
-        if (i_send_result == SOCKET_ERROR) {
-            throw std::runtime_error("data send error: " + std::to_string(WSAGetLastError()));
-        }
     }
 }
