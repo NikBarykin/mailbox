@@ -2,8 +2,13 @@ Logging
 GetMail filter argument
 Encryption by RSA
 Data compression by Huffman's algorithm
-Unit-testing
-Letter data
+Letter date
 Server command line
 Block query
 File transfer
+
+TODO:
+* filter
+* compression
+* date 
+* server new architecture (not obligatory)
