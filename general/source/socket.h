@@ -42,8 +42,12 @@ namespace Socket {
     class Communicator : public Base {
     protected:
         explicit Communicator(SOCKET);
+    private:
+        void SendSize(const std::string &);
+        size_t RecvSize();
+
     public:
-        void Send(std::string, bool compress = false, bool encode = false);
+        void Send(std::string, bool compress = false, bool encrypt = false);
         std::string Recv();
     };
 }

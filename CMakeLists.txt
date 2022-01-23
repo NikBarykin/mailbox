@@ -12,12 +12,12 @@ add_executable(server server/source/main.cpp server/source/server_sock.h
         general/source/protocol.cpp general/source/protocol.h
         server/source/query_processor.cpp server/source/query_processor.h
         general/source/utils.cpp general/source/utils.h
-        general/source/letter.h general/source/letter.cpp)
+        general/source/letter.h general/source/letter.cpp general/source/huffman_compression.cpp general/source/huffman_compression.h)
 target_link_libraries(server wsock32 ws2_32)
 
 add_executable(client client/source/main.cpp client/source/client_sock.h
         general/source/socket.h general/source/socket.cpp
-        client/source/client_sock.cpp general/source/query.cpp general/source/query.h general/source/answer.cpp general/source/answer.h general/source/protocol.cpp general/source/protocol.h client/source/session.cpp client/source/session.h general/source/utils.cpp general/source/utils.h client/source/cycle_outcome_processing.cpp client/source/cycle_outcome_processing.h client/source/build_query.cpp client/source/build_query.h)
+        client/source/client_sock.cpp general/source/query.cpp general/source/query.h general/source/answer.cpp general/source/answer.h general/source/protocol.cpp general/source/protocol.h client/source/session.cpp client/source/session.h general/source/utils.cpp general/source/utils.h client/source/cycle_outcome_processing.cpp client/source/cycle_outcome_processing.h client/source/build_query.cpp client/source/build_query.h general/source/huffman_compression.cpp general/source/huffman_compression.h)
 target_link_libraries(client wsock32 ws2_32)
 
 add_executable(test_general general/test/main.cpp server/source/server_sock.cpp server/source/server_sock.h
@@ -27,7 +27,7 @@ add_executable(test_general general/test/main.cpp server/source/server_sock.cpp 
         general/test/testtools.h general/test/test_protocol.cpp general/test/test_protocol.h general/test/test_socket.cpp
         general/test/test_socket.h general/test/test_query.cpp general/test/test_query.h
         general/source/query.h general/source/query.cpp general/test/test_answer.cpp general/test/test_answer.h
-        general/source/answer.h general/source/answer.cpp)
+        general/source/answer.h general/source/answer.cpp general/source/huffman_compression.cpp general/source/huffman_compression.h)
 target_link_libraries(test_general wsock32 ws2_32)
 
 
@@ -44,7 +44,7 @@ add_executable(test_server server/test/main.cpp server/test/test_database.h serv
         general/source/socket.h general/source/socket.cpp
         client/source/client_sock.h client/source/client_sock.cpp
         server/source/server_sock.h server/source/server_sock.cpp
-        general/source/query.h general/source/query.cpp)
+        general/source/query.h general/source/query.cpp general/source/huffman_compression.cpp general/source/huffman_compression.h)
 target_link_libraries(test_server wsock32 ws2_32)
 
 
@@ -55,5 +55,5 @@ add_executable(test_client client/test/main.cpp client/test/test_build_query.cpp
         general/source/socket.h general/source/socket.cpp server/source/server_sock.h server/source/server_sock.cpp
         general/source/query.h general/source/query.cpp general/source/answer.h general/source/answer.cpp
         general/source/protocol.h general/source/protocol.cpp general/source/utils.h general/source/utils.cpp
-        client/source/session.h client/source/session.cpp client/source/client_sock.h client/source/client_sock.cpp client/source/cycle_outcome_processing.cpp client/source/cycle_outcome_processing.h client/source/build_query.cpp client/source/build_query.h)
+        client/source/session.h client/source/session.cpp client/source/client_sock.h client/source/client_sock.cpp client/source/cycle_outcome_processing.cpp client/source/cycle_outcome_processing.h client/source/build_query.cpp client/source/build_query.h general/source/huffman_compression.cpp general/source/huffman_compression.h)
 target_link_libraries(test_client wsock32 ws2_32)

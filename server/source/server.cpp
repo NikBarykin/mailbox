@@ -9,7 +9,7 @@ void Server::ProcessClient(Socket::Client &&client_sock) {
     while (session_state.running) {
         Query::Any query = Query::DeserializeTransfer(client_sock.Recv());
         Answer::Any answer = query_processor(query);
-        client_sock.Send(Answer::SerializeForTransfer(answer));
+        client_sock.Send(Answer::SerializeForTransfer(answer), true);
     }
 }
 

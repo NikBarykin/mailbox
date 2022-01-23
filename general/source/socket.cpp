@@ -1,7 +1,9 @@
 #include "socket.h"
+#include "huffman_compression.h"
 
 #include <stdexcept>
 #include <iostream>
+#include <cassert>
 
 
 WSALib::WSALib()  {
@@ -40,33 +42,68 @@ namespace Socket {
 
     Communicator::Communicator(SOCKET sock): Base(sock) {}
 
-    void Communicator::Send(std::string data, bool compress, bool encode) {
+    void Communicator::SendSize(const std::string & data) {
         char sz_bytes[sizeof(size_t)];
         *static_cast<size_t *>(static_cast<void *>(sz_bytes)) = data.size();
         int i_send_result = send(sock_, sz_bytes, sizeof(size_t), 0);
         if (i_send_result == SOCKET_ERROR) {
             throw std::runtime_error("data size send error: " + std::to_string(WSAGetLastError()));
         }
+    }
 
-        i_send_result = send(sock_, data.c_str(), data.size(), 0);
+    void Communicator::Send(std::string data, bool compress, bool encrypt) {
+        if (compress) {
+            data = PerformHuffmanCompression(data);
+        }
+
+        if (encrypt) {
+            // TODO: encryption
+            throw std::runtime_error("Encryption isn't implemented!");
+        }
+        // compress and encrypt flags
+        // TODO: make flags more elegant. For example by adding section "flags"
+        data = std::string(compress ? "c" : "C") + std::string(encrypt ? "e" : "E") + data;
+
+        SendSize(data);
+
+        int i_send_result = send(sock_, data.c_str(), data.size(), 0);
         if (i_send_result == SOCKET_ERROR) {
             throw std::runtime_error("data send error: " + std::to_string(WSAGetLastError()));
         }
     }
 
-    std::string Communicator::Recv() {
+    size_t Communicator::RecvSize() {
         char sz_bytes[sizeof(size_t)];
         int i_recv_result = recv(sock_, sz_bytes, sizeof(size_t), 0);
         if (i_recv_result < 0) {
             throw std::runtime_error("data size recv error: " + std::to_string(WSAGetLastError()));
         }
-        size_t sz = *static_cast<size_t *>(static_cast<void *>(sz_bytes));
+        return *static_cast<size_t *>(static_cast<void *>(sz_bytes));
+    }
 
-        char data[sz];
-        i_recv_result = recv(sock_, data, sz, 0);
+    // TODO: decryption
+    std::string Communicator::Recv() {
+        size_t sz = RecvSize();
+
+        char buf[sz];
+        int i_recv_result = recv(sock_, buf, sz, 0);
         if (i_recv_result < 0) {
             throw std::runtime_error("data recv error: " + std::to_string(WSAGetLastError()));
         }
-        return {data, data + sz};
+
+        assert(sz >= 2);
+        // data without flags
+        std::string data{buf + 2, buf + sz};
+
+        if (buf[1] == 'e') {
+            // TODO: decryption
+            throw std::runtime_error("Decryption isn't implemented!");
+        }
+
+        if (buf[0] == 'c') {
+            data = PerformHuffmanDecompression(data);
+        }
+
+        return data;
     }
 }
