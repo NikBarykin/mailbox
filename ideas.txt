@@ -6,6 +6,7 @@ Letter date
 Server command line
 Block query
 File transfer
+Send onde letter to multiple recipients
 
 TODO:
 * filter
