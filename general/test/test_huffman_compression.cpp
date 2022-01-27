@@ -10,7 +10,11 @@
 
 namespace {
     void CheckCompressionAndDecompression(const std::string & str) {
-        assert(PerformHuffmanDecompression(PerformHuffmanCompression(str)) == str);
+        std::string conversed_str = PerformHuffmanDecompression(PerformHuffmanCompression(str));
+        if (conversed_str != str) {
+            throw std::runtime_error("Huffman compression failed!\n" + conversed_str + "isn't equal to initial string + " + str);
+        }
+//        assert(PerformHuffmanDecompression(PerformHuffmanCompression(str)) == str);
     }
 
     std::string CompressAndDecompress(const std::string & str) {
@@ -24,7 +28,6 @@ namespace {
             ch = rnd() % (1 << 7);
         }
         CheckCompressionAndDecompression(source_str);
-        assert(CompressAndDecompress(source_str) == source_str);
     }
 
     void TestExtreme() {
