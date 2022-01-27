@@ -12,7 +12,7 @@ namespace {
     using CompressionRule = std::unordered_map<char, std::list<bool>>;
 
     // maybe:
-    //    using BitList = std::list<bool>;
+    // using BitList = std::list<bool>;
 
     class Node {
     public:
@@ -73,7 +73,6 @@ namespace {
             bits.pop_front();
             return (first_bit ? right_child : left_child)->DecompressFirstChar(bits);
         }
-
 
         virtual std::list<bool> Compress() const override {
             std::list<bool> compressed = {false};
