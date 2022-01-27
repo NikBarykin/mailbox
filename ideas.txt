@@ -4,6 +4,7 @@ Encryption by RSA
 Data compression by Huffman's algorithm
 Letter date
 Server command line
+Ability to save database or whole server
 Block query
 File transfer
 Send onde letter to multiple recipients
