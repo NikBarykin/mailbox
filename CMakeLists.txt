@@ -27,7 +27,7 @@ add_executable(test_general general/test/main.cpp server/source/server_sock.cpp 
         general/test/testtools.h general/test/test_protocol.cpp general/test/test_protocol.h general/test/test_socket.cpp
         general/test/test_socket.h general/test/test_query.cpp general/test/test_query.h
         general/source/query.h general/source/query.cpp general/test/test_answer.cpp general/test/test_answer.h
-        general/source/answer.h general/source/answer.cpp general/source/huffman_compression.cpp general/source/huffman_compression.h)
+        general/source/answer.h general/source/answer.cpp general/source/huffman_compression.cpp general/source/huffman_compression.h general/test/test_huffman_compression.cpp general/test/test_huffman_compression.h)
 target_link_libraries(test_general wsock32 ws2_32)
 
 
