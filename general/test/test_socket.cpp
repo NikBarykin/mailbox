@@ -13,25 +13,36 @@ namespace {
     void TestServerOneThread() {
         Socket::Listener listen_sock("8080");
         Socket::Client client_sock = listen_sock.Accept();
+
         std::string input = client_sock.Recv();
         assert(input == "Hello, server!");
         client_sock.Send("Hello, client!");
+
         std::string large_str = client_sock.Recv();
-        assert(large_str == std::string(2048, 'n'));
+        assert(large_str == std::string(2048, 'x'));
+
+        assert(client_sock.Recv() == "Compressed message to server");
+        client_sock.Send("Compressed message to client", true);
     }
 
     void TestClientOneThread() {
         Socket::Server server_sock("localhost", "8080");
+
         server_sock.Send("Hello, server!");
         std::string input = server_sock.Recv();
         assert(input == "Hello, client!");
-        std::string large_str(2048, 'n');
+
+        std::string large_str(2048, 'x');
         server_sock.Send(large_str);
+
+        server_sock.Send("Compressed message to server", true);
+        assert(server_sock.Recv() == "Compressed message to client");
     }
 
     void Test() {
         std::future<void> server_fut = std::async(TestServerOneThread);
         TestClientOneThread();
+        server_fut.get();
     }
 }
 
