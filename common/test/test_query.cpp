@@ -1,5 +1,5 @@
 #include "test_query.h"
-#include "general/source/query.h"
+#include "common/source/query.h"
 
 #include <iostream>
 #include <cassert>

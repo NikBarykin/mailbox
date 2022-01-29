@@ -1,5 +1,5 @@
 #include "session.h"
-#include "general/source/socket.h"
+#include "common/source/socket.h"
 #include "client_sock.h"
 #include "build_query.h"
 #include "cycle_outcome_processing.h"

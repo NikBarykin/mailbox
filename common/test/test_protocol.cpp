@@ -1,5 +1,5 @@
 #include "test_protocol.h"
-#include "general/source/protocol.h"
+#include "common/source/protocol.h"
 
 
 #include <iostream>

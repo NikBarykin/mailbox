@@ -1,6 +1,6 @@
 #pragma once
 
-#include "general/source/query.h"
+#include "common/source/query.h"
 #include "session.h"
 
 #include <iostream>

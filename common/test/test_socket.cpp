@@ -1,5 +1,5 @@
 #include "test_socket.h"
-#include "general/source/socket.h"
+#include "common/source/socket.h"
 #include "server/source/server_sock.h"
 #include "client/source/client_sock.h"
 

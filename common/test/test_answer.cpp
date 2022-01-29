@@ -1,5 +1,5 @@
 #include "test_answer.h"
-#include "general/source/answer.h"
+#include "common/source/answer.h"
 
 #include <iostream>
 #include <cassert>

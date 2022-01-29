@@ -1,5 +1,5 @@
 #include "test_huffman_compression.h"
-#include "general/source/huffman_compression.h"
+#include "common/source/huffman_compression.h"
 
 #include <iostream>
 #include <random>

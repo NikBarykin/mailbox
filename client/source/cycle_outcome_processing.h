@@ -1,7 +1,7 @@
 #pragma once
 
-#include "general/source/query.h"
-#include "general/source/answer.h"
+#include "common/source/query.h"
+#include "common/source/answer.h"
 #include "session.h"
 
 #include <ostream>

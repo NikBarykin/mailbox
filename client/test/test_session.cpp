@@ -1,7 +1,7 @@
 #include "test_session.h"
 #include "client/source/session.h"
 #include "server/source/server_sock.h"
-#include "general/source/query.h"
+#include "common/source/query.h"
 #include "client/source/client_sock.h"
 
 
