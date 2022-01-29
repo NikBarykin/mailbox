@@ -13,7 +13,6 @@
 // TODO: prettify
 namespace {
     using CompressionRule = std::unordered_map<char, std::list<bool>>;
-    constexpr size_t CHAR_BIT_SIZE = sizeof(char) * CHAR_BIT;
 
     // maybe:
     // using BitList = std::list<bool>;
@@ -26,7 +25,7 @@ namespace {
 
     std::list<bool> CharToBits(char ch) {
         std::list<bool> bits;
-        for (size_t i = 0; i < CHAR_BIT_SIZE; ++i) {
+        for (size_t i = 0; i < CHAR_BIT; ++i) {
             bits.push_back((ch >> i) & 1);
         }
         return bits;
@@ -35,8 +34,7 @@ namespace {
     class Node {
     public:
         virtual CompressionRule BuildCompressionRule() const = 0;
-        // TODO: maybe ExtractCompressedChar
-        virtual char ExtractAndDecompressChar(std::list<bool> & compressed_str) const = 0;
+        virtual char ExtractCompressedChar(std::list<bool> & compressed_str) const = 0;
         virtual std::list<bool> Compress() const = 0;
     };
 
@@ -50,7 +48,7 @@ namespace {
             return {{ch, {}}};
         }
 
-        virtual char ExtractAndDecompressChar(std::list<bool> & compressed_str) const override {
+        virtual char ExtractCompressedChar(std::list<bool> & compressed_str) const override {
             return ch;
         }
 
@@ -84,9 +82,9 @@ namespace {
             return l_rule;
         }
 
-        virtual char ExtractAndDecompressChar(std::list<bool> & bits) const override {
+        virtual char ExtractCompressedChar(std::list<bool> & bits) const override {
             bool first_bit = ExtractFirstBit(bits);
-            return (first_bit ? right_child : left_child)->ExtractAndDecompressChar(bits);
+            return (first_bit ? right_child : left_child)->ExtractCompressedChar(bits);
         }
 
         virtual std::list<bool> Compress() const override {
@@ -98,6 +96,8 @@ namespace {
     };
 
     std::unique_ptr<Node> BuildTree(const std::unordered_map<char, size_t> & initial_weights) {
+        assert(initial_weights.size() >= 2);
+
         std::set<std::pair<size_t, std::unique_ptr<Node>>> weighted_nodes;
         for (const auto & [ch, weight] : initial_weights) {
             weighted_nodes.emplace(weight, std::make_unique<LeafNode>(ch));
@@ -108,11 +108,6 @@ namespace {
         };
 
         while (weighted_nodes.size() > 1) {
-//            auto [weight1, node_ptr1] = std::move(
-//                    weighted_nodes.extract(weighted_nodes.begin()).value());
-//            auto [weight2, node_ptr2] = std::move(
-//                    weighted_nodes.extract(weighted_nodes.begin()).value());
-
             auto [weight1, node_ptr1] = pop_begin(weighted_nodes);
             auto [weight2, node_ptr2] = pop_begin(weighted_nodes);
 
@@ -145,11 +140,11 @@ namespace {
 //
 
     char ReadCharFromBits(std::list<bool> & bits) {
-        if (bits.size() < CHAR_BIT_SIZE) {
+        if (bits.size() < CHAR_BIT) {
             throw std::runtime_error("Too few bits (" + std::to_string(bits.size()) + ") to form a char");
         }
         char extracted_char = 0;
-        for (size_t i = 0; i < CHAR_BIT_SIZE; ++i) {
+        for (size_t i = 0; i < CHAR_BIT; ++i) {
             extracted_char |= ExtractFirstBit(bits) << i;
         }
         return extracted_char;
@@ -171,7 +166,7 @@ namespace {
     }
 
     std::string BitsToString(std::list<bool> bits) {
-        char n_insignificant_bits = (CHAR_BIT_SIZE - bits.size() % CHAR_BIT_SIZE) % CHAR_BIT_SIZE;
+        char n_insignificant_bits = (CHAR_BIT - bits.size() % CHAR_BIT) % CHAR_BIT;
         bits.splice(bits.end(), std::list<bool>(n_insignificant_bits, false));
         // TODO: optimize by passing resulting size to constructor
         std::string resulting_str = {n_insignificant_bits};
@@ -197,35 +192,31 @@ namespace {
 }
 
 std::string PerformHuffmanCompression(const std::string & str) {
-    // TODO: process string containing only one unique character
-    // 1. Clc frequencies
-    // 2. Build tree
-    // 3. Serialize str using tree
-    // 4. Serialize tree
-    // First byte codes number of significant bits in the trailing byte
-
-    std::unordered_map<char, size_t> char_frequencies;
+    std::unordered_map<char, size_t> frequencies;
     for (char ch : str) {
-        ++char_frequencies[ch];
+        ++frequencies[ch];
     }
+    // frequencies size should be at least 2, otherwise we can't build a correct tree
+    for (char ch = 0; frequencies.size() < 2; ++ch) frequencies.emplace(ch, 0);
 
-    std::unique_ptr<Node> tree = BuildTree(char_frequencies);
-    std::list<bool> resulting_compression = tree->Compress();
+    std::unique_ptr<Node> tree = BuildTree(frequencies);
+    std::list<bool> bit_compression = tree->Compress();
     CompressionRule rule = tree->BuildCompressionRule();
     for (char ch : str) {
-        std::list<bool> ch_compression = rule[ch];
-        resulting_compression.splice(resulting_compression.end(), std::move(ch_compression));
+        std::list<bool> compressed_ch = rule[ch];
+        bit_compression.splice(bit_compression.end(), std::move(compressed_ch));
     }
 
-    return BitsToString(resulting_compression);
+    return BitsToString(bit_compression);
 }
+
 
 std::string PerformHuffmanDecompression(const std::string & compressed_str) {
     std::list<bool> bit_compression = StringToBits(compressed_str);
     std::unique_ptr<Node> tree = DecompressTree(bit_compression);
     std::string decompressed_str;
     while (!bit_compression.empty()) {
-        decompressed_str.push_back(tree->ExtractAndDecompressChar(bit_compression));
+        decompressed_str.push_back(tree->ExtractCompressedChar(bit_compression));
     }
     return decompressed_str;
 }
