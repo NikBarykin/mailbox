@@ -1,5 +1,5 @@
 #include "letter_filter.h"
-#include "expression_token.h"
+#include "letter_filter_token.h"
 
 namespace LetterFilter {
     class LetterFilter {

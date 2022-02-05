@@ -1,5 +1,5 @@
-#include "letter_filter_parse_tree.h"
-#include "expression_token.h"
+#include "letter_filter_node.h"
+#include "letter_filter_token.h"
 
 #include <stack>
 #include <cassert>
@@ -16,15 +16,15 @@ namespace LetterFilter {
 
     template<typename NodeT>
     std::shared_ptr<PropertyNode> MakeLiteralNode(Token * token) {
-        return std::make_shared<NodeT>(dynamic_cast<Literal*>(token)->value_str);
+        return std::make_shared<NodeT>(dynamic_cast<StringLiteral*>(token)->value_str);
     }
 
 
     using PropertyNodeMaker = std::function<std::shared_ptr<PropertyNode>(Token *)>;
     static const std::unordered_map<std::type_index, PropertyNodeMaker> property_makers = {
-            {typeid(LetterSenderName), MakePropertyNode<SenderNameNode>},
-            {typeid(LetterBody), MakePropertyNode<BodyNode>},
-            {typeid(Literal), MakeLiteralNode<StringLiteralNode>},
+            {typeid(FromProperty), MakePropertyNode<SenderNameNode>},
+            {typeid(BodyProperty), MakePropertyNode<BodyNode>},
+            {typeid(StringLiteral), MakeLiteralNode<StringLiteralNode>},
     };
 
     template<typename LimitT>
@@ -61,7 +61,7 @@ namespace LetterFilter {
 //        return result;
 //    }
 
-    std::shared_ptr<LogicalNode> BuildTree(const std::vector<std::shared_ptr<Token>> & tokens_in_postfix_notation) {
+    std::shared_ptr<LogicalNode> BuildTree(const std::vector<TokenHandler> & tokens_in_postfix_notation) {
         std::stack<NodeHandler> nodes;
 
         for (const auto &token_handler: tokens_in_postfix_notation) {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "common/source/letter.h"
-#include "expression_token.h"
+#include "letter_filter_token.h"
 
 #include <memory>
 #include <functional>
@@ -83,5 +83,5 @@ namespace LetterFilter {
     using AndCombinator = LogicalCombineNode<std::logical_and<>>;
     using OrCombinator = LogicalCombineNode<std::logical_or<>>;
 
-    std::shared_ptr<LogicalNode> BuildTree(const std::vector<std::shared_ptr<Token>> & tokens_in_postfix_notation);
+    std::shared_ptr<LogicalNode> BuildTree(const std::vector<TokenHandler> & tokens_in_postfix_notation);
 }
