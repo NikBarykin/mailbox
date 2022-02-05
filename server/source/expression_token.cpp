@@ -9,28 +9,30 @@ namespace LetterFilter {
     Token::~Token() = default;
 
     template<class TokenT>
-    std::unique_ptr<Token> MakeToken() {
-        return std::make_unique<TokenT>();
+    std::shared_ptr<Token> MakeToken() {
+        return std::make_shared<TokenT>();
     }
 
-    std::vector<std::unique_ptr<Token>> ParseLetterFilterTokens(std::string_view sv) {
-        static const std::unordered_map<std::string, std::function<std::unique_ptr<Token> ()>> constant_tokens = {
+    std::vector<std::shared_ptr<Token>> ParseLetterFilterTokens(std::string_view sv) {
+        static const std::unordered_map<std::string, std::function<std::shared_ptr<Token> ()>> constant_tokens = {
                 {"(", MakeToken<LeftParenthesis>},
                 {")", MakeToken<RightParenthesis>},
                 {"==", MakeToken<Equal>},
                 {"||", MakeToken<LogicalOr>},
+                {"&&", MakeToken<LogicalAnd>},
         };
-        static const std::unordered_map<std::string, std::function<std::unique_ptr<Token> ()>> property_tokens = {
+        static const std::unordered_map<std::string, std::function<std::shared_ptr<Token> ()>> property_tokens = {
                 {"from", MakeToken<LetterSenderName>},
+                {"body", MakeToken<LetterBody>},
         };
-//        static const std::unordered_map<std::string, std::function<std::unique_ptr<Token> ()>> literal_tokens = {
+//        static const std::unordered_map<std::string, std::function<std::shared_ptr<Token> ()>> literal_tokens = {
 //                {"from", MakeToken<LetterSenderName>},
 //        };
 
-        std::vector<std::unique_ptr<Token>> tokens;
+        std::vector<std::shared_ptr<Token>> tokens;
 
         while (!sv.empty()) {
-            if (sv.front() == ' ') {
+            if (std::isspace(sv.front())) {
                 sv.remove_prefix(1);
                 continue;
             }
@@ -50,7 +52,7 @@ namespace LetterFilter {
                 if (pos == std::string_view::npos) {
                     throw std::runtime_error("Invalid literal: \"" + std::string(sv));
                 }
-                tokens.push_back(std::make_unique<Literal>(std::string(sv.substr(0, pos))));
+                tokens.push_back(std::make_shared<Literal>(std::string(sv.substr(0, pos))));
                 sv.remove_prefix(pos + 1);
             } else {
                 std::string greatest_token;
@@ -69,9 +71,9 @@ namespace LetterFilter {
         return tokens;
     }
 
-    std::vector<std::unique_ptr<Token>> MakePostfixNotationFromInfix(std::vector<std::unique_ptr<Token>> && tokens) {
-        std::vector<std::unique_ptr<Token>> postfix_notation;
-        std::stack<std::unique_ptr<Token>> operators;
+    std::vector<std::shared_ptr<Token>> MakePostfixNotationFromInfix(const std::vector<std::shared_ptr<Token>> & tokens) {
+        std::vector<std::shared_ptr<Token>> postfix_notation;
+        std::stack<std::shared_ptr<Token>> operators;
 
         // Token sequence validation (if we remove parenthesis it should look like this:
         // operand operator operand ... operator operand)
@@ -91,37 +93,36 @@ namespace LetterFilter {
         }
 
         for (auto && token_handler : tokens) {
-            Token * token_ptr = token_handler.release();
-            if (auto op_ptr = dynamic_cast<BinaryOperator*>(token_ptr); op_ptr) {
+            if (auto op_ptr = std::dynamic_pointer_cast<BinaryOperator>(token_handler); op_ptr) {
                 while (!operators.empty()) {
-                    auto top_ptr = dynamic_cast<BinaryOperator*>(operators.top().get());
+                    auto top_ptr = std::dynamic_pointer_cast<BinaryOperator>(operators.top());
                     if (!top_ptr || top_ptr->Precedence() < op_ptr->Precedence()) {
                         break;
                     }
-                    postfix_notation.push_back(std::move(operators.top()));
+                    postfix_notation.push_back(operators.top());
                     operators.pop();
                 }
-                operators.emplace(token_ptr);
-            } else if (dynamic_cast<LeftParenthesis*>(token_ptr)) {
-                operators.emplace(token_ptr);
-            } else if (dynamic_cast<RightParenthesis*>(token_ptr)) {
-                while (!operators.empty() && !dynamic_cast<LeftParenthesis*>(operators.top().get())) {
-                    postfix_notation.push_back(std::move(operators.top()));
+                operators.emplace(token_handler);
+            } else if (std::dynamic_pointer_cast<LeftParenthesis>(token_handler)) {
+                operators.emplace(token_handler);
+            } else if (std::dynamic_pointer_cast<RightParenthesis>(token_handler)) {
+                while (!operators.empty() && !std::dynamic_pointer_cast<LeftParenthesis>(operators.top())) {
+                    postfix_notation.push_back(operators.top());
                     operators.pop();
                 }
                 if (operators.empty()) {
                     throw std::runtime_error("Unmatched right parenthesis");
                 }
                 operators.pop(); // Pop left parenthesis
-            } else if (dynamic_cast<Operand*>(token_ptr)) {
-                postfix_notation.emplace_back(token_ptr);
+            } else if (std::dynamic_pointer_cast<Operand>(token_handler)) {
+                postfix_notation.push_back(token_handler);
             }
         }
         while (!operators.empty()) {
-            if (dynamic_cast<LeftParenthesis*>(operators.top().get())) {
+            if (std::dynamic_pointer_cast<LeftParenthesis>(operators.top())) {
                 throw std::runtime_error("Unmatched left parenthesis");
             }
-            postfix_notation.emplace_back(std::move(operators.top()));
+            postfix_notation.push_back(operators.top());
             operators.pop();
         }
         return postfix_notation;

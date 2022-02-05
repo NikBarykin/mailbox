@@ -4,17 +4,17 @@
 #include <iostream>
 #include <string>
 #include <cassert>
+#include <vector>
 
 
 namespace {
     void Test() {
-        LetterFilter::LetterFilter filter("from == \"Nikita\" || from == \"Ivan\"");
-        Letter valid1{"Nikita", "X", "Y"};
-        Letter valid2{"Ivan", "1", "2"};
-        Letter invalid{"Nik", "Z", "K"};
-        assert(filter(valid1));
-        assert(filter(valid2));
-        assert(!filter(invalid));
+        auto filter = LetterFilter::MakeFilter(R"((from == "Nikita" && body == "AMOGUS")
+                                                  || (from == "Akim" && body == "SUS"))");
+        assert(filter({"Nikita", "1", "AMOGUS"}));
+        assert(!filter({"Akim", "2", "AMOGUS"}));
+        assert(filter({"Akim", "3", "SUS"}));
+        assert(!filter({"Nikita", "4", "SUS"}));
     }
 }
 

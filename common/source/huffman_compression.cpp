@@ -61,9 +61,9 @@ namespace {
 
     class TransitNode : public Node {
     private:
-        std::unique_ptr<Node> left_child, right_child;
+        std::shared_ptr<Node> left_child, right_child;
     public:
-        TransitNode(std::unique_ptr<Node> left_child, std::unique_ptr<Node> right_child)
+        TransitNode(std::shared_ptr<Node> left_child, std::shared_ptr<Node> right_child)
         : left_child(std::move(left_child)), right_child(std::move(right_child)) {}
 
         virtual CompressionRule BuildCompressionRule() const override {
@@ -95,12 +95,12 @@ namespace {
         }
     };
 
-    std::unique_ptr<Node> BuildTree(const std::unordered_map<char, size_t> & initial_weights) {
+    std::shared_ptr<Node> BuildTree(const std::unordered_map<char, size_t> & initial_weights) {
         assert(initial_weights.size() >= 2);
 
-        std::set<std::pair<size_t, std::unique_ptr<Node>>> weighted_nodes;
+        std::set<std::pair<size_t, std::shared_ptr<Node>>> weighted_nodes;
         for (const auto & [ch, weight] : initial_weights) {
-            weighted_nodes.emplace(weight, std::make_unique<LeafNode>(ch));
+            weighted_nodes.emplace(weight, std::make_shared<LeafNode>(ch));
         }
 
         auto pop_begin = []<class T>(std::set<T>& s) -> T {
@@ -111,7 +111,7 @@ namespace {
             auto [weight1, node_ptr1] = pop_begin(weighted_nodes);
             auto [weight2, node_ptr2] = pop_begin(weighted_nodes);
 
-            auto new_node_ptr = std::make_unique<TransitNode>(
+            auto new_node_ptr = std::make_shared<TransitNode>(
                     std::move(node_ptr1), std::move(node_ptr2));
             size_t new_weight = weight1 + weight2;
 
@@ -150,17 +150,17 @@ namespace {
         return extracted_char;
     }
 
-    std::unique_ptr<Node> DecompressTree(std::list<bool> & bits) {
+    std::shared_ptr<Node> DecompressTree(std::list<bool> & bits) {
         if (bits.empty()) {
             throw std::runtime_error("Failed to decompress tree, not enough bits");
         }
         if (ExtractFirstBit(bits)) {
             char ch = ReadCharFromBits(bits);
-            return std::make_unique<LeafNode>(ch);
+            return std::make_shared<LeafNode>(ch);
         } else {
             auto left_tree = DecompressTree(bits);
             auto right_tree = DecompressTree(bits);
-            return std::make_unique<TransitNode>(
+            return std::make_shared<TransitNode>(
                     std::move(left_tree), std::move(right_tree));
         }
     }
@@ -199,7 +199,7 @@ std::string PerformHuffmanCompression(const std::string & str) {
     // frequencies size should be at least 2, otherwise we can't build a correct tree
     for (char ch = 0; frequencies.size() < 2; ++ch) frequencies.emplace(ch, 0);
 
-    std::unique_ptr<Node> tree = BuildTree(frequencies);
+    std::shared_ptr<Node> tree = BuildTree(frequencies);
     std::list<bool> bit_compression = tree->Compress();
     CompressionRule rule = tree->BuildCompressionRule();
     for (char ch : str) {
@@ -213,7 +213,7 @@ std::string PerformHuffmanCompression(const std::string & str) {
 
 std::string PerformHuffmanDecompression(const std::string & compressed_str) {
     std::list<bool> bit_compression = StringToBits(compressed_str);
-    std::unique_ptr<Node> tree = DecompressTree(bit_compression);
+    std::shared_ptr<Node> tree = DecompressTree(bit_compression);
     std::string decompressed_str;
     while (!bit_compression.empty()) {
         decompressed_str.push_back(tree->ExtractCompressedChar(bit_compression));

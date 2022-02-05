@@ -14,7 +14,7 @@ namespace LetterFilter {
         virtual ~Node() = 0;
     };
 
-    using NodeHandler = std::unique_ptr<Node>;
+    using NodeHandler = std::shared_ptr<Node>;
     using PropertyT = std::variant<std::string>;
 
     struct PropertyNode : public Node {
@@ -24,6 +24,12 @@ namespace LetterFilter {
     struct SenderNameNode : public PropertyNode {
         PropertyT GetProperty(const Letter & letter) const override {
             return letter.from;
+        }
+    };
+
+    struct BodyNode : public PropertyNode {
+        PropertyT GetProperty(const Letter & letter) const override {
+            return letter.body;
         }
     };
 
@@ -42,9 +48,9 @@ namespace LetterFilter {
     template<typename LimitVisitor>
     class LimitationNode : public LogicalNode {
         LimitVisitor visitor;
-        std::unique_ptr<PropertyNode> left, right;
+        std::shared_ptr<PropertyNode> left, right;
     public:
-        LimitationNode(std::unique_ptr<PropertyNode> left, std::unique_ptr<PropertyNode> right)
+        LimitationNode(std::shared_ptr<PropertyNode> left, std::shared_ptr<PropertyNode> right)
         : left(std::move(left)), right(std::move(right)) {}
 
         bool Check(const Letter & letter) const override {
@@ -57,14 +63,15 @@ namespace LetterFilter {
     };
 
     using LessLimitation = LimitationNode<std::less<>>;
-    using EqLimitation = LimitationNode<std::equal_to<>>;
+    using EqualLimitation = LimitationNode<std::equal_to<>>;
+    using NotEqualLimitation = LimitationNode<std::not_equal_to<>>;
 
     template<typename LogicalCombinator>
     class LogicalCombineNode : public LogicalNode {
         LogicalCombinator combinator;
-        std::unique_ptr<LogicalNode> left, right;
+        std::shared_ptr<LogicalNode> left, right;
     public:
-        LogicalCombineNode(std::unique_ptr<LogicalNode> left, std::unique_ptr<LogicalNode> right)
+        LogicalCombineNode(std::shared_ptr<LogicalNode> left, std::shared_ptr<LogicalNode> right)
                 : left(std::move(left)), right(std::move(right)) {}
 
         bool Check(const Letter & letter) const override {
@@ -76,5 +83,5 @@ namespace LetterFilter {
     using AndCombinator = LogicalCombineNode<std::logical_and<>>;
     using OrCombinator = LogicalCombineNode<std::logical_or<>>;
 
-    std::unique_ptr<LogicalNode> BuildTree(const std::vector<std::unique_ptr<Token>> & tokens_in_postfix_notation);
+    std::shared_ptr<LogicalNode> BuildTree(const std::vector<std::shared_ptr<Token>> & tokens_in_postfix_notation);
 }

@@ -6,16 +6,9 @@
 
 #include <string>
 #include <memory>
+#include <functional>
 
 
 namespace LetterFilter {
-
-    class LetterFilter {
-    private:
-        std::unique_ptr<LogicalNode> filter_tree;
-    public:
-        LetterFilter(const std::string &filter_str);
-
-        bool operator()(const Letter &);
-    };
+    std::function<bool (const Letter &)> MakeFilter(const std::string &filter_str);
 }

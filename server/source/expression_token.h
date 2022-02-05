@@ -11,7 +11,7 @@ namespace LetterFilter {
     };
 
     // TODO: maybe
-    // using TokenHandler = std::unique_ptr<Token>;
+    // using TokenHandler = std::shared_ptr<Token>;
 
     struct BinaryOperator : public Token {
         constexpr virtual int Precedence() const = 0;
@@ -36,16 +36,17 @@ namespace LetterFilter {
     struct Operand : public Token {};
 
     struct LetterSenderName : public Operand {};
+    struct LetterBody : public Operand {};
+
     // TODO: deduce value type
     struct Literal : public Operand {
         std::string value_str;
-        Literal(std::string value_str)
-        : value_str(std::move(value_str)) {}
+        Literal(std::string value_str) : value_str(std::move(value_str)) {}
     };
 
     struct LeftParenthesis : public Token {};
     struct RightParenthesis : public Token {};
 
-    std::vector<std::unique_ptr<Token>> ParseLetterFilterTokens(std::string_view);
-    std::vector<std::unique_ptr<Token>> MakePostfixNotationFromInfix(std::vector<std::unique_ptr<Token>> &&);
+    std::vector<std::shared_ptr<Token>> ParseLetterFilterTokens(std::string_view);
+    std::vector<std::shared_ptr<Token>> MakePostfixNotationFromInfix(const std::vector<std::shared_ptr<Token>> &);
 }

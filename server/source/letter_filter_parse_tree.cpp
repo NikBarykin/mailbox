@@ -10,56 +10,58 @@ namespace LetterFilter {
     Node::~Node() = default;
 
     template<typename NodeT>
-    std::unique_ptr<PropertyNode> MakePropertyNode(Token *) {
-        return std::make_unique<NodeT>();
+    std::shared_ptr<PropertyNode> MakePropertyNode(Token *) {
+        return std::make_shared<NodeT>();
     }
 
     template<typename NodeT>
-    std::unique_ptr<PropertyNode> MakeLiteralNode(Token * token) {
-        return std::make_unique<NodeT>(dynamic_cast<Literal*>(token)->value_str);
+    std::shared_ptr<PropertyNode> MakeLiteralNode(Token * token) {
+        return std::make_shared<NodeT>(dynamic_cast<Literal*>(token)->value_str);
     }
 
 
-    using PropertyNodeMaker = std::function<std::unique_ptr<PropertyNode>(Token *)>;
+    using PropertyNodeMaker = std::function<std::shared_ptr<PropertyNode>(Token *)>;
     static const std::unordered_map<std::type_index, PropertyNodeMaker> property_makers = {
             {typeid(LetterSenderName), MakePropertyNode<SenderNameNode>},
-            {typeid(Literal), MakeLiteralNode<StringLiteralNode>}
+            {typeid(LetterBody), MakePropertyNode<BodyNode>},
+            {typeid(Literal), MakeLiteralNode<StringLiteralNode>},
     };
 
     template<typename LimitT>
-    std::unique_ptr<LogicalNode> MakeLimit(std::unique_ptr<PropertyNode> left, std::unique_ptr<PropertyNode> right) {
-        return std::make_unique<LimitT>(std::move(left), std::move(right));
+    std::shared_ptr<LogicalNode> MakeLimit(std::shared_ptr<PropertyNode> left, std::shared_ptr<PropertyNode> right) {
+        return std::make_shared<LimitT>(left, right);
     }
 
-    using LimitationNodeMaker = std::function<std::unique_ptr<LogicalNode>(std::unique_ptr<PropertyNode>,
-                                                                           std::unique_ptr<PropertyNode>)>;
+    using LimitationNodeMaker = std::function<std::shared_ptr<LogicalNode>(std::shared_ptr<PropertyNode>,
+                                                                           std::shared_ptr<PropertyNode>)>;
     static const std::unordered_map<std::type_index, LimitationNodeMaker> limitation_makers = {
-            {typeid(Equal), MakeLimit<EqLimitation>},
+            {typeid(Equal), MakeLimit<EqualLimitation>},
+            {typeid(NotEqual), MakeLimit<NotEqualLimitation>},
     };
 
     template<typename CombT>
-    std::unique_ptr<LogicalNode> MakeComb(std::unique_ptr<LogicalNode> left, std::unique_ptr<LogicalNode> right) {
-        return std::make_unique<CombT>(std::move(left), std::move(right));
+    std::shared_ptr<LogicalNode> MakeComb(std::shared_ptr<LogicalNode> left, std::shared_ptr<LogicalNode> right) {
+        return std::make_shared<CombT>(left, right);
     }
 
-    using CombinatorNodeMaker = std::function<std::unique_ptr<LogicalNode>(std::unique_ptr<LogicalNode>,
-                                                                           std::unique_ptr<LogicalNode>)>;
+    using CombinatorNodeMaker = std::function<std::shared_ptr<LogicalNode>(std::shared_ptr<LogicalNode>,
+                                                                           std::shared_ptr<LogicalNode>)>;
     static const std::unordered_map<std::type_index, CombinatorNodeMaker> comb_makers = {
             {typeid(LogicalAnd), MakeComb<AndCombinator>},
             {typeid(LogicalOr), MakeComb<OrCombinator>},
     };
 
-    template<typename T, typename U>
-    std::unique_ptr<T> UniquePtrForcedDynamicCast(std::unique_ptr<U>& ptr) {
-        auto result = std::unique_ptr<T>(dynamic_cast<T*>(ptr.release()));
-        if (!result) {
-            throw std::runtime_error(std::string("Failed to perform unique_ptr dynamic_cast: ")
-                                     + typeid(U).name() + " -> " + typeid(T).name());
-        }
-        return result;
-    }
+//    template<typename T, typename U>
+//    std::shared_ptr<T> UniquePtrForcedDynamicCast(std::shared_ptr<U>& ptr) {
+//        auto result = std::shared_ptr<T>(dynamic_cast<T*>(ptr.release()));
+//        if (!result) {
+//            throw std::runtime_error(std::string("Failed to perform unique_ptr dynamic_cast: ")
+//                                     + typeid(U).name() + " -> " + typeid(T).name());
+//        }
+//        return result;
+//    }
 
-    std::unique_ptr<LogicalNode> BuildTree(const std::vector<std::unique_ptr<Token>> & tokens_in_postfix_notation) {
+    std::shared_ptr<LogicalNode> BuildTree(const std::vector<std::shared_ptr<Token>> & tokens_in_postfix_notation) {
         std::stack<NodeHandler> nodes;
 
         for (const auto &token_handler: tokens_in_postfix_notation) {
@@ -68,26 +70,28 @@ namespace LetterFilter {
             if (property_makers.count(token_type)) {
                 nodes.push(property_makers.at(token_type)(token_ptr));
             } else if (limitation_makers.count(token_type)) {
-                auto right = UniquePtrForcedDynamicCast<PropertyNode>(nodes.top());
+                auto right = std::dynamic_pointer_cast<PropertyNode>(nodes.top());
                 nodes.pop();
-                auto left = UniquePtrForcedDynamicCast<PropertyNode>(nodes.top());
+                auto left = std::dynamic_pointer_cast<PropertyNode>(nodes.top());
                 nodes.pop();
                 // TODO: make normal exception
                 assert(left && right);
-                nodes.push(limitation_makers.at(token_type)(std::move(left), std::move(right)));
+                nodes.push(limitation_makers.at(token_type)(left, right));
             } else if (comb_makers.count(token_type)) {
-                auto right = UniquePtrForcedDynamicCast<LogicalNode>(nodes.top());
+                auto right = std::dynamic_pointer_cast<LogicalNode>(nodes.top());
                 nodes.pop();
-                auto left = UniquePtrForcedDynamicCast<LogicalNode>(nodes.top());
+                auto left = std::dynamic_pointer_cast<LogicalNode>(nodes.top());
                 nodes.pop();
-                nodes.push(comb_makers.at(token_type)(std::move(left), std::move(right)));
+                assert(left && right);
+                nodes.push(comb_makers.at(token_type)(left, right));
             } else {
                 throw std::runtime_error(std::string("Bad token type: ") + typeid(*token_ptr).name());
             }
         }
-        if (nodes.size() != 1) {
+        auto resulting_node = std::dynamic_pointer_cast<LogicalNode>(nodes.top());
+        if (nodes.size() != 1 || !resulting_node) {
             throw std::runtime_error("Bad tokens, failed to combine one logical node from them");
         }
-        return UniquePtrForcedDynamicCast<LogicalNode>(nodes.top());
+        return resulting_node;
     }
 }
