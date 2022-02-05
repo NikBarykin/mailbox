@@ -2,6 +2,7 @@
 
 #include <unordered_map>
 #include <functional>
+#include <stack>
 
 
 namespace LetterFilter {
@@ -52,5 +53,38 @@ namespace LetterFilter {
             }
         }
         return tokens;
+    }
+
+    std::vector<std::unique_ptr<Token>> MakePostfixNotationFromInfix(
+            const std::vector<std::unique_ptr<Token>> & tokens) {
+        std::vector<std::unique_ptr<Token>> postfix_notation;
+        std::stack<std::unique_ptr<Token>> operators;
+        // TODO: add validation (infix notation should look like this: operand operator operand ... operand + parenthesis)
+        for (auto & token_ptr : tokens) {
+            if (auto op_ptr = dynamic_cast<BinaryOperator*>(token_ptr.get()); op_ptr) {
+                while (!operators.empty()) {
+                    auto top_ptr = dynamic_cast<BinaryOperator*>(operators.top().get());
+                    if (!top_ptr || top_ptr->Precedence() < op_ptr->Precedence()) {
+                        break;
+                    }
+                    postfix_notation.push_back(std::move(operators.top()));
+                    operators.pop();
+                }
+                operators.push(std::move(token_ptr));
+            } else if (dynamic_cast<LeftParenthesis*>(token_ptr.get())) {
+                operators.push(std::move(token_ptr));
+            } else if (dynamic_cast<RightParenthesis*>(token_ptr.get())) {
+                while (!operators.empty() && !dynamic_cast<LeftParenthesis*>(operators.top().get())) {
+                    postfix_notation.push_back(std::move(operators.top()));
+                    operators.pop();
+                }
+                if (operators.empty()) {
+                    throw std::runtime_error("Unclosed parenthesis");
+                }
+            } else if (dynamic_cast<Operand*>(token_ptr.get())) {
+                postfix_notation.push_back(std::move(token_ptr));
+            }
+        }
+        return postfix_notation;
     }
 }

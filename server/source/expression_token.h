@@ -6,35 +6,38 @@
 
 // TODO: discard letter-filter-words, though it is a generic code that can be used outside of letter-filter context
 namespace LetterFilter {
-    struct Token {};
+    struct Token {
+        virtual ~Token() = 0;
+    };
+    Token::~Token() = default;
 
     // TODO: maybe
     // using TokenHandler = std::unique_ptr<Token>;
 
-    template <int precedence, class Func>
     struct BinaryOperator : public Token {
-        static constexpr int precedence_ = precedence;
-        using Func_ = Func;
+        constexpr virtual int Precedence() const = 0;
     };
 
-    using LogicalAnd    = BinaryOperator<1, std::logical_and<>>;
-    using LogicalOr     = BinaryOperator<0, std::logical_or<>>;
+    struct LogicalAnd : public BinaryOperator {
+        constexpr int Precedence() const final { return 1; };
+    };
 
-    using Equal         = BinaryOperator<2, std::equal_to<>>;
-    using NotEqual      = BinaryOperator<2, std::not_equal_to<>>;
-    using Less          = BinaryOperator<2, std::less<>>;
-    using LessEqual     = BinaryOperator<2, std::less_equal<>>;
-    using Greater       = BinaryOperator<2, std::greater<>>;
-    using GreaterEqual  = BinaryOperator<2, std::greater_equal<>>;
+    struct LogicalOr : public BinaryOperator {
+        constexpr int Precedence() const final { return 0; };
+    };
+
+    // TODO: maybe comparison
+    struct Comparator : public BinaryOperator {
+        constexpr int Precedence() const final { return 2; };
+    };
+
+    struct Equal : public Comparator {};
+    struct NotEqual : public Comparator {};
 
     struct Operand : public Token {};
 
-    struct LetterProperty : public Operand {
-        std::string property_name;
-        LetterProperty(std::string property_name)
-        : property_name(std::move(property_name)) {}
-    };
-
+    struct LetterSenderName : public Operand {};
+    // TODO: deduce value type
     struct Literal : public Operand {
         std::string value_str;
         Literal(std::string value_str)
@@ -47,6 +50,7 @@ namespace LetterFilter {
 //    }
     struct RightParenthesis : public Token {};
 
+    // TODO: stack instead of vector MAYBE
     std::vector<std::unique_ptr<Token>> ParseTokens(std::string_view);
     std::vector<std::unique_ptr<Token>> MakePostfixNotationFromInfix(
             const std::vector<std::unique_ptr<Token>> &);
