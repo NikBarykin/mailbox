@@ -9,6 +9,7 @@ Block query
 File transfer
 Send onde letter to multiple recipients
 proper exceptions
+"in" condition in letter filter 
 
 TODO:
 * filter
