@@ -84,12 +84,12 @@ namespace LetterFilter {
             // if we remove parenthesis it should look like this: operand operator operand ... operator operand
             bool expect_operand = true;
             for (const auto &token_handler: tokens) {
-                if (std::dynamic_pointer_cast<Operand *>(token_handler)) {
+                if (std::dynamic_pointer_cast<Operand>(token_handler)) {
                     if (!expect_operand) {
                         throw std::runtime_error("Expected operator but found operand");
                     }
                     expect_operand = false;
-                } else if (std::dynamic_pointer_cast<Operator*>(token_handler)) {
+                } else if (std::dynamic_pointer_cast<Operator>(token_handler)) {
                     if (expect_operand) {
                         throw std::runtime_error("Expected operand but found operator");
                     }

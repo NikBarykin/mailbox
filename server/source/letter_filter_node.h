@@ -10,78 +10,82 @@
 
 
 namespace LetterFilter {
-    struct Node {
-        virtual ~Node() = 0;
-    };
+    namespace Node {
+        struct Node {
+            virtual ~Node() = 0;
+        };
 
-    using NodeHandler = std::shared_ptr<Node>;
-    using PropertyT = std::variant<std::string>;
+        using NodeHandler = std::shared_ptr<Node>;
+        using PropertyT = std::variant<std::string>;
 
-    struct PropertyNode : public Node {
-        virtual PropertyT GetProperty(const Letter &) const = 0;
-    };
+        struct PropertyNode : public Node {
+            virtual PropertyT GetProperty(const Letter &) const = 0;
+        };
 
-    struct SenderNameNode : public PropertyNode {
-        PropertyT GetProperty(const Letter & letter) const override {
-            return letter.from;
-        }
-    };
+        struct SenderNameNode : public PropertyNode {
+            PropertyT GetProperty(const Letter &letter) const override {
+                return letter.from;
+            }
+        };
 
-    struct BodyNode : public PropertyNode {
-        PropertyT GetProperty(const Letter & letter) const override {
-            return letter.body;
-        }
-    };
+        struct BodyNode : public PropertyNode {
+            PropertyT GetProperty(const Letter &letter) const override {
+                return letter.body;
+            }
+        };
 
-    struct StringLiteralNode : public PropertyNode {
-        std::string value;
-        StringLiteralNode(std::string value): value(value) {}
-        PropertyT GetProperty(const Letter &) const override {
-            return value;
-        }
-    };
+        struct StringLiteralNode : public PropertyNode {
+            std::string value;
 
-    struct LogicalNode : public Node {
-        virtual bool Check(const Letter &) const = 0;
-    };
+            StringLiteralNode(std::string value) : value(value) {}
 
-    template<typename LimitVisitor>
-    class LimitationNode : public LogicalNode {
-        LimitVisitor visitor;
-        std::shared_ptr<PropertyNode> left, right;
-    public:
-        LimitationNode(std::shared_ptr<PropertyNode> left, std::shared_ptr<PropertyNode> right)
-        : left(std::move(left)), right(std::move(right)) {}
+            PropertyT GetProperty(const Letter &) const override {
+                return value;
+            }
+        };
 
-        bool Check(const Letter & letter) const override {
-            PropertyT lhs = left->GetProperty(letter);
-            PropertyT rhs = right->GetProperty(letter);
-            return std::visit<bool>([this, &rhs]<typename PT>(const PT & lhs) {
-                return this->visitor(lhs, std::get<PT>(rhs));
-            }, lhs);
-        }
-    };
+        struct LogicalNode : public Node {
+            virtual bool Check(const Letter &) const = 0;
+        };
 
-    using LessLimitation = LimitationNode<std::less<>>;
-    using EqualLimitation = LimitationNode<std::equal_to<>>;
-    using NotEqualLimitation = LimitationNode<std::not_equal_to<>>;
+        template<typename LimitVisitor>
+        class LimitationNode : public LogicalNode {
+            LimitVisitor visitor;
+            std::shared_ptr<PropertyNode> left, right;
+        public:
+            LimitationNode(std::shared_ptr<PropertyNode> left, std::shared_ptr<PropertyNode> right)
+                    : left(std::move(left)), right(std::move(right)) {}
 
-    template<typename LogicalCombinator>
-    class LogicalCombineNode : public LogicalNode {
-        LogicalCombinator combinator;
-        std::shared_ptr<LogicalNode> left, right;
-    public:
-        LogicalCombineNode(std::shared_ptr<LogicalNode> left, std::shared_ptr<LogicalNode> right)
-                : left(std::move(left)), right(std::move(right)) {}
+            bool Check(const Letter &letter) const override {
+                PropertyT lhs = left->GetProperty(letter);
+                PropertyT rhs = right->GetProperty(letter);
+                return std::visit<bool>([this, &rhs]<typename PT>(const PT &lhs) {
+                    return this->visitor(lhs, std::get<PT>(rhs));
+                }, lhs);
+            }
+        };
 
-        bool Check(const Letter & letter) const override {
-            return combinator(left->Check(letter),
-                              right->Check(letter));
-        }
-    };
+        using LessLimitation = LimitationNode<std::less<>>;
+        using EqualLimitation = LimitationNode<std::equal_to<>>;
+        using NotEqualLimitation = LimitationNode<std::not_equal_to<>>;
 
-    using AndCombinator = LogicalCombineNode<std::logical_and<>>;
-    using OrCombinator = LogicalCombineNode<std::logical_or<>>;
+        template<typename LogicalCombinator>
+        class LogicalCombineNode : public LogicalNode {
+            LogicalCombinator combinator;
+            std::shared_ptr<LogicalNode> left, right;
+        public:
+            LogicalCombineNode(std::shared_ptr<LogicalNode> left, std::shared_ptr<LogicalNode> right)
+                    : left(std::move(left)), right(std::move(right)) {}
 
-    std::shared_ptr<LogicalNode> BuildTree(const std::vector<TokenHandler> & tokens_in_postfix_notation);
+            bool Check(const Letter &letter) const override {
+                return combinator(left->Check(letter),
+                                  right->Check(letter));
+            }
+        };
+
+        using AndCombinator = LogicalCombineNode<std::logical_and<>>;
+        using OrCombinator = LogicalCombineNode<std::logical_or<>>;
+
+        std::shared_ptr<LogicalNode> BuildTree(const std::vector<Token::TokenHandler> &tokens_in_postfix_notation);
+    }
 }

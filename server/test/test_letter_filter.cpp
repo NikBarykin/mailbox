@@ -8,17 +8,22 @@
 
 
 namespace {
-    void Test() {
-        auto filter = LetterFilter::MakeFilter(R"((from == "Nikita" && body == "AMOGUS")
+    void TestGeneral() {
+        auto filter = LetterFilter::ParseFilter(R"((from == "Nikita" && body == "AMOGUS")
                                                   || (from == "Akim" && body == "SUS"))");
         assert(filter({"Nikita", "1", "AMOGUS"}));
         assert(!filter({"Akim", "2", "AMOGUS"}));
         assert(filter({"Akim", "3", "SUS"}));
         assert(!filter({"Nikita", "4", "SUS"}));
     }
+
+    void TestExtreme() {
+//        auto kind_filter = LetterFilter::
+    }
 }
 
 void TestLetterFilter() {
-    Test();
+    TestGeneral();
+    TestExtreme();
     std::cerr << "TestLetterFilter: OK" << std::endl;
 }
