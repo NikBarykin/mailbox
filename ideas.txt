@@ -8,6 +8,7 @@ Ability to save database or whole server
 Block query
 File transfer
 Send onde letter to multiple recipients
+proper exceptions
 
 TODO:
 * filter
