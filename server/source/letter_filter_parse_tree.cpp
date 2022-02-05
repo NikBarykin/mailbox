@@ -68,7 +68,6 @@ namespace LetterFilter {
             if (property_makers.count(token_type)) {
                 nodes.push(property_makers.at(token_type)(token_ptr));
             } else if (limitation_makers.count(token_type)) {
-//                auto right = std::unique_ptr<PropertyNode>(dynamic_cast<PropertyNode *>(nodes.top().release()));
                 auto right = UniquePtrForcedDynamicCast<PropertyNode>(nodes.top());
                 nodes.pop();
                 auto left = UniquePtrForcedDynamicCast<PropertyNode>(nodes.top());
