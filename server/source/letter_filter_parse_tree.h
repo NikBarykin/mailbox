@@ -13,7 +13,6 @@ namespace LetterFilter {
     struct Node {
         virtual ~Node() = 0;
     };
-    Node::~Node() {}
 
     using NodeHandler = std::unique_ptr<Node>;
     using PropertyT = std::variant<std::string>;
@@ -25,6 +24,14 @@ namespace LetterFilter {
     struct SenderNameNode : public PropertyNode {
         PropertyT GetProperty(const Letter & letter) const override {
             return letter.from;
+        }
+    };
+
+    struct StringLiteralNode : public PropertyNode {
+        std::string value;
+        StringLiteralNode(std::string value): value(value) {}
+        PropertyT GetProperty(const Letter &) const override {
+            return value;
         }
     };
 
@@ -67,6 +74,7 @@ namespace LetterFilter {
     };
 
     using AndCombinator = LogicalCombineNode<std::logical_and<>>;
+    using OrCombinator = LogicalCombineNode<std::logical_or<>>;
 
     std::unique_ptr<LogicalNode> BuildTree(const std::vector<std::unique_ptr<Token>> & tokens_in_postfix_notation);
 }

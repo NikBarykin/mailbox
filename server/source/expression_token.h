@@ -9,7 +9,6 @@ namespace LetterFilter {
     struct Token {
         virtual ~Token() = 0;
     };
-    Token::~Token() = default;
 
     // TODO: maybe
     // using TokenHandler = std::unique_ptr<Token>;
@@ -45,13 +44,8 @@ namespace LetterFilter {
     };
 
     struct LeftParenthesis : public Token {};
-//    std::unique_ptr<Token> MakeLeftParenthesis() {
-//        return std::make_unique<LeftParenthesis>()
-//    }
     struct RightParenthesis : public Token {};
 
-    // TODO: stack instead of vector MAYBE
-    std::vector<std::unique_ptr<Token>> ParseTokens(std::string_view);
-    std::vector<std::unique_ptr<Token>> MakePostfixNotationFromInfix(
-            const std::vector<std::unique_ptr<Token>> &);
+    std::vector<std::unique_ptr<Token>> ParseLetterFilterTokens(std::string_view);
+    std::vector<std::unique_ptr<Token>> MakePostfixNotationFromInfix(std::vector<std::unique_ptr<Token>> &&);
 }

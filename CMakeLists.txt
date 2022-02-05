@@ -44,7 +44,7 @@ add_executable(test_server server/test/main.cpp server/test/test_database.h serv
         common/source/socket.h common/source/socket.cpp
         client/source/client_sock.h client/source/client_sock.cpp
         server/source/server_sock.h server/source/server_sock.cpp
-        common/source/query.h common/source/query.cpp common/source/huffman_compression.cpp common/source/huffman_compression.h server/source/letter_filter.cpp server/source/letter_filter.h server/source/expression_token.cpp server/source/expression_token.h server/source/letter_filter_parse_tree.cpp server/source/letter_filter_parse_tree.h)
+        common/source/query.h common/source/query.cpp common/source/huffman_compression.cpp common/source/huffman_compression.h server/source/letter_filter.cpp server/source/letter_filter.h server/source/expression_token.cpp server/source/expression_token.h server/source/letter_filter_parse_tree.cpp server/source/letter_filter_parse_tree.h server/test/test_letter_filter.cpp server/test/test_letter_filter.h)
 target_link_libraries(test_server wsock32 ws2_32)
 
 

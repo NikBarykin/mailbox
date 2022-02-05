@@ -7,20 +7,47 @@
 
 
 namespace LetterFilter {
+    Node::~Node() = default;
+
     template<typename NodeT>
     std::unique_ptr<PropertyNode> MakePropertyNode(Token *) {
         return std::make_unique<NodeT>();
     }
+
+    template<typename NodeT>
+    std::unique_ptr<PropertyNode> MakeLiteralNode(Token * token) {
+        return std::make_unique<NodeT>(dynamic_cast<Literal*>(token)->value_str);
+    }
+
+
+    using PropertyNodeMaker = std::function<std::unique_ptr<PropertyNode>(Token *)>;
+    static const std::unordered_map<std::type_index, PropertyNodeMaker> property_makers = {
+            {typeid(LetterSenderName), MakePropertyNode<SenderNameNode>},
+            {typeid(Literal), MakeLiteralNode<StringLiteralNode>}
+    };
 
     template<typename LimitT>
     std::unique_ptr<LogicalNode> MakeLimit(std::unique_ptr<PropertyNode> left, std::unique_ptr<PropertyNode> right) {
         return std::make_unique<LimitT>(std::move(left), std::move(right));
     }
 
+    using LimitationNodeMaker = std::function<std::unique_ptr<LogicalNode>(std::unique_ptr<PropertyNode>,
+                                                                           std::unique_ptr<PropertyNode>)>;
+    static const std::unordered_map<std::type_index, LimitationNodeMaker> limitation_makers = {
+            {typeid(Equal), MakeLimit<EqLimitation>},
+    };
+
     template<typename CombT>
     std::unique_ptr<LogicalNode> MakeComb(std::unique_ptr<LogicalNode> left, std::unique_ptr<LogicalNode> right) {
         return std::make_unique<CombT>(std::move(left), std::move(right));
     }
+
+    using CombinatorNodeMaker = std::function<std::unique_ptr<LogicalNode>(std::unique_ptr<LogicalNode>,
+                                                                           std::unique_ptr<LogicalNode>)>;
+    static const std::unordered_map<std::type_index, CombinatorNodeMaker> comb_makers = {
+            {typeid(LogicalAnd), MakeComb<AndCombinator>},
+            {typeid(LogicalOr), MakeComb<OrCombinator>},
+    };
 
     template<typename T, typename U>
     std::unique_ptr<T> UniquePtrForcedDynamicCast(std::unique_ptr<U>& ptr) {
@@ -34,23 +61,6 @@ namespace LetterFilter {
 
     std::unique_ptr<LogicalNode> BuildTree(const std::vector<std::unique_ptr<Token>> & tokens_in_postfix_notation) {
         std::stack<NodeHandler> nodes;
-
-        using PropertyNodeMaker = std::function<std::unique_ptr<PropertyNode>(Token *)>;
-        static const std::unordered_map<std::type_index, PropertyNodeMaker> property_makers = {
-                {typeid(LetterSenderName), MakePropertyNode<SenderNameNode>},
-        };
-
-        using LimitationNodeMaker = std::function<std::unique_ptr<LogicalNode>(std::unique_ptr<PropertyNode>,
-                                                                               std::unique_ptr<PropertyNode>)>;
-        static const std::unordered_map<std::type_index, LimitationNodeMaker> limitation_makers = {
-                {typeid(Equal), MakeLimit<EqLimitation>},
-        };
-
-        using CombinatorNodeMaker = std::function<std::unique_ptr<LogicalNode>(std::unique_ptr<LogicalNode>,
-                                                                               std::unique_ptr<LogicalNode>)>;
-        static const std::unordered_map<std::type_index, CombinatorNodeMaker> comb_makers = {
-                {typeid(LogicalAnd), MakeComb<AndCombinator>},
-        };
 
         for (const auto &token_handler: tokens_in_postfix_notation) {
             Token *token_ptr = token_handler.get();

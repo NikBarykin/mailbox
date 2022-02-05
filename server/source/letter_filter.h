@@ -1,20 +1,18 @@
 #pragma once
 
 #include "common/source/letter.h"
+#include "letter_filter_parse_tree.h"
+
 
 #include <string>
 #include <memory>
 
 
 namespace LetterFilter {
-    class LetterFilterNode {
-    public:
-        virtual bool CheckLetter(const Letter &) const = 0;
-    };
 
     class LetterFilter {
     private:
-        std::unique_ptr<LetterFilterNode> filter_tree;
+        std::unique_ptr<LogicalNode> filter_tree;
     public:
         LetterFilter(const std::string &filter_str);
 
