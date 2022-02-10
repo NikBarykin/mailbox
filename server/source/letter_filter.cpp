@@ -5,7 +5,7 @@
 namespace LetterFilter {
     class Filter {
     private:
-        std::shared_ptr<Node::LogicalNode> filter_tree;
+        std::shared_ptr<Node::Logical> filter_tree;
     public:
         Filter(const std::string &filter_str);
 

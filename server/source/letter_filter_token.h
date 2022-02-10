@@ -29,11 +29,11 @@ namespace LetterFilter {
             constexpr int Precedence() const final { return 2; };
         };
 
-        struct Equal : public Condition {};
-        struct NotEqual : public Condition {};
-        struct Less : public Condition {};
-        struct Greater : public Condition {};
-        struct LessEqual : public Condition {};
+        struct Equal        : public Condition {};
+        struct NotEqual     : public Condition {};
+        struct Less         : public Condition {};
+        struct Greater      : public Condition {};
+        struct LessEqual    : public Condition {};
         struct GreaterEqual : public Condition {};
 
         struct Operand : public Token {};
