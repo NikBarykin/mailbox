@@ -88,5 +88,5 @@ namespace LetterFilter::Node {
     using LessEqual    = Condition<std::less_equal<>>;
     using GreaterEqual = Condition<std::greater_equal<>>;
 
-    std::shared_ptr<Logical> BuildTree(const std::vector<Token::TokenHandler> &postfix_notation);
+    std::shared_ptr<Logical> BuildTree(const std::vector<Token::TokenHandler> &tokens_in_postfix_notation);
 }
