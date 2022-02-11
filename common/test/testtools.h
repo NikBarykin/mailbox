@@ -4,3 +4,5 @@
 
 
 Letter operator "" _L(const char* letter_str, size_t);
+
+// TODO: ASSERT_THROWS
