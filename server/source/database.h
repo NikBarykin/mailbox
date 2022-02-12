@@ -2,10 +2,10 @@
 
 #include "common/source/letter.h"
 
-
 #include <vector>
 #include <string>
 #include <unordered_map>
+#include <shared_mutex>
 #include <mutex>
 #include <optional>
 
@@ -25,8 +25,6 @@ private:
     std::unordered_map<std::string, std::string> user_passwords_;
     std::unordered_map<std::string, UserId> user_ids_;
 
-    UserId GiveId(std::string login);
-
 public:
     // If user doesn't have and id GetId creates new id and returns it
     UserId GetId(std::string login);
@@ -39,21 +37,15 @@ private:
     std::unordered_map<UserId, std::vector<LetterId>> letters_by_recipient_;
 
 public:
-    std::vector<Letter> GetMail(UserId user_id) const;
+    std::vector<Letter> GetMail(UserId user_id, std::string_view filter_str = "") const;
 
     Database& AddLetter(Letter letter);
 
     template<class LetterIt>
-    Database& AddLetters(LetterIt letter_begin, LetterIt letter_end);
-};
-
-
-// Implementations
-
-template<class LetterIt>
-Database& Database::AddLetters(LetterIt letter_begin, LetterIt letter_end) {
-    for (LetterIt letter_it = letter_begin; letter_it != letter_end; ++letter_it) {
-        AddLetter(*letter_it);
+    Database& AddLetters(LetterIt letter_begin, LetterIt letter_end) {
+        for (LetterIt letter_it = letter_begin; letter_it != letter_end; ++letter_it) {
+            AddLetter(*letter_it);
+        }
+        return *this;
     }
-    return *this;
-}
+};

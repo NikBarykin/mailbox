@@ -16,22 +16,21 @@ namespace {
         assert(filter({"Akim", "3", "SUS"}));
         assert(!filter({"Nikita", "4", "SUS"}));
     }
-//
-//    void TestExtreme() {
-//        auto kind_filter = LetterFilter::ParseFilter("");
-//
-//        std::vector<Letter> random_letters = {{"ABA",  "CABA",   "ABOBA"},
-//                                              {"BOBA", "123321", "BIBA"},
-//                                              {"",     "",       ""}};
-//        for (auto letter : random_letters) {
-//            assert(kind_filter(letter));
-//        }
-//    }
-}
 
+    void TestExtreme() {
+        auto kind_filter = LetterFilter::ParseFilter("");
+
+        std::vector<Letter> random_letters = {{"ABA",  "CABA",   "ABOBA"},
+                                              {"BOBA", "123321", "BIBA"},
+                                              {"",     "",       ""}};
+        for (auto letter : random_letters) {
+            assert(kind_filter(letter));
+        }
+    }
+}
 
 void TestLetterFilter() {
     TestGeneral();
-//    TestExtreme();
+    TestExtreme();
     std::cerr << "TestLetterFilter: OK" << std::endl;
 }

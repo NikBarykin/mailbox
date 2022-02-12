@@ -55,6 +55,10 @@ namespace {
         std::future<void> future1 = std::async(TestDatabaseUserOneThread, std::ref(db), "a", "b");
         std::future<void> future2 = std::async(TestDatabaseUserOneThread, std::ref(db), "c", "d");
         std::future<void> future3 = std::async(TestDatabaseUserOneThread, std::ref(db), "e", "f");
+
+        future1.get();
+        future2.get();
+        future3.get();
     }
 
     void TestDatabaseLetter() {
@@ -63,6 +67,11 @@ namespace {
         std::future<void> future2 = std::async(TestDatabaseLetterOneThread, std::ref(db), "d", "e", "f");
         std::future<void> future3 = std::async(TestDatabaseLetterOneThread, std::ref(db), "g", "h", "i");
         std::future<void> future4 = std::async(TestDatabaseLetterOneThread, std::ref(db), "x", "y", "z");
+
+        future1.get();
+        future2.get();
+        future3.get();
+        future4.get();
     }
 
 }
@@ -70,7 +79,7 @@ namespace {
 
 void TestDatabase() {
     // We have to run these tests multiple times to increase chances of catching multithreading error
-    for (int i = 0; i < 25; ++i) {
+    for (int i = 0; i < 10000; ++i) {
         TestDatabaseUser();
         TestDatabaseLetter();
     }

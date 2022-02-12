@@ -83,10 +83,13 @@ namespace LetterFilter::Node {
             }
         }
 
-        auto resulting_node = std::dynamic_pointer_cast<Logical>(nodes.top());
-        if (nodes.size() != 1 || !resulting_node) {
-            throw std::runtime_error("Invalid token sequence, failed to combine one logical node from them");
+        if (nodes.size() != 1) {
+            throw std::runtime_error("Failed to build one node from token sequence");
         }
-        return resulting_node;
+        auto tree = std::dynamic_pointer_cast<Logical>(nodes.top());
+        if (!tree) {
+            throw std::runtime_error("Failed to build logical node from token sequence");
+        }
+        return tree;
     }
 }

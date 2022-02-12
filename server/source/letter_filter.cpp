@@ -20,6 +20,9 @@ namespace LetterFilter {
     };
 
     std::function<bool (const Letter &)> ParseFilter(std::string_view filter_str) {
+        if (std::all_of(filter_str.begin(), filter_str.end(), isspace)) {
+            return [](const Letter &) { return true; };
+        }
         return Filter{filter_str};
     }
 }
