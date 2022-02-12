@@ -15,5 +15,6 @@ TODO:
 * filter
 * compression
 * database elegant multithreading 
+* custom exceptions and their propagation to client
 * date 
 * server new architecture (not obligatory)
