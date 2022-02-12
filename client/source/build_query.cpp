@@ -7,6 +7,7 @@
 namespace {
     Query::Any BuildGetMail(std::istream & input, std::ostream & output,
                             const SessionState & session_state) {
+        
         return Query::GetMail{};
     }
 

@@ -7,18 +7,18 @@
 
 namespace Query {
     std::string GetMail::SerializeForTransfer() const {
-        return Protocol::Query{name}.Serialize();
+        return Protocol::Query{name, {letter_filter}}.Serialize();
     }
 
     GetMail GetMail::DeserializeTransfer(std::string serialized_query) {
         auto query_proto = Protocol::Query::Deserialize(serialized_query);
         assert(query_proto.name == name);
-        return {};
+        return {query_proto.arguments[0]};
     }
 
 
     std::string SendLetter::SerializeForTransfer() const {
-        Protocol::Query query_proto{name,{letter.from, letter.to, letter.body}};
+        Protocol::Query query_proto{name, {letter.from, letter.to, letter.body}};
         return query_proto.Serialize();
     }
 

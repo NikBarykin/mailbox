@@ -29,6 +29,7 @@ public:
     // If user doesn't have and id GetId creates new id and returns it
     UserId GetId(std::string login);
 
+    // TODO: maybe return bool
     std::optional<UserId> Authorize(std::string login, std::string password);
 
 private:
