@@ -1,7 +1,9 @@
 #include "build_query.h"
-
+#include "common/source/utils.h"
 
 #include <unordered_map>
+#include <functional>
+#include <map>
 
 
 namespace {
@@ -63,24 +65,42 @@ namespace {
 
 Query::Any BuildQuery(std::istream & input, std::ostream & output,
                       const SessionState & session_state) {
-    output << "Query name:" << std::endl;
-    std::string query_name;
-    if (!std::getline(input, query_name)) {
-        throw std::runtime_error("Failed to read query name");
-    }
-
-    typedef Query::Any (* BuildQueryPtr)(
-            std::istream &, std::ostream &, const SessionState &);
-    static const std::unordered_map<std::string, BuildQueryPtr> query_builders {
-            {Query::GetMail::name, &BuildGetMail},
-            {Query::SendLetter::name, &BuildSendLetter},
-            {Query::Authorize::name, &BuildAuthorize},
-            {Query::Terminate::name, &BuildTerminate},
+    using QueryBuilder = std::function<Query::Any(
+            std::istream &, std::ostream &, const SessionState &)>;
+    // Not unordered_map because I want map keys to be in specified order
+    static const std::map<std::string, QueryBuilder> query_builders{
+            {Query::GetMail::name,    BuildGetMail},
+            {Query::SendLetter::name, BuildSendLetter},
+            {Query::Authorize::name,  BuildAuthorize},
+            {Query::Terminate::name,  BuildTerminate},
     };
 
-    // TODO: add help command
-    if (!query_builders.count(query_name)) {
-        throw std::runtime_error("Invalid query name: " + query_name);
+    std::string query_name;
+    while (true) {
+        output << "Query name:" << std::endl;
+        if (!std::getline(input, query_name)) {
+            throw std::runtime_error("Failed to read query name");
+        }
+
+        if (query_builders.contains(query_name)) {
+            break;
+        }
+
+        if (query_name == "Help") {
+            output << "Valid queries: ";
+            bool first = true;
+            for (const auto &[valid_name, _] : query_builders) {
+                if (first) {
+                    first = false;
+                } else {
+                    output << ", ";
+                }
+                output << valid_name;
+            }
+        } else {
+            output << "Invalid query name, type \"Help\" to get list of valid names";
+        }
+        output << std::endl;
     }
 
     auto query_builder = query_builders.at(query_name);
