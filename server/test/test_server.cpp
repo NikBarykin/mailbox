@@ -79,6 +79,10 @@ namespace {
         auto a_mail = std::get<Answer::GetMail>(ans12).mail;
         assert(a_mail == std::vector<Letter>{l3});
 
+        Answer::Any ans13 = send_query(a_serv_sock, Query::GetMail{"from != \"" + b_name + "\""});
+        assert(std::holds_alternative<Answer::GetMail>(ans12));
+        assert(std::get<Answer::GetMail>(ans13).mail.empty());
+
         Answer::Any ans14 = send_query(a_serv_sock, Query::Terminate{});
         assert(std::holds_alternative<Answer::Terminate>(ans14));
     }

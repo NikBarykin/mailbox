@@ -12,16 +12,6 @@
 
 
 namespace {
-    void Test1() {
-        Socket::Server serv_sock("localhost", "8080");
-    }
-
-    void Test2() {
-        Socket::Listener listen_sock("8080");
-        Socket::Client client_sock = listen_sock.Accept();
-    }
-
-
     void RunTestSession() {
         std::istringstream input(R"(SendLetter
 B
@@ -41,6 +31,8 @@ B
 B
 GetMail
 from == "A"
+GetMail
+from != "A"
 SendLetter
 A
 D
@@ -90,6 +82,11 @@ Letter filter:
 
 From: A
 C
+
+Query name:
+Letter filter:
+
+Your mailbox is empty
 
 Query name:
 Letter recipient:
@@ -156,6 +153,11 @@ Session terminated
         assert(std::holds_alternative<Query::GetMail>(query6));
 
         client_sock.Send(Answer::GetMail{{{"A", "B", "C"}}}.SerializeForTransfer());
+
+        auto query6_2 = Query::DeserializeTransfer(client_sock.Recv());
+        assert(std::get<Query::GetMail>(query6_2).letter_filter == "from != \"A\"");
+
+        client_sock.Send(Answer::GetMail{{}}.SerializeForTransfer());
 
         auto query7 = Query::DeserializeTransfer(client_sock.Recv());
         assert(std::holds_alternative<Query::SendLetter>(query7));

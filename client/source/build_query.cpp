@@ -78,6 +78,7 @@ Query::Any BuildQuery(std::istream & input, std::ostream & output,
             {Query::Terminate::name, &BuildTerminate},
     };
 
+    // TODO: add help command
     if (!query_builders.count(query_name)) {
         throw std::runtime_error("Invalid query name: " + query_name);
     }
