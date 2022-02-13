@@ -5,6 +5,7 @@
 #include <cassert>
 
 
+// TODO: optimize by passing references or moving
 namespace Query {
     std::string GetMail::SerializeForTransfer() const {
         return Protocol::Query{name, {letter_filter}}.Serialize();

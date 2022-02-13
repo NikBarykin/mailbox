@@ -31,7 +31,7 @@ namespace {
         Socket::Server b_serv_sock("localhost", "8080");
 
         auto send_query = []<class QueryType>(Socket::Server& server_sock, QueryType query) {
-            server_sock.Send(query.SerializeForTransfer());
+            server_sock.Send(query.SerializeForTransfer(), true);
             return Answer::DeserializeTransfer<typename QueryType::Answer>(server_sock.Recv());
         };
 
@@ -63,7 +63,7 @@ namespace {
         Answer::Any ans8 = send_query(b_serv_sock, Query::SendLetter{l2});
         assert(std::holds_alternative<Answer::SendLetter>(ans8));
 
-        Letter l3{b_name, a_name, "How was your day?:p"};
+        Letter l3{b_name, a_name, ":p"};
         Answer::Any ans9 = send_query(b_serv_sock, Query::SendLetter{l3});
         assert(std::holds_alternative<Answer::SendLetter>(ans9));
 
@@ -74,13 +74,13 @@ namespace {
 //        Answer::Any ans11 = send_query(b_serv_sock, Query::GetMail{});
 //        assert(std::holds_alternative<Answer::Error>(ans11));
 
-        Answer::Any ans12 = send_query(a_serv_sock, Query::GetMail{});
+        Answer::Any ans12 = send_query(a_serv_sock, Query::GetMail{R"(body == ":p")"});
         assert(std::holds_alternative<Answer::GetMail>(ans12));
         auto a_mail = std::get<Answer::GetMail>(ans12).mail;
-        assert(a_mail == std::vector<Letter>({l2, l3}));
+        assert(a_mail == std::vector<Letter>{l3});
 
-        Answer::Any ans13 = send_query(a_serv_sock, Query::Terminate{});
-        assert(std::holds_alternative<Answer::Terminate>(ans13));
+        Answer::Any ans14 = send_query(a_serv_sock, Query::Terminate{});
+        assert(std::holds_alternative<Answer::Terminate>(ans14));
     }
 
 

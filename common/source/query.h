@@ -13,7 +13,7 @@ namespace Query {
         static inline const std::string name = "GetMail";
         using Answer = Answer::GetMail;
 
-        std::string letter_filter;
+        std::string letter_filter; // empty => all letters fit
 
         std::string SerializeForTransfer() const;
         static GetMail DeserializeTransfer(std::string);

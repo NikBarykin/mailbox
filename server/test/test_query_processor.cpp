@@ -22,11 +22,16 @@ namespace {
         Answer::Any ans2 = query_processor(Query::GetMail{});
         assert(std::get<Answer::GetMail>(ans2).mail.empty());
 
-        Letter l{"b", "a", "Hey, A!"};
-        db.AddLetter(l);
+        std::vector<Letter> ls = {{"b", "a", "x"}, {"c", "a", "apop"}};
+        db.AddLetters(ls.begin(), ls.end());
+
         Answer::Any ans3 = query_processor(Query::GetMail{});
-        std::vector<Letter> expect3{l};
-        assert(std::get<Answer::GetMail>(ans3).mail == expect3);
+        auto res3 = std::get<Answer::GetMail>(ans3).mail;
+        assert(std::is_permutation(res3.begin(), res3.end(), ls.begin()));
+
+        Answer::Any ans4 = query_processor(Query::GetMail{R"((from == "b" && body != "x") || from == "c")"});
+        auto res4 = std::get<Answer::GetMail>(ans4).mail;
+        assert(res4 == std::vector<Letter>{ls[1]});
     }
 
     void TestSendLetterProcessing() {

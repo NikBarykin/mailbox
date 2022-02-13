@@ -4,11 +4,11 @@
 QueryProcessor::QueryProcessor(Database &db, SessionState &session_state)
         : db_(db), session_state_(session_state) {}
 
-Answer::Any QueryProcessor::operator()(Query::GetMail) {
+Answer::Any QueryProcessor::operator()(Query::GetMail query) {
     if (!session_state_.user_id) {
         return Answer::Error{"Not authorized"};
     }
-    return Query::GetMail::Answer{db_.GetMail(*session_state_.user_id)};
+    return Query::GetMail::Answer{db_.GetMail(*session_state_.user_id, query.letter_filter)};
 }
 
 // TODO: maybe forbid sending letter to yourself

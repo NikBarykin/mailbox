@@ -12,7 +12,7 @@ void RunSession(std::string nodename, std::string servname,
 
     while (session_state.running) {
         Query::Any query = BuildQuery(input, output, session_state);
-        server_sock.Send(Query::SerializeForTransfer(query));
+        server_sock.Send(Query::SerializeForTransfer(query), true);
 
         std::string serialized_answer = server_sock.Recv();
         Answer::Any answer = Query::DeserializeQueryAnswer(query, serialized_answer);

@@ -48,30 +48,38 @@ namespace {
         std::vector<Letter> expected_c = {letters[4]};
         auto res3 = db.GetMail(db.GetId(c_name));
         assert(std::is_permutation(res3.begin(), res3.end(), expected_c.begin()));
+
+        std::vector<Letter> expected_b_filtered = {letters[1], letters[5]};
+        auto res4 = db.GetMail(db.GetId(b_name),
+                               "(from == \"" + c_name + "\" && body == \"5\") || (body == \"1\")");
+        assert(std::is_permutation(res4.begin(), res4.end(), expected_b_filtered.begin()));
     }
 
     void TestDatabaseUser() {
         Database db;
-        std::future<void> future1 = std::async(TestDatabaseUserOneThread, std::ref(db), "a", "b");
-        std::future<void> future2 = std::async(TestDatabaseUserOneThread, std::ref(db), "c", "d");
-        std::future<void> future3 = std::async(TestDatabaseUserOneThread, std::ref(db), "e", "f");
 
-        future1.get();
-        future2.get();
-        future3.get();
+        std::vector<std::future<void>> futures;
+        futures.push_back(std::async(TestDatabaseUserOneThread, std::ref(db), "a", "b"));
+        futures.push_back(std::async(TestDatabaseUserOneThread, std::ref(db), "c", "d"));
+        futures.push_back(std::async(TestDatabaseUserOneThread, std::ref(db), "e", "f"));
+
+        for (auto &future : futures) {
+            future.get();
+        }
     }
 
     void TestDatabaseLetter() {
         Database db;
-        std::future<void> future1 = std::async(TestDatabaseLetterOneThread, std::ref(db), "a", "b", "c");
-        std::future<void> future2 = std::async(TestDatabaseLetterOneThread, std::ref(db), "d", "e", "f");
-        std::future<void> future3 = std::async(TestDatabaseLetterOneThread, std::ref(db), "g", "h", "i");
-        std::future<void> future4 = std::async(TestDatabaseLetterOneThread, std::ref(db), "x", "y", "z");
 
-        future1.get();
-        future2.get();
-        future3.get();
-        future4.get();
+        std::vector<std::future<void>> futures;
+        futures.push_back(std::async(TestDatabaseLetterOneThread, std::ref(db), "a", "b", "c"));
+        futures.push_back(std::async(TestDatabaseLetterOneThread, std::ref(db), "d", "e", "f"));
+        futures.push_back(std::async(TestDatabaseLetterOneThread, std::ref(db), "g", "h", "i"));
+        futures.push_back(std::async(TestDatabaseLetterOneThread, std::ref(db), "x", "y", "z"));
+
+        for (auto &future : futures) {
+            future.get();
+        }
     }
 
 }
@@ -79,7 +87,7 @@ namespace {
 
 void TestDatabase() {
     // We have to run these tests multiple times to increase chances of catching multithreading error
-    for (int i = 0; i < 10000; ++i) {
+    for (int i = 0; i < 2000; ++i) {
         TestDatabaseUser();
         TestDatabaseLetter();
     }

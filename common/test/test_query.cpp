@@ -8,8 +8,12 @@
 
 namespace {
     void TestGetMail() {
-        assert(Query::GetMail{}.SerializeForTransfer() == "7\nGetMail");
-        Query::GetMail{}.DeserializeTransfer("7\nGetMail");
+        Query::GetMail query{"from != \"xxx\""};
+
+        std::string serialized = query.SerializeForTransfer();
+
+        assert(serialized == "7\nGetMail13\nfrom != \"xxx\"");
+        assert(query.letter_filter == Query::GetMail::DeserializeTransfer(serialized).letter_filter);
     }
 
     void TestSendMail() {
@@ -38,8 +42,8 @@ namespace {
     }
 
     void TestGeneralTransfer() {
-        std::string serialized1 = Query::SerializeForTransfer(Query::GetMail{});
-        assert(serialized1 == "7\nGetMail");
+        std::string serialized1 = Query::SerializeForTransfer(Query::GetMail{"body==\"foo\""});
+        assert(serialized1 == "7\nGetMail11\nbody==\"foo\"");
 
         std::string serialized2 = Query::SerializeForTransfer(Query::SendLetter{{"a", "b", "c"}});
         assert(serialized2 == "10\nSendLetter1\na1\nb1\nc");

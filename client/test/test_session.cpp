@@ -35,10 +35,12 @@ B
 C
 \End-of-letter
 GetMail
+
 Authorize
 B
 B
 GetMail
+from == "A"
 SendLetter
 A
 D
@@ -47,6 +49,7 @@ Authorize
 A
 A
 GetMail
+body == "D"
 Terminate
 )");
         std::ostringstream output;
@@ -72,6 +75,7 @@ Letter body:
 Letter sent successfully
 
 Query name:
+Letter filter:
 
 Your mailbox is empty
 
@@ -82,6 +86,7 @@ Password:
 Authorized successfully
 
 Query name:
+Letter filter:
 
 From: A
 C
@@ -99,6 +104,7 @@ Password:
 Authorized successfully
 
 Query name:
+Letter filter:
 
 From: B
 D

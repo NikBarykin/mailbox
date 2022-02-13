@@ -7,8 +7,10 @@
 namespace {
     Query::Any BuildGetMail(std::istream & input, std::ostream & output,
                             const SessionState & session_state) {
-        
-        return Query::GetMail{};
+        Query::GetMail query;
+        output << "Letter filter:" << std::endl;
+        std::getline(input, query.letter_filter);
+        return query;
     }
 
     // TODO: maybe throw exception if user didn't authorize

@@ -38,6 +38,7 @@ private:
     std::unordered_map<UserId, std::vector<LetterId>> letters_by_recipient_;
 
 public:
+    // Maybe accept user login not id
     std::vector<Letter> GetMail(UserId user_id, std::string_view filter_str = "") const;
 
     Database& AddLetter(Letter letter);
