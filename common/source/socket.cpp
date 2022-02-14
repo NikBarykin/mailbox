@@ -1,7 +1,6 @@
 #include "socket.h"
 
 #include <stdexcept>
-
 #include <iostream>
 #include <cassert>
 
@@ -55,7 +54,7 @@ namespace Socket {
 
     void Communicator::Send(std::string data, bool compress, bool encrypt) {
         if (compress) {
-            data = PerformHuffmanCompression(data);
+            data = Huffman::PerformCompression(data);
         }
 
         if (encrypt) {
@@ -103,7 +102,7 @@ namespace Socket {
         }
 
         if (buf[0] == 'c') {
-            data = PerformHuffmanDecompression(data);
+            data = Huffman::PerformDecompression(data);
         }
 
         return data;

@@ -167,31 +167,33 @@ namespace {
 }
 
 
-std::string PerformHuffmanCompression(const std::string & str) {
-    std::unordered_map<char, size_t> frequencies;
-    for (char ch : str) {
-        ++frequencies[ch];
-    }
-    // frequencies size should be at least 2, otherwise we can't build a valid tree
-    for (char ch = 0; frequencies.size() < 2; ++ch) frequencies.emplace(ch, 0);
+namespace Huffman {
+    std::string PerformCompression(const std::string &str) {
+        std::unordered_map<char, size_t> frequencies;
+        for (char ch: str) {
+            ++frequencies[ch];
+        }
+        // frequencies size should be at least 2, otherwise we can't build a valid tree
+        for (char ch = 0; frequencies.size() < 2; ++ch) frequencies.emplace(ch, 0);
 
-    std::shared_ptr<Node> tree = BuildTree(frequencies);
-    std::list<bool> resulting_compression = tree->Compress();
-    CompressionRule rule = tree->BuildCompressionRule();
-    for (char ch : str) {
-        std::list<bool> compressed_ch = rule[ch];
-        resulting_compression.splice(resulting_compression.end(), std::move(compressed_ch));
+        std::shared_ptr<Node> tree = BuildTree(frequencies);
+        std::list<bool> resulting_compression = tree->Compress();
+        CompressionRule rule = tree->BuildCompressionRule();
+        for (char ch: str) {
+            std::list<bool> compressed_ch = rule[ch];
+            resulting_compression.splice(resulting_compression.end(), std::move(compressed_ch));
+        }
+
+        return BitsToString(resulting_compression);
     }
 
-    return BitsToString(resulting_compression);
-}
-
-std::string PerformHuffmanDecompression(const std::string & compressed_str) {
-    std::list<bool> bit_compression = StringToBits(compressed_str);
-    std::shared_ptr<Node> tree = DecompressTree(bit_compression);
-    std::string decompressed_str;
-    while (!bit_compression.empty()) {
-        decompressed_str.push_back(tree->ExtractCompressedChar(bit_compression));
+    std::string PerformDecompression(const std::string &compressed_str) {
+        std::list<bool> bit_compression = StringToBits(compressed_str);
+        std::shared_ptr<Node> tree = DecompressTree(bit_compression);
+        std::string decompressed_str;
+        while (!bit_compression.empty()) {
+            decompressed_str.push_back(tree->ExtractCompressedChar(bit_compression));
+        }
+        return decompressed_str;
     }
-    return decompressed_str;
 }

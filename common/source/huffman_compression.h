@@ -3,7 +3,16 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <stdexcept>
 
 
-std::string PerformHuffmanCompression(const std::string &);
-std::string PerformHuffmanDecompression(const std::string &);
+namespace Huffman {
+    struct Error : public std::runtime_error {
+        explicit Error(const std::string &msg)
+        : std::runtime_error(msg) {}
+    };
+
+    std::string PerformCompression(const std::string &);
+
+    std::string PerformDecompression(const std::string &);
+}
