@@ -2,6 +2,8 @@
 
 #include <winsock2.h>
 #include <ws2tcpip.h>
+
+#include <stdexcept>
 #include <string>
 
 #pragma comment(lib, "Ws2_32.lib")
@@ -22,6 +24,11 @@ namespace Socket {
 
     struct SocketArgs {
         int af, type, protocol;
+    };
+
+    struct SocketError : std::runtime_error {
+        explicit SocketError(const std::string &msg)
+        : std::runtime_error(msg) {}
     };
 
     class Base {

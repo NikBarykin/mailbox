@@ -1,9 +1,11 @@
 #include "socket.h"
-#include "huffman_compression.h"
 
 #include <stdexcept>
+
 #include <iostream>
 #include <cassert>
+
+#include "huffman_compression.h"
 
 
 WSALib::WSALib()  {
@@ -19,14 +21,14 @@ WSALib::~WSALib()  {
 namespace Socket {
     Base::Base(SOCKET sock): sock_(sock) {
         if (sock_ == INVALID_SOCKET) {
-            throw std::runtime_error("INVALID_SOCKET construction is forbidden");
+            throw SocketError("INVALID_SOCKET construction is forbidden");
         }
     }
 
     Base::Base(SocketArgs sock_args) {
         sock_ = socket(sock_args.af, sock_args.type, sock_args.protocol);
         if (sock_ == INVALID_SOCKET) {
-            throw std::runtime_error("socket failed: " + std::to_string(WSAGetLastError()));
+            throw SocketError("socket failed: " + std::to_string(WSAGetLastError()));
         }
     }
 
@@ -47,7 +49,7 @@ namespace Socket {
         *static_cast<size_t *>(static_cast<void *>(sz_bytes)) = data.size();
         int i_send_result = send(sock_, sz_bytes, sizeof(size_t), 0);
         if (i_send_result == SOCKET_ERROR) {
-            throw std::runtime_error("data size send error: " + std::to_string(WSAGetLastError()));
+            throw SocketError("data size send error: " + std::to_string(WSAGetLastError()));
         }
     }
 
@@ -58,7 +60,7 @@ namespace Socket {
 
         if (encrypt) {
             // TODO: encryption
-            throw std::runtime_error("Encryption isn't implemented!");
+            throw SocketError("Encryption isn't implemented!");
         }
         // compress and encrypt flags
         // TODO: make flags more elegant. For example by adding section "flags"
@@ -68,7 +70,7 @@ namespace Socket {
 
         int i_send_result = send(sock_, data.c_str(), data.size(), 0);
         if (i_send_result == SOCKET_ERROR) {
-            throw std::runtime_error("data send error: " + std::to_string(WSAGetLastError()));
+            throw SocketError("data send error: " + std::to_string(WSAGetLastError()));
         }
     }
 
@@ -76,7 +78,7 @@ namespace Socket {
         char sz_bytes[sizeof(size_t)];
         int i_recv_result = recv(sock_, sz_bytes, sizeof(size_t), 0);
         if (i_recv_result < 0) {
-            throw std::runtime_error("data size recv error: " + std::to_string(WSAGetLastError()));
+            throw SocketError("data size recv error: " + std::to_string(WSAGetLastError()));
         }
         return *static_cast<size_t *>(static_cast<void *>(sz_bytes));
     }
@@ -88,7 +90,7 @@ namespace Socket {
         char buf[sz];
         int i_recv_result = recv(sock_, buf, sz, 0);
         if (i_recv_result < 0) {
-            throw std::runtime_error("data recv error: " + std::to_string(WSAGetLastError()));
+            throw SocketError("data recv error: " + std::to_string(WSAGetLastError()));
         }
 
         assert(sz >= 2);
@@ -97,7 +99,7 @@ namespace Socket {
 
         if (buf[1] == 'e') {
             // TODO: decryption
-            throw std::runtime_error("Decryption isn't implemented!");
+            throw SocketError("Decryption isn't implemented!");
         }
 
         if (buf[0] == 'c') {
