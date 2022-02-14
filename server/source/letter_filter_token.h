@@ -28,6 +28,7 @@ namespace LetterFilter::Token {
         constexpr int Precedence() const final { return 2; };
     };
 
+    // TODO: "IN" condition (like "Foo" IN body)
     struct Equal        : public Condition {};
     struct NotEqual     : public Condition {};
     struct Less         : public Condition {};

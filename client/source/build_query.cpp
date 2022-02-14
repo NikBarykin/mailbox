@@ -59,7 +59,6 @@ namespace {
                               const SessionState & session_state) {
         return Query::Terminate{};
     }
-
 }
 
 
@@ -82,7 +81,7 @@ Query::Any BuildQuery(std::istream & input, std::ostream & output,
             throw std::runtime_error("Failed to read query name");
         }
 
-        if (query_builders.contains(query_name)) {
+        if (query_builders.count(query_name)) {
             break;
         }
 
@@ -97,10 +96,10 @@ Query::Any BuildQuery(std::istream & input, std::ostream & output,
                 }
                 output << valid_name;
             }
+            output << std::endl;
         } else {
-            output << "Invalid query name, type \"Help\" to get list of valid names";
+            output << "Unknown query, type \"Help\" to get list of queries" << std::endl;
         }
-        output << std::endl;
     }
 
     auto query_builder = query_builders.at(query_name);

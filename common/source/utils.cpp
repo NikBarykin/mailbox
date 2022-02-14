@@ -18,8 +18,8 @@ std::string Replace(const std::string& source, const std::string& from, const st
     return res_str;
 }
 
-std::string ToLower(std::string s) {
-    std::transform(s.begin(), s.end(), s.begin(),
-                   [](unsigned char c){ return std::tolower(c); });
-    return s;
-}
+//std::string ToLower(std::string s) {
+//    std::transform(s.begin(), s.end(), s.begin(),
+//                   [](unsigned char c){ return std::tolower(c); });
+//    return s;
+//}

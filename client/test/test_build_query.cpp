@@ -1,6 +1,6 @@
 #include "test_build_query.h"
 #include "client/source/build_query.h"
-
+#include "common/test/testtools.h"
 
 #include <iostream>
 #include <cassert>
@@ -40,17 +40,8 @@ InvalidQueryName)");
         Query::Any query4 = BuildQuery(input, output, sst);
         assert(std::holds_alternative<Query::Terminate>(query4));
 
-        // Query name is invalid
-        try {
-            BuildQuery(input, output, sst);
-            assert(false);
-        } catch(std::exception&) {}
-
         // Input is empty
-        try {
-            BuildQuery(input, output, sst);
-            assert(false);
-        } catch(std::exception&) {}
+        ASSERT_THROWS(BuildQuery(input, output, sst), std::exception);
 
         std::string expected_output = R"(Query name:
 Letter filter:
@@ -66,6 +57,7 @@ Password:
 Query name:
 
 Query name:
+Unknown query, type "Help" to get list of queries
 Query name:
 )";
         assert(output.str() == expected_output);

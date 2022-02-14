@@ -2,9 +2,12 @@
 
 #include <string>
 
+#include "date.h"
+
 
 struct Letter {
     std::string from, to, body;
+    Date date;
 };
 
 

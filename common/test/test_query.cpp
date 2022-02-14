@@ -1,5 +1,6 @@
 #include "test_query.h"
 #include "common/source/query.h"
+#include "testtools.h"
 
 #include <iostream>
 #include <cassert>
@@ -57,10 +58,12 @@ namespace {
         assert(std::holds_alternative<Query::Terminate>(deserialized2));
 
         // Invalid query name
-        try {
-            Query::DeserializeTransfer("getmail");
-            assert(false);
-        } catch (std::exception&) {}
+
+        ASSERT_THROWS(Query::DeserializeTransfer("getmail"), std::exception);
+//        try {
+//            Query::DeserializeTransfer("getmail");
+//            assert(false);
+//        } catch (std::exception&) {}
     }
 
     void TestQueryAnswerDeserialization() {
