@@ -4,6 +4,8 @@
 
 #include <cassert>
 
+// TODO: maybe rename to testing_utils
+
 Letter operator "" _L(const char* letter_str, size_t);
 
 #define ASSERT_THROWS(expression, exception)    \

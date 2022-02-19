@@ -20,6 +20,10 @@ namespace LetterFilter::Node {
         return std::make_shared<StringLiteral>(dynamic_cast<Token::StringLiteral&>(*token).value);
     }
 
+    template<>
+    std::shared_ptr<Property> MakeProperty<DateLiteral>(Token::TokenHandler token) {
+        return std::make_shared<DateLiteral>(dynamic_cast<Token::DateLiteral&>(*token).value);
+    }
 
     template<typename ConditionNodeT>
     std::shared_ptr<Logical> MakeCondition(std::shared_ptr<Property> left, std::shared_ptr<Property> right) {
@@ -36,7 +40,9 @@ namespace LetterFilter::Node {
         static const unordered_map<type_index, function<shared_ptr<Property>(Token::TokenHandler)>> property_makers = {
                 {typeid(Token::FromProperty),  MakeProperty<From>},
                 {typeid(Token::BodyProperty),  MakeProperty<Body>},
+                {typeid(Token::DateProperty),  MakeProperty<LetterDate>},
                 {typeid(Token::StringLiteral), MakeProperty<StringLiteral>},
+                {typeid(Token::DateLiteral), MakeProperty<DateLiteral>},
         };
 
         using ConditionMaker = std::function<std::shared_ptr<Logical>(std::shared_ptr<Property>,

@@ -15,7 +15,7 @@ namespace LetterFilter::Node {
     };
 
     using NodeHandler = std::shared_ptr<Node>;
-    using PropertyT = std::variant<std::string>;
+    using PropertyT = std::variant<std::string, Date>;
 
     struct Property : public Node {
         virtual PropertyT GetProperty(const Letter &) const = 0;
@@ -33,10 +33,25 @@ namespace LetterFilter::Node {
         }
     };
 
+    // TODO: maybe more elegant name
+    struct LetterDate : public Property {
+        PropertyT GetProperty(const Letter &letter) const override {
+            return letter.date;
+        }
+    };
+
     struct StringLiteral : public Property {
         std::string value;
 
-        StringLiteral(std::string value) : value(value) {}
+        explicit StringLiteral(std::string value) : value(std::move(value)) {}
+
+        PropertyT GetProperty(const Letter &) const final { return value; }
+    };
+
+    struct DateLiteral : public Property {
+        Date value;
+
+        explicit DateLiteral(Date value) : value(value) {}
 
         PropertyT GetProperty(const Letter &) const final { return value; }
     };

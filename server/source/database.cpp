@@ -29,6 +29,7 @@ std::vector<Letter> Database::GetMail(UserId user_id, std::string_view filter_st
     if (!letters_by_recipient_.count(user_id)) {
         return {};
     }
+    // TODO: filter hashing
     auto filter = LetterFilter::ParseFilter(filter_str);
     std::vector<Letter> result;
     for (LetterId letter_id: letters_by_recipient_.at(user_id)) {

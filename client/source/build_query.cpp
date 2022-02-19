@@ -18,28 +18,29 @@ namespace {
     // TODO: maybe throw exception if user didn't authorize
     Query::Any BuildSendLetter(std::istream & input, std::ostream & output,
                                const SessionState & session_state) {
-        Query::SendLetter query;
+        std::string author = session_state.user_login;
 
-        query.letter.from = session_state.user_login;
+        output << "Letter addressee:" << std::endl;
+        std::string addressee;
+        std::getline(input, addressee);
 
-        output << "Letter recipient:" << std::endl;
-        std::getline(input, query.letter.to);
-
-        output << "Letter body:" << std::endl;
+        output << "Letter body: (empty line marks end of letter)" << std::endl;
+        std::string body;
         bool first_line = true;
         for (std::string letter_line; std::getline(input, letter_line); ) {
-            if (letter_line == "\\End-of-letter") {
+            if (letter_line.empty()) {
                 break;
             }
             if (first_line) {
                 first_line = false;
             } else {
-                query.letter.body += "\n";
+                body += "\n";
             }
-            query.letter.body += letter_line;
+            body += letter_line;
         }
 
-        return query;
+        Letter letter = {std::move(author), std::move(addressee), std::move(body), Date::CurrentDate()};
+        return Query::SendLetter{std::move(letter)};
     }
 
     Query::Any BuildAuthorize(std::istream & input, std::ostream & output,

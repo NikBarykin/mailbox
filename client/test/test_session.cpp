@@ -49,7 +49,7 @@ Terminate
         RunSession("localhost", "8080", input, output);
 
         std::string expected_output = R"(Query name:
-Letter recipient:
+Letter addressee:
 Letter body:
 
 Server error: Not authorized
@@ -61,7 +61,7 @@ Password:
 Authorized successfully
 
 Query name:
-Letter recipient:
+Letter addressee:
 Letter body:
 
 Letter sent successfully
@@ -89,7 +89,7 @@ Letter filter:
 Your mailbox is empty
 
 Query name:
-Letter recipient:
+Letter addressee:
 Letter body:
 
 Letter sent successfully

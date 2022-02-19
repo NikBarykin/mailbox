@@ -1,6 +1,6 @@
 #include "test_build_query.h"
 #include "client/source/build_query.h"
-#include "common/test/testtools.h"
+#include "common/test/testing_utility.h"
 
 #include <iostream>
 #include <cassert>
@@ -47,7 +47,7 @@ InvalidQueryName)");
 Letter filter:
 
 Query name:
-Letter recipient:
+Letter addressee:
 Letter body:
 
 Query name:

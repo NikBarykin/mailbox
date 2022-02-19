@@ -1,6 +1,6 @@
 #include "test_query.h"
 #include "common/source/query.h"
-#include "testtools.h"
+#include "testing_utility.h"
 
 #include <iostream>
 #include <cassert>

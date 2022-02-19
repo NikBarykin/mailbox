@@ -2,25 +2,22 @@
 
 
 namespace {
-    void Process(Query::GetMail, Query::GetMail::Answer answer,
+    void Process(const Query::GetMail&, Query::GetMail::Answer answer,
                  SessionState &, std::ostream & output) {
         if (answer.mail.empty()) {
             output << "Your mailbox is empty\n";
             return;
         }
-        bool first_letter = true;
-        for (const Letter &letter: answer.mail) {
-            if (first_letter) {
-                first_letter = false;
-            } else {
-                output << std::string(15, '-') << "\n";
-            }
+        for (size_t letter_i = 0; letter_i < answer.mail.size(); ++letter_i) {
+            const Letter & letter = answer.mail[letter_i];
+            output << letter_i + 1 << ".\n";
+            output << "Date: " << letter.date.AsString() << '\n';
             output << "From: " << letter.from << "\n";
             output << letter.body << "\n";
         }
     }
 
-    void Process(Query::SendLetter, Query::SendLetter::Answer,
+    void Process(const Query::SendLetter&, Query::SendLetter::Answer,
                  SessionState &, std::ostream & output) {
         output << "Letter sent successfully\n";
     }

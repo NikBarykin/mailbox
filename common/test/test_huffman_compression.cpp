@@ -10,15 +10,15 @@
 
 namespace {
     void CheckCompressionAndDecompression(const std::string & str) {
-        std::string conversed_str = PerformHuffmanDecompression(PerformHuffmanCompression(str));
+        std::string conversed_str = Huffman::PerformDecompression(Huffman::PerformCompression(str));
         if (conversed_str != str) {
             throw std::runtime_error("Huffman compression failed!\n" + conversed_str + "isn't equal to initial string + " + str);
         }
-//        assert(PerformHuffmanDecompression(PerformHuffmanCompression(str)) == str);
+//        assert(Huffman::PerformDecompression(Huffman::PerformCompression(str)) == str);
     }
 
     std::string CompressAndDecompress(const std::string & str) {
-        return PerformHuffmanDecompression(PerformHuffmanCompression(str));
+        return Huffman::PerformDecompression(Huffman::PerformCompression(str));
     }
 
     void TestGeneral() {

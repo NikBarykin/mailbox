@@ -23,8 +23,8 @@ target_link_libraries(client wsock32 ws2_32)
 add_executable(test_common common/test/main.cpp server/source/server_sock.cpp server/source/server_sock.h
         client/source/client_sock.cpp client/source/client_sock.h
         common/source/socket.h common/source/socket.cpp common/source/protocol.cpp common/source/protocol.h
-        common/source/utils.cpp common/source/utils.h common/source/letter.cpp common/test/testtools.cpp
-        common/test/testtools.h common/test/test_protocol.cpp common/test/test_protocol.h common/test/test_socket.cpp
+        common/source/utils.cpp common/source/utils.h common/source/letter.cpp common/test/testing_utility.cpp
+        common/test/testing_utility.h common/test/test_protocol.cpp common/test/test_protocol.h common/test/test_socket.cpp
         common/test/test_socket.h common/test/test_query.cpp common/test/test_query.h
         common/source/query.h common/source/query.cpp common/test/test_answer.cpp common/test/test_answer.h
         common/source/answer.h common/source/answer.cpp common/source/huffman_compression.cpp common/source/huffman_compression.h common/test/test_huffman_compression.cpp common/test/test_huffman_compression.h common/source/date.cpp common/source/date.h)
@@ -33,7 +33,7 @@ target_link_libraries(test_common wsock32 ws2_32)
 
 add_executable(test_server server/test/main.cpp server/test/test_database.h server/test/test_database.cpp
         server/source/database.h server/source/database.cpp common/source/utils.cpp common/source/utils.h
-        common/source/letter.h common/source/letter.cpp common/test/testtools.cpp common/test/testtools.h
+        common/source/letter.h common/source/letter.cpp common/test/testing_utility.cpp common/test/testing_utility.h
         server/source/query_processor.h server/source/query_processor.cpp
         server/test/test_query_processor.h server/test/test_query_processor.cpp
         server/test/test_server.h server/test/test_server.cpp

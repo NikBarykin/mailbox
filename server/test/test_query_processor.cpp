@@ -1,7 +1,7 @@
 #include "test_query_processor.h"
 #include "../source/server.h"
 #include "../source/query_processor.h"
-#include "common/test/testtools.h"
+#include "common/test/testing_utility.h"
 
 #include <iostream>
 #include <cassert>

@@ -11,18 +11,27 @@ namespace Answer {
             answer_proto.fields.push_back(letter.from);
             answer_proto.fields.push_back(letter.to);
             answer_proto.fields.push_back(letter.body);
+            answer_proto.fields.push_back(letter.date.AsString());
         }
         return answer_proto.Serialize();
     }
 
     GetMail GetMail::DeserializeTransfer(std::string serialized) {
-        const auto& ans_fields = Protocol::Answer::Deserialize(serialized).fields;
-        assert(ans_fields.size() % 3 == 0);
-        std::vector<Letter> mail(ans_fields.size() / 3);
-        for (size_t letter_i = 0; letter_i < mail.size(); ++letter_i) {
-            mail[letter_i].from = ans_fields[letter_i * 3];
-            mail[letter_i].to = ans_fields[letter_i * 3 + 1];
-            mail[letter_i].body = ans_fields[letter_i * 3 + 2];
+        static constexpr int LETTER_FIELDS_N = 4;
+
+        const auto& ans_fields = Protocol::Answer::Deserialize(std::move(serialized)).fields;
+
+        assert(ans_fields.size() % LETTER_FIELDS_N == 0);
+        size_t n_letters = ans_fields.size() / LETTER_FIELDS_N;
+
+        std::vector<Letter> mail;
+        mail.reserve(n_letters);
+        for (size_t letter_i = 0; letter_i < n_letters; ++letter_i) {
+            mail.emplace_back(ans_fields[letter_i * LETTER_FIELDS_N],
+                              ans_fields[letter_i * LETTER_FIELDS_N + 1],
+                              ans_fields[letter_i * LETTER_FIELDS_N + 2],
+                              Date::ParseFrom(ans_fields[letter_i * LETTER_FIELDS_N + 3]));
+
         }
         return {mail};
     }

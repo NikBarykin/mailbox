@@ -4,6 +4,8 @@
 #include <vector>
 #include <memory>
 
+#include "common/source/date.h"
+
 
 namespace LetterFilter::Token {
     struct Token {
@@ -28,7 +30,7 @@ namespace LetterFilter::Token {
         constexpr int Precedence() const final { return 2; };
     };
 
-    // TODO: "IN" condition (like "Foo" IN body)
+    // TODO: "IN" condition (like "Foo" IN body), It can be named ContainedIn
     struct Equal        : public Condition {};
     struct NotEqual     : public Condition {};
     struct Less         : public Condition {};
@@ -43,10 +45,16 @@ namespace LetterFilter::Token {
 
     struct FromProperty : public Operand {};
     struct BodyProperty : public Operand {};
+    struct DateProperty : public Operand {};
 
     struct StringLiteral : public Operand {
         std::string value;
         explicit StringLiteral(std::string value) : value(std::move(value)) {}
+    };
+
+    struct DateLiteral : public Operand {
+        Date value;
+        explicit DateLiteral(Date value) : value(value) {}
     };
 
     std::vector<TokenHandler> Tokenize(std::string_view filter_str);

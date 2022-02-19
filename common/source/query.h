@@ -9,6 +9,7 @@
 
 namespace Query {
     // TODO: maybe design similarity by inheritance, not by std::variant
+    // TODO: {GetMail} -> {GetMail, GetMailFiltered}
     struct GetMail {
         static inline const std::string name = "GetMail";
         using Answer = Answer::GetMail;

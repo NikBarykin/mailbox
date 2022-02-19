@@ -19,7 +19,8 @@ namespace Query {
 
 
     std::string SendLetter::SerializeForTransfer() const {
-        Protocol::Query query_proto{name, {letter.from, letter.to, letter.body}};
+        Protocol::Query query_proto{name, {
+            letter.from, letter.to, letter.body, letter.date.AsString()}};
         return query_proto.Serialize();
     }
 
@@ -27,7 +28,7 @@ namespace Query {
         auto query_proto = Protocol::Query::Deserialize(serialized_query);
         assert(query_proto.name == name);
         const auto& arguments = query_proto.arguments;
-        return {{arguments[0], arguments[1], arguments[2]}};
+        return {{arguments[0], arguments[1], arguments[2], Date::ParseFrom(arguments[3])}};
     }
 
 
