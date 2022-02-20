@@ -4,19 +4,36 @@
 #include <tuple>
 #include <sstream>
 #include <ctime>
+#include <iomanip>
 
 
 Date::Date(int day, int month, int year):
-day_(day), month_(month), year_(year) {} // TODO: validation
+day_(day), month_(month), year_(year) {
+    if (year < 0) { // TODO: idk maybe <=
+        throw DateError("Bad year: " + std::to_string(year) + " (Years BC aren't allowed)");
+    }
+
+    if (month <= 0 || month > 12) {
+        throw DateError("Bad month: " + std::to_string(month));
+    }
+
+    bool leap_year = year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
+    int month_durations[12] = {31, 28 + leap_year, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+    if (day <= 0 || day > month_durations[month - 1]) {
+        throw DateError("Bad day: " + std::to_string(day));
+    }
+}
 
 std::string Date::AsString() const {
     std::ostringstream oss;
-    oss << day_ << '.' << month_ << '.' << year_;
+    oss << std::setfill('0');
+    oss << std::setw(2) << day_ << '.' << std::setw(2) << month_ << '.' << year_;
     return oss.str();
 }
 
 Date Date::CurrentDate() {
-    time_t now = time(0);
+    time_t now = time(nullptr);
     std::tm* moment = gmtime(&now);
     return {moment->tm_mday, moment->tm_mon + 1, moment->tm_year + 1900};
 }

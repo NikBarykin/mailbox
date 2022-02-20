@@ -1,12 +1,15 @@
 #include "test_server.h"
-#include "server/source/server.h"
-#include "client/source/client_sock.h"
 
 #include <iostream>
 #include <future>
 #include <cassert>
 
+#include "server/source/server.h"
+#include "client/source/client_sock.h"
+#include "common/test/testing_utility.h"
 
+
+// TODO: make normal date testing
 namespace {
     void RunTestServer(size_t n_clients_to_process) {
         Database db;
@@ -44,7 +47,7 @@ namespace {
         Answer::Any ans3 = send_query(a_serv_sock, Query::Authorize{a_name, b_name});
         assert(std::get<Answer::Authorize>(ans3).authorized_login.empty());
 
-        Letter l1{a_name, b_name, "Hey, " + b_name};
+        Letter l1{a_name, b_name, "Hey, " + b_name, "1.1.1"_d};
         Answer::Any ans4 = send_query(a_serv_sock, Query::SendLetter{l1});
         assert(std::holds_alternative<Answer::SendLetter>(ans4));
 
@@ -59,11 +62,11 @@ namespace {
         auto b_mail = std::get<Answer::GetMail>(ans7).mail;
         assert(b_mail == std::vector<Letter>{l1});
 
-        Letter l2{b_name, a_name, "Hey, " + a_name};
+        Letter l2{b_name, a_name, "Hey, " + a_name, "1.1.1"_d};
         Answer::Any ans8 = send_query(b_serv_sock, Query::SendLetter{l2});
         assert(std::holds_alternative<Answer::SendLetter>(ans8));
 
-        Letter l3{b_name, a_name, ":p"};
+        Letter l3{b_name, a_name, ":p", "1.1.1"_d};
         Answer::Any ans9 = send_query(b_serv_sock, Query::SendLetter{l3});
         assert(std::holds_alternative<Answer::SendLetter>(ans9));
 

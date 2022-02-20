@@ -1,10 +1,12 @@
 #include "test_cycle_outcome_processing.h"
-#include "client/source/cycle_outcome_processing.h"
 
 
 #include <iostream>
 #include <cassert>
 #include <sstream>
+
+#include "client/source/cycle_outcome_processing.h"
+#include "common/test/testing_utility.h"
 
 
 namespace {
@@ -17,11 +19,11 @@ namespace {
         };
         process(Query::GetMail{}, Answer::GetMail{});
 
-        Answer::GetMail ans = {{{"a", "Nikita", "c\nd\\e"},
-                                 {"x", "Nikita", "z\nz\n"}}};
+        Answer::GetMail ans = {{"a Nikita c\nd\\e"_l,
+                                "x Nikita z\nz\n"_l}};
         process(Query::GetMail{}, ans);
 
-        process(Query::SendLetter{{"a", "b", "c"}}, Answer::SendLetter{});
+        process(Query::SendLetter{"a b c"_l}, Answer::SendLetter{});
 
         process(Query::GetMail{}, Answer::Error{"Fatal error"});
 
@@ -39,31 +41,24 @@ namespace {
         process(Query::Terminate{}, Answer::Terminate{});
         assert(!sst.running);
 
-        std::string expected_output = R"(Your mailbox is empty
+        std::ostringstream expected_output;
+        expected_output << "Your mailbox is empty\n\n"
+                        << "1.\n"
+                        << "Date: " << Date::CurrentDate().AsString() << '\n'
+                        << "From: a\n"
+                        << "c\nd\\e\n"
+                        << "2.\n"
+                        << "Date: " << Date::CurrentDate().AsString() << '\n'
+                        << "From: x\n"
+                        << "z\nz\n\n\n"
+                        << "Letter sent successfully\n\n"
+                        << "Server error: Fatal error\n\n"
+                        << "Authorized successfully\n\n"
+                        << "Wrong password\n\n"
+                        << "Authorized successfully\n\n"
+                        << "Session terminated\n\n";
 
-From: a
-c
-d\e
----------------
-From: x
-z
-z
-
-
-Letter sent successfully
-
-Server error: Fatal error
-
-Authorized successfully
-
-Wrong password
-
-Authorized successfully
-
-Session terminated
-
-)";
-        assert(output.str() == expected_output);
+        assert(output.str() == expected_output.str());
     }
 }
 

@@ -26,7 +26,6 @@ public:
     static Date ParseFrom(std::string_view);
 };
 
-//std::ostream &operator<<(std::ostream & output, const Date & d);
 
 bool operator==(const Date &lhs, const Date &rhs);
 bool operator!=(const Date &lhs, const Date &rhs);

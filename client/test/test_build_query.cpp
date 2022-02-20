@@ -14,9 +14,8 @@ namespace {
 from == "BestFriend" || body == ":]"
 SendLetter
 BestFriend
-Yo, Bro
-What da dog doin?
-\End-of-letter
+XXX
+
 Authorize
 Biba
 Boba
@@ -29,8 +28,8 @@ InvalidQueryName)");
 
         Query::Any query2 = BuildQuery(input, output, sst);
         assert(std::holds_alternative<Query::SendLetter>(query2));
-        Letter expected_letter{"NikitaKot", "BestFriend", "Yo, Bro\nWhat da dog doin?"};
-        assert(std::get<Query::SendLetter>(query2).letter == expected_letter);
+        Query::Any expected2 = Query::SendLetter{"NikitaKot BestFriend XXX"_l};
+        assert(query2 == expected2);
 
         Query::Any query3 = BuildQuery(input, output, sst);
         assert(std::holds_alternative<Query::Authorize>(query3));
@@ -48,7 +47,7 @@ Letter filter:
 
 Query name:
 Letter addressee:
-Letter body:
+Letter body: (empty line marks end of letter)
 
 Query name:
 Login:

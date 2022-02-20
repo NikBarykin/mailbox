@@ -1,6 +1,4 @@
 #include "test_database.h"
-#include "../source/database.h"
-
 
 #include <iostream>
 #include <cassert>
@@ -8,7 +6,9 @@
 #include <future>
 #include <sstream>
 #include <algorithm>
-// TODO: Generate big tests
+
+#include "../source/database.h"
+#include "common/test/testing_utility.h"
 
 
 namespace {
@@ -24,12 +24,12 @@ namespace {
     }
 
     void TestDatabaseLetterOneThread(Database& db, std::string a_name, std::string b_name, std::string c_name) {
-        std::vector<Letter> letters = {Letter{a_name, b_name, "0"},
-                                       Letter{a_name, b_name, "1"},
-                                       Letter{b_name, a_name, "2"},
-                                       Letter{c_name, b_name, "3"},
-                                       Letter{a_name, c_name, "4"},
-                                       Letter{c_name, b_name, "5"}};
+        std::vector<Letter> letters{{a_name, b_name, "0", "1.1.1"_d},
+                                    {a_name, b_name, "1", "1.1.1"_d},
+                                    {b_name, a_name, "2", "1.1.1"_d},
+                                    {c_name, b_name, "3", "1.1.1"_d},
+                                    {a_name, c_name, "4", "1.1.1"_d},
+                                    {c_name, b_name, "5", "1.1.1"_d}};
 
 
         assert(db.GetMail(db.GetId(a_name)).empty());

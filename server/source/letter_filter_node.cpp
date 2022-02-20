@@ -22,7 +22,7 @@ namespace LetterFilter::Node {
 
     template<>
     std::shared_ptr<Property> MakeProperty<DateLiteral>(Token::TokenHandler token) {
-        return std::make_shared<DateLiteral>(dynamic_cast<Token::DateLiteral&>(*token).value);
+         return std::make_shared<DateLiteral>(dynamic_cast<Token::DateLiteral&>(*token).value);
     }
 
     template<typename ConditionNodeT>
@@ -36,8 +36,8 @@ namespace LetterFilter::Node {
     }
 
     std::shared_ptr<Logical> BuildTree(const std::vector<Token::TokenHandler> &tokens_in_postfix_notation) {
-        using PropertyMaker = std::function<std::shared_ptr<Property>(Token::Token * )>;
-        static const unordered_map<type_index, function<shared_ptr<Property>(Token::TokenHandler)>> property_makers = {
+        using PropertyMaker = std::function<std::shared_ptr<Property>(Token::TokenHandler)>;
+        static const unordered_map<type_index, PropertyMaker> property_makers = {
                 {typeid(Token::FromProperty),  MakeProperty<From>},
                 {typeid(Token::BodyProperty),  MakeProperty<Body>},
                 {typeid(Token::DateProperty),  MakeProperty<LetterDate>},
@@ -50,10 +50,10 @@ namespace LetterFilter::Node {
         static const std::unordered_map<std::type_index, ConditionMaker> condition_makers = {
                 {typeid(Token::Equal),    MakeCondition<Equal>},
                 {typeid(Token::NotEqual), MakeCondition<NotEqual>},
-                {typeid(Token::NotEqual), MakeCondition<Less>},
-                {typeid(Token::NotEqual), MakeCondition<Greater>},
-                {typeid(Token::NotEqual), MakeCondition<LessEqual>},
-                {typeid(Token::NotEqual), MakeCondition<GreaterEqual>},
+                {typeid(Token::Less), MakeCondition<Less>},
+                {typeid(Token::Greater), MakeCondition<Greater>},
+                {typeid(Token::LessEqual), MakeCondition<LessEqual>},
+                {typeid(Token::GreaterEqual), MakeCondition<GreaterEqual>},
         };
 
         using LogicalCombinationMaker = std::function<std::shared_ptr<Logical>(std::shared_ptr<Logical>,

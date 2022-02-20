@@ -1,14 +1,15 @@
 #include "test_session.h"
-#include "client/source/session.h"
-#include "server/source/server_sock.h"
-#include "common/source/query.h"
-#include "client/source/client_sock.h"
-
 
 #include <cassert>
 #include <iostream>
 #include <sstream>
 #include <future>
+
+#include "client/source/session.h"
+#include "server/source/server_sock.h"
+#include "common/source/query.h"
+#include "client/source/client_sock.h"
+#include "common/test/testing_utility.h"
 
 
 namespace {
@@ -16,14 +17,14 @@ namespace {
         std::istringstream input(R"(SendLetter
 B
 C
-\End-of-letter
+
 Authorize
 A
 A
 SendLetter
 B
 C
-\End-of-letter
+
 GetMail
 
 Authorize
@@ -36,7 +37,7 @@ from != "A"
 SendLetter
 A
 D
-\End-of-letter
+
 Authorize
 A
 A
@@ -48,92 +49,74 @@ Terminate
 
         RunSession("localhost", "8080", input, output);
 
-        std::string expected_output = R"(Query name:
-Letter addressee:
-Letter body:
+        std::ostringstream expected_output;
+        expected_output << "Query name:\n"
+                        << "Letter addressee:\n"
+                        << "Letter body: (empty line marks end of letter)\n\n"
+                        << "Server error: Not authorized\n\n"
+                        << "Query name:\n"
+                        << "Login:\n"
+                        << "Password:\n\n"
+                        << "Authorized successfully\n\n"
+                        << "Query name:\n"
+                        << "Letter addressee:\n"
+                        << "Letter body: (empty line marks end of letter)\n\n"
+                        << "Letter sent successfully\n\n"
+                        << "Query name:\n"
+                        << "Letter filter:\n\n"
+                        << "Your mailbox is empty\n\n"
+                        << "Query name:\n"
+                        << "Login:\n"
+                        << "Password:\n\n"
+                        << "Authorized successfully\n\n"
+                        << "Query name:\n"
+                        << "Letter filter:\n\n"
+                        << "1.\n"
+                        << "Date: " << Date::CurrentDate().AsString() << '\n'
+                        << "From: A\n"
+                        << "C\n\n"
+                        << "Query name:\n"
+                        << "Letter filter:\n\n"
+                        << "Your mailbox is empty\n\n"
+                        << "Query name:\n"
+                        << "Letter addressee:\n"
+                        << "Letter body: (empty line marks end of letter)\n\n"
+                        << "Letter sent successfully\n\n"
+                        << "Query name:\n"
+                        << "Login:\n"
+                        << "Password:\n\n"
+                        << "Authorized successfully\n\n"
+                        << "Query name:\n"
+                        << "Letter filter:\n\n"
+                        << "1.\n"
+                        << "Date: " << Date::CurrentDate().AsString() << '\n'
+                        << "From: B\n"
+                        << "D\n\n"
+                        << "Query name:\n\n"
+                        << "Session terminated\n\n";
 
-Server error: Not authorized
-
-Query name:
-Login:
-Password:
-
-Authorized successfully
-
-Query name:
-Letter addressee:
-Letter body:
-
-Letter sent successfully
-
-Query name:
-Letter filter:
-
-Your mailbox is empty
-
-Query name:
-Login:
-Password:
-
-Authorized successfully
-
-Query name:
-Letter filter:
-
-From: A
-C
-
-Query name:
-Letter filter:
-
-Your mailbox is empty
-
-Query name:
-Letter addressee:
-Letter body:
-
-Letter sent successfully
-
-Query name:
-Login:
-Password:
-
-Authorized successfully
-
-Query name:
-Letter filter:
-
-From: B
-D
-
-Query name:
-
-Session terminated
-
-)";
-        assert(output.str() == expected_output);
+        assert(output.str() == expected_output.str());
     }
 
     void ServerTest() {
         Socket::Listener listen_sock("8080");
         Socket::Client client_sock = listen_sock.Accept();
 
-        auto query1 = Query::DeserializeTransfer(client_sock.Recv());
-        assert(std::holds_alternative<Query::SendLetter>(query1));
-        assert(std::get<Query::SendLetter>(query1).letter == Letter({"", "B", "C"}));
+        Query::Any query1 = Query::DeserializeTransfer(client_sock.Recv());
+        Query::Any expected1 = Query::SendLetter{" B C"_l};
+        assert(query1 == expected1);
 
         client_sock.Send(Answer::Error{"Not authorized"}.SerializeForTransfer());
 
-        auto query2 = Query::DeserializeTransfer(client_sock.Recv());
-        assert(std::holds_alternative<Query::Authorize>(query2));
-        auto [login2, password2] = std::get<Query::Authorize>(query2);
-        assert(login2 == "A" && password2 == "A");
+        Query::Any query2 = Query::DeserializeTransfer(client_sock.Recv());
+        Query::Any expected2 = Query::Authorize{"A", "A"};
+        assert(query2 == expected2);
 
         client_sock.Send(Answer::Authorize{"A"}.SerializeForTransfer());
 
-        auto query3 = Query::DeserializeTransfer(client_sock.Recv());
-        assert(std::holds_alternative<Query::SendLetter>(query3));
-        assert(std::get<Query::SendLetter>(query3).letter == Letter({"A", "B", "C"}));
+        Query::Any query3 = Query::DeserializeTransfer(client_sock.Recv());
+        Query::Any expected3 = Query::SendLetter{"A B C"_l};
+        assert(query3 == expected3);
 
         client_sock.Send(Answer::SendLetter{}.SerializeForTransfer());
 
@@ -142,40 +125,38 @@ Session terminated
 
         client_sock.Send(Answer::GetMail{}.SerializeForTransfer());
 
-        auto query5 = Query::DeserializeTransfer(client_sock.Recv());
-        assert(std::holds_alternative<Query::Authorize>(query5));
-        auto [login5, password5] = std::get<Query::Authorize>(query5);
-        assert(login5 == "B" && password5 == "B");
+        Query::Any query5 = Query::DeserializeTransfer(client_sock.Recv());
+        Query::Any expected5 = Query::Authorize{"B", "B"};
+        assert(query5 == expected5);
 
         client_sock.Send(Answer::Authorize{"B"}.SerializeForTransfer());
 
         auto query6 = Query::DeserializeTransfer(client_sock.Recv());
         assert(std::holds_alternative<Query::GetMail>(query6));
 
-        client_sock.Send(Answer::GetMail{{{"A", "B", "C"}}}.SerializeForTransfer());
+        client_sock.Send(Answer::GetMail{{"A B C"_l}}.SerializeForTransfer());
 
         auto query6_2 = Query::DeserializeTransfer(client_sock.Recv());
         assert(std::get<Query::GetMail>(query6_2).letter_filter == "from != \"A\"");
 
         client_sock.Send(Answer::GetMail{{}}.SerializeForTransfer());
 
-        auto query7 = Query::DeserializeTransfer(client_sock.Recv());
-        assert(std::holds_alternative<Query::SendLetter>(query7));
-        assert(std::get<Query::SendLetter>(query7).letter == Letter({"B", "A", "D"}));
+        Query::Any query7 = Query::DeserializeTransfer(client_sock.Recv());
+        Query::Any expected7 = Query::SendLetter{"B A D"_l};
+        assert(query7 == expected7);
 
         client_sock.Send(Answer::SendLetter{}.SerializeForTransfer());
 
-        auto query8 = Query::DeserializeTransfer(client_sock.Recv());
-        assert(std::holds_alternative<Query::Authorize>(query8));
-        auto [login8, password8] = std::get<Query::Authorize>(query8);
-        assert(login8 == "A" && password8 == "A");
+        Query::Any query8 = Query::DeserializeTransfer(client_sock.Recv());
+        Query::Any expected8 = Query::Authorize{"A", "A"};
+        assert(query8 == expected8);
 
         client_sock.Send(Answer::Authorize{"A"}.SerializeForTransfer());
 
         auto query9 = Query::DeserializeTransfer(client_sock.Recv());
         assert(std::holds_alternative<Query::GetMail>(query9));
 
-        client_sock.Send(Answer::GetMail{{{"B", "A", "D"}}}.SerializeForTransfer());
+        client_sock.Send(Answer::GetMail{{"B A D"_l}}.SerializeForTransfer());
 
         auto query10 = Query::DeserializeTransfer(client_sock.Recv());
         assert(std::holds_alternative<Query::Terminate>(query10));

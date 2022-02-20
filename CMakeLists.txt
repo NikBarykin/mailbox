@@ -27,7 +27,11 @@ add_executable(test_common common/test/main.cpp server/source/server_sock.cpp se
         common/test/testing_utility.h common/test/test_protocol.cpp common/test/test_protocol.h common/test/test_socket.cpp
         common/test/test_socket.h common/test/test_query.cpp common/test/test_query.h
         common/source/query.h common/source/query.cpp common/test/test_answer.cpp common/test/test_answer.h
-        common/source/answer.h common/source/answer.cpp common/source/huffman_compression.cpp common/source/huffman_compression.h common/test/test_huffman_compression.cpp common/test/test_huffman_compression.h common/source/date.cpp common/source/date.h)
+        common/source/answer.h common/source/answer.cpp
+        common/source/huffman_compression.cpp common/source/huffman_compression.h
+        common/test/test_huffman_compression.cpp common/test/test_huffman_compression.h
+        common/source/date.cpp common/source/date.h
+        common/test/test_letter.cpp common/test/test_letter.h)
 target_link_libraries(test_common wsock32 ws2_32)
 
 
@@ -44,11 +48,18 @@ add_executable(test_server server/test/main.cpp server/test/test_database.h serv
         common/source/socket.h common/source/socket.cpp
         client/source/client_sock.h client/source/client_sock.cpp
         server/source/server_sock.h server/source/server_sock.cpp
-        common/source/query.h common/source/query.cpp common/source/huffman_compression.cpp common/source/huffman_compression.h server/source/letter_filter.cpp server/source/letter_filter.h server/source/letter_filter_token.cpp server/source/letter_filter_token.h server/source/letter_filter_node.cpp server/source/letter_filter_node.h server/test/test_letter_filter.cpp server/test/test_letter_filter.h common/source/date.cpp common/source/date.h)
+        common/source/query.h common/source/query.cpp
+        common/source/huffman_compression.cpp common/source/huffman_compression.h
+        server/source/letter_filter.cpp server/source/letter_filter.h
+        server/source/letter_filter_token.cpp server/source/letter_filter_token.h
+        server/source/letter_filter_node.cpp server/source/letter_filter_node.h
+        server/test/test_letter_filter.cpp server/test/test_letter_filter.h
+        common/source/date.cpp common/source/date.h)
 target_link_libraries(test_server wsock32 ws2_32)
 
 
 add_executable(test_client client/test/main.cpp client/test/test_build_query.cpp client/test/test_build_query.h
+        common/test/testing_utility.cpp common/test/testing_utility.h
         common/source/letter.h common/source/letter.cpp
         client/test/test_cycle_outcome_processing.cpp client/test/test_cycle_outcome_processing.h
         client/test/test_session.cpp client/test/test_session.h

@@ -60,6 +60,7 @@ namespace LetterFilter::Token {
 
             // String literal
             if (char start_ch = filter_str.front(); start_ch == '\"' || start_ch == '\'') {
+                filter_str.remove_prefix(1);
                 bool escape = false;
                 std::string literal_value;
                 while (true) {
@@ -79,9 +80,11 @@ namespace LetterFilter::Token {
                     literal_value.push_back(cur_ch);
                 }
                 resulting_tokens.push_back(std::make_shared<StringLiteral>(std::move(literal_value)));
-            } else { // Date literal
-                std::regex date_regex{"(" + std::string(Date::regex) + ").*"};
+            } else { // Date literal or invalid token
+                // [\s\S] means any character including newline ('.' doesn't match newline)
+                std::regex date_regex{"(" + std::string(Date::regex) + ")[\\s\\S]*"};
                 std::match_results<std::string_view::const_iterator> match_res;
+
                 if (!std::regex_match(filter_str.cbegin(), filter_str.cend(), match_res, date_regex)) {
                     throw ParseError("Failed to parse heading token from suffix: " + std::string(filter_str));
                 }
