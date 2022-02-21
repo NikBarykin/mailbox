@@ -10,7 +10,7 @@
 namespace {
     void Test() {
         SessionState sst{.user_login = "NikitaKot"};
-        std::istringstream input(R"(GetMail
+        std::istringstream input(R"(GetMailFiltered
 from == "BestFriend" || body == ":]"
 SendLetter
 BestFriend
@@ -20,6 +20,7 @@ Authorize
 Biba
 Boba
 Terminate
+GetMail
 InvalidQueryName)");
         std::ostringstream output;
 
@@ -39,6 +40,8 @@ InvalidQueryName)");
         Query::Any query4 = BuildQuery(input, output, sst);
         assert(std::holds_alternative<Query::Terminate>(query4));
 
+        Query::Any query5 = BuildQuery(input, output, sst);
+        assert(query5 == Query::Any{Query::GetMail{""}});
         // Input is empty
         ASSERT_THROWS(BuildQuery(input, output, sst), std::exception);
 
@@ -52,6 +55,8 @@ Letter body: (empty line marks end of letter)
 Query name:
 Login:
 Password:
+
+Query name:
 
 Query name:
 

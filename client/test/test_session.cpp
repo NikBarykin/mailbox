@@ -25,14 +25,14 @@ SendLetter
 B
 C
 
-GetMail
+GetMailFiltered
 
 Authorize
 B
 B
-GetMail
+GetMailFiltered
 from == "A"
-GetMail
+GetMailFiltered
 from != "A"
 SendLetter
 A
@@ -41,7 +41,7 @@ D
 Authorize
 A
 A
-GetMail
+GetMailFiltered
 body == "D"
 Terminate
 )");

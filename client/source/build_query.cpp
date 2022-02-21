@@ -9,6 +9,11 @@
 namespace {
     Query::Any BuildGetMail(std::istream & input, std::ostream & output,
                             const SessionState & session_state) {
+        return Query::GetMail{};
+    }
+
+    Query::Any BuildGetMailFiltered(std::istream & input, std::ostream & output,
+                            const SessionState & session_state) {
         Query::GetMail query;
         output << "Letter filter:" << std::endl;
         std::getline(input, query.letter_filter);
@@ -69,10 +74,11 @@ Query::Any BuildQuery(std::istream & input, std::ostream & output,
             std::istream &, std::ostream &, const SessionState &)>;
     // Not unordered_map because I want map keys to be in specified order
     static const std::map<std::string, QueryBuilder> query_builders{
-            {Query::GetMail::name,    BuildGetMail},
-            {Query::SendLetter::name, BuildSendLetter},
-            {Query::Authorize::name,  BuildAuthorize},
-            {Query::Terminate::name,  BuildTerminate},
+            {"GetMail"          , BuildGetMail},
+            {"GetMailFiltered"  , BuildGetMailFiltered},
+            {"SendLetter"       , BuildSendLetter},
+            {"Authorize"        , BuildAuthorize},
+            {"Terminate"        , BuildTerminate},
     };
 
     std::string query_name;
