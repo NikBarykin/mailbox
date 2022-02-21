@@ -8,8 +8,6 @@
 using namespace std;
 
 namespace LetterFilter::Node {
-    Node::~Node() = default;
-
     template<typename PropertyNodeT>
     std::shared_ptr<Property> MakeProperty(Token::TokenHandler) {
         return std::make_shared<PropertyNodeT>();
@@ -54,6 +52,7 @@ namespace LetterFilter::Node {
                 {typeid(Token::Greater), MakeCondition<Greater>},
                 {typeid(Token::LessEqual), MakeCondition<LessEqual>},
                 {typeid(Token::GreaterEqual), MakeCondition<GreaterEqual>},
+                {typeid(Token::ContainedIn), MakeCondition<ContainedIn>},
         };
 
         using LogicalCombinationMaker = std::function<std::shared_ptr<Logical>(std::shared_ptr<Logical>,

@@ -11,6 +11,7 @@ namespace LetterFilter::Token {
     struct Token {
         virtual ~Token() = 0;
     };
+    inline Token::~Token() = default;
 
     using TokenHandler = std::shared_ptr<Token>;
 
@@ -30,13 +31,13 @@ namespace LetterFilter::Token {
         constexpr int Precedence() const final { return 2; };
     };
 
-    // TODO: "IN" condition (like "Foo" IN body), It can be named ContainedIn
     struct Equal        : public Condition {};
     struct NotEqual     : public Condition {};
     struct Less         : public Condition {};
     struct Greater      : public Condition {};
     struct LessEqual    : public Condition {};
     struct GreaterEqual : public Condition {};
+    struct ContainedIn  : public Condition {};
 
     struct Operand : public Token {};
 

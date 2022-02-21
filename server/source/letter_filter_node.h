@@ -1,18 +1,20 @@
 #pragma once
 
-#include "common/source/letter.h"
-#include "letter_filter_token.h"
-
 #include <memory>
 #include <functional>
 #include <any>
 #include <variant>
+
+#include "common/source/letter.h"
+#include "letter_filter_token.h"
+#include "letter_filter.h"
 
 
 namespace LetterFilter::Node {
     struct Node {
         virtual ~Node() = 0;
     };
+    inline Node::~Node() = default;
 
     using NodeHandler = std::shared_ptr<Node>;
     using PropertyT = std::variant<std::string, Date>;
@@ -102,6 +104,29 @@ namespace LetterFilter::Node {
     using Greater      = Condition<std::greater<>>;
     using LessEqual    = Condition<std::less_equal<>>;
     using GreaterEqual = Condition<std::greater_equal<>>;
+
+    struct ContainedInVisitor {
+        template<typename T>
+        bool operator()(const T &source, const T &target) const {
+            throw ExecutionError("ContainedIn isn't allowed for type: " + std::string{typeid(T).name()});
+        }
+        //        {
+//            return target.contains(source);
+//        }
+    };
+    template<>
+    inline bool ContainedInVisitor::operator()<std::string>(const std::string &source,
+                                                            const std::string &target) const {
+            return target.contains(source);
+    }
+//
+//    template<>
+//    bool ContainedInVisitor::operator()<std::string>(const std::string &source,
+//                                                     const std::string &target) const {
+//        return target.contains(source);
+//    }
+
+    using ContainedIn = Condition<ContainedInVisitor>;
 
     std::shared_ptr<Logical> BuildTree(const std::vector<Token::TokenHandler> &tokens_in_postfix_notation);
 }

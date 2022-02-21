@@ -13,8 +13,10 @@ namespace LetterFilter {
         explicit ParseError(const std::string &msg)
         : std::runtime_error(msg) {}
     };
-    struct ExecutionError : public std::runtime_error {
 
+    struct ExecutionError : public std::runtime_error {
+        explicit ExecutionError(const std::string &msg)
+        : std::runtime_error(msg) {}
     };  // throw if we, for example use condition with invalid types (like ContainedIn with dates)
         // or checking date condition on letter with unspecified date
 

@@ -8,8 +8,6 @@
 
 
 namespace LetterFilter::Token {
-    Token::~Token() = default;
-
     template<class TokenType>
     TokenHandler MakeToken() {
         return std::make_shared<TokenType>();
@@ -25,18 +23,13 @@ namespace LetterFilter::Token {
                 {">" , MakeToken<Greater>},
                 {"<=", MakeToken<LessEqual>},
                 {">=", MakeToken<GreaterEqual>},
+                {"IN", MakeToken<ContainedIn>}, // TODO: maybe lowercase
                 {"(" , MakeToken<LeftParenthesis>},
                 {")" , MakeToken<RightParenthesis>},
                 {"from", MakeToken<FromProperty>},
                 {"body", MakeToken<BodyProperty>},
                 {"date", MakeToken<DateProperty>},
         };
-
-//        static const std::unordered_map<std::string, std::function<TokenHandler()>> property_tokens = {
-//                {"from", MakeToken<FromProperty>},
-//                {"body", MakeToken<BodyProperty>},
-//                {"date", MakeToken<DateProperty>},
-//        };
 
         std::vector<TokenHandler> resulting_tokens;
 

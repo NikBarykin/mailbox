@@ -10,14 +10,17 @@
 
 
 namespace {
+    // TODO: test exceptions
     void TestGeneral() {
 
         auto filter = LetterFilter::ParseFilter(R"((from == "A"          && body == "B")
                                                 || (body == "X"          && date < 11.04.2013)
-                                                || (date >= 12.12.2012   && from > "D"))");
+                                                || (date >= 12.12.2012   && from > "D")
+                                                || "SUS" IN body)");
         Letter valid_letters[] = {{"A", "_", "B", {10, 03, 2100}},
                                   {"C", "_", "X", {10, 04, 2013}},
-                                  {"E", "_", "Z", {12, 12, 2012}}};
+                                  {"E", "_", "Z", {12, 12, 2012}},
+                                  {"D", "_", "AMOGSUS", {11, 11, 2011}}};
 
         for (Letter valid : valid_letters) {
             assert(filter(valid));
@@ -25,7 +28,8 @@ namespace {
 
         Letter invalid_letters[] = {{"B", "_", "C", {9, 9, 2003}},
                                     {"A", "_", "X", {11, 04, 2013}},
-                                    {"X", "_", "Z", {11, 12, 2012}}};
+                                    {"X", "_", "Z", {11, 12, 2012}},
+                                    {"D", "_", "S U S", {05, 05, 2005}}};
 
         for (Letter invalid : invalid_letters) {
             assert(!filter(invalid));
