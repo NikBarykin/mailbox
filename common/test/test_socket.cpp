@@ -1,12 +1,14 @@
 #include "test_socket.h"
-#include "common/source/socket.h"
-#include "server/source/server_sock.h"
-#include "client/source/client_sock.h"
 
 #include <cassert>
 #include <future>
 #include <vector>
 #include <iostream>
+
+#include "common/source/socket.h"
+#include "server/source/server_sock.h"
+#include "client/source/client_sock.h"
+#include "testing_utility.h"
 
 
 namespace {
@@ -39,15 +41,21 @@ namespace {
         assert(server_sock.Recv() == "Compressed message to client");
     }
 
-    void Test() {
+    void TestGeneral() {
         std::future<void> server_fut = std::async(TestServerOneThread);
         TestClientOneThread();
         server_fut.get();
+    }
+
+    void TestExceptions() {
+        // Connection failed
+        ASSERT_THROWS(Socket::Server("localhost", "1234"), Socket::SocketError);
     }
 }
 
 
 void TestSocket() {
-    Test();
+    TestGeneral();
+    TestExceptions();
     std::cerr << "TestSocket: OK" << std::endl;
 }

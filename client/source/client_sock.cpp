@@ -11,13 +11,13 @@ namespace Socket {
         hints.ai_protocol = sock_args.protocol;
         int i_result = getaddrinfo(nodename.c_str(), servname.c_str(), &hints, &addr_info);
         if (i_result != 0) {
-            throw std::runtime_error("getaddrinfo failed: " + std::to_string(i_result));
+            throw SocketError("getaddrinfo failed: " + std::to_string(i_result));
         }
         SOCKET connect_sock = INVALID_SOCKET;
         for (addrinfo* ptr = addr_info; ptr != nullptr && connect_sock == INVALID_SOCKET; ptr = ptr->ai_next) {
             connect_sock = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
             if (connect_sock == INVALID_SOCKET) {
-                throw std::runtime_error("socket failed: " + std::to_string(WSAGetLastError()));
+                throw SocketError("socket failed: " + std::to_string(WSAGetLastError()));
             }
             i_result = connect(connect_sock, ptr->ai_addr, ptr->ai_addrlen);
             if (i_result == SOCKET_ERROR) {
@@ -27,7 +27,7 @@ namespace Socket {
         }
         freeaddrinfo(addr_info);
         if (connect_sock == INVALID_SOCKET) {
-            throw std::runtime_error("failed to connect");
+            throw SocketError("failed to connect");
         }
         return connect_sock;
     }
