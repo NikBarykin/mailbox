@@ -35,7 +35,8 @@ namespace Answer {
 do {                                            \
     try {                                       \
         expression;                             \
-        assert(false);                          \
+        std::cerr << #expression << " doesn't throw " << #exception << std::endl; \
+        assert(false);                                            \
     } catch (exception&) {}                     \
 } while (false)
 

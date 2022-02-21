@@ -4,6 +4,8 @@
 #include <functional>
 #include <any>
 #include <variant>
+#include <sstream>
+#include <iostream>
 
 #include "common/source/letter.h"
 #include "letter_filter_token.h"
@@ -87,12 +89,16 @@ namespace LetterFilter::Node {
 
     public:
         Condition(std::shared_ptr<Property> left, std::shared_ptr<Property> right)
-        : left(left), right(right) {}
+        : left(std::move(left)), right(std::move(right)) {}
 
         bool Evaluate(const Letter &letter) const final {
             PropertyT lhs = left->GetProperty(letter);
             PropertyT rhs = right->GetProperty(letter);
             return std::visit<bool>([this, &rhs]<typename PT>(const PT &lhs) {
+                if (!std::holds_alternative<PT>(rhs)) {
+                    // TODO: name lhs and rhs types
+                    throw ExecutionError("Operand types differ");
+                }
                 return this->visitor(lhs, std::get<PT>(rhs));
             }, lhs);
         }
@@ -110,21 +116,13 @@ namespace LetterFilter::Node {
         bool operator()(const T &source, const T &target) const {
             throw ExecutionError("ContainedIn isn't allowed for type: " + std::string{typeid(T).name()});
         }
-        //        {
-//            return target.contains(source);
-//        }
     };
+
     template<>
     inline bool ContainedInVisitor::operator()<std::string>(const std::string &source,
                                                             const std::string &target) const {
             return target.contains(source);
     }
-//
-//    template<>
-//    bool ContainedInVisitor::operator()<std::string>(const std::string &source,
-//                                                     const std::string &target) const {
-//        return target.contains(source);
-//    }
 
     using ContainedIn = Condition<ContainedInVisitor>;
 

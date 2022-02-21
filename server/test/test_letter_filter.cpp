@@ -10,7 +10,6 @@
 
 
 namespace {
-    // TODO: test exceptions
     void TestGeneral() {
 
         auto filter = LetterFilter::ParseFilter(R"((from == "A"          && body == "B")
@@ -34,13 +33,6 @@ namespace {
         for (Letter invalid : invalid_letters) {
             assert(!filter(invalid));
         }
-//
-//        auto filter = LetterFilter::ParseFilter(R"((from == "Nikita" && body == "AMOGUS")
-//                                                  || (from == "Akim" && body == "SUS"))");
-//        assert(filter("Nikita 1 AMOGUS"_l));
-//        assert(!filter("Akim 2 AMOGUS"_l));
-//        assert(filter("Akim 3 SUS"_l));
-//        assert(!filter("Nikita 4 SUS"_l));
     }
 
     void TestExtreme() {
@@ -51,10 +43,35 @@ namespace {
             assert(kind_filter(l));
         }
     }
+
+    void TestExceptions() {
+        std::string parse_error_filters[] = {"\'StringLiteral\"",
+                                             "AMOGUS",
+                                             "from body",
+                                             "from < <",
+                                             "body == \'Bad right parenthesis\')",
+                                             "(body != \'Bad left parenthesis\'",
+                                             "\'Literal can not be transformed to logical node\'"};
+
+        for (const auto &bad_filter_str : parse_error_filters) {
+            ASSERT_THROWS(LetterFilter::ParseFilter(bad_filter_str),
+                          LetterFilter::ParseError);
+        }
+
+        std::string execution_error_filters[] = {"\'Different literal types\' == 11.09.2002",
+                                                 "date IN 21.03.2003"};
+
+        for (const auto &bad_filter_str : execution_error_filters) {
+            auto bad_filter = LetterFilter::ParseFilter(bad_filter_str);
+            ASSERT_THROWS(bad_filter(GenRandomLetter(123)), LetterFilter::ExecutionError);
+        }
+    }
 }
+
 
 void TestLetterFilter() {
     TestGeneral();
     TestExtreme();
+    TestExceptions();
     std::cerr << "TestLetterFilter: OK" << std::endl;
 }

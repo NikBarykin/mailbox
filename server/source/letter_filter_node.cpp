@@ -84,16 +84,16 @@ namespace LetterFilter::Node {
                 assert(left && right);
                 nodes.push(logical_combination_makers.at(token_type)(left, right));
             } else {
-                throw std::runtime_error(std::string("Bad token type: ") + token_type.name());
+                throw ParseError(std::string("Bad token type: ") + token_type.name());
             }
         }
 
         if (nodes.size() != 1) {
-            throw std::runtime_error("Failed to build one node from token sequence");
+            throw ParseError("Failed to build one node from token sequence");
         }
         auto tree = std::dynamic_pointer_cast<Logical>(nodes.top());
         if (!tree) {
-            throw std::runtime_error("Failed to build logical node from token sequence");
+            throw ParseError("Failed to build logical node from token sequence");
         }
         return tree;
     }
