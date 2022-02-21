@@ -1,11 +1,13 @@
 #include "test_huffman_compression.h"
-#include "common/source/huffman_compression.h"
 
 #include <iostream>
 #include <random>
 #include <string>
 #include <cassert>
 #include <numeric>
+
+#include "common/source/huffman_compression.h"
+#include "common/test/testing_utility.h"
 
 
 namespace {
@@ -14,11 +16,6 @@ namespace {
         if (conversed_str != str) {
             throw std::runtime_error("Huffman compression failed!\n" + conversed_str + "isn't equal to initial string + " + str);
         }
-//        assert(Huffman::PerformDecompression(Huffman::PerformCompression(str)) == str);
-    }
-
-    std::string CompressAndDecompress(const std::string & str) {
-        return Huffman::PerformDecompression(Huffman::PerformCompression(str));
     }
 
     void TestGeneral() {
@@ -40,11 +37,16 @@ namespace {
         std::iota(every_character.begin(), every_character.end(), 0);
         CheckCompressionAndDecompression(every_character);
     }
+
+    void TestException() {
+        ASSERT_THROWS(Huffman::PerformDecompression("RANDOMSTRING"), Huffman::Error);
+    }
 }
 
 
 void TestHuffmanCompression() {
     TestGeneral();
     TestExtreme();
+    TestException();
     std::cerr << "TestHuffmanCompression: OK" << std::endl;
 }

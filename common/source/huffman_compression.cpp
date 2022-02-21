@@ -118,7 +118,7 @@ namespace {
 
     char ReadCharFromBits(std::list<bool> & bits) {
         if (bits.size() < CHAR_BIT) {
-            throw std::runtime_error("Too few bits to form a char: " + std::to_string(bits.size()));
+            throw Huffman::Error("Too few bits to form a char: " + std::to_string(bits.size()));
         }
         char extracted_char = 0;
         for (size_t i = 0; i < CHAR_BIT; ++i) {
@@ -129,7 +129,7 @@ namespace {
 
     std::shared_ptr<Node> DecompressTree(std::list<bool> & bits) {
         if (bits.empty()) {
-            throw std::runtime_error("Failed to decompress tree, not enough bits");
+            throw Huffman::Error("Failed to decompress tree, not enough bits");
         }
         if (ExtractFirstBit(bits)) {
             char ch = ReadCharFromBits(bits);
