@@ -15,9 +15,9 @@ Answer::Any QueryProcessor::operator()(Query::GetMail query) {
         auto mail = db_.GetMail(*session_state_.user_id, query.letter_filter);
         result = Query::GetMail::Answer{std::move(mail)};
     } catch (const LetterFilter::ParseError& e) {
-        result = Answer::Error{std::string("Failed to parse filter: ") + e.what()};
+        result = Answer::Error{std::string("Failed to parse filter (") + e.what() + ')'};
     } catch (const LetterFilter::ExecutionError& e) {
-        result = Answer::Error{std::string("Filter execution failed: ") + e.what()};
+        result = Answer::Error{std::string("Filter execution failed (") + e.what() + ')'};
     }
 
     return result;

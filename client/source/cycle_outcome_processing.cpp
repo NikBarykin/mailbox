@@ -5,7 +5,7 @@ namespace {
     void Process(const Query::GetMail&, Query::GetMail::Answer answer,
                  SessionState &, std::ostream & output) {
         if (answer.mail.empty()) {
-            output << " No mail found\n";
+            output << "No mail found\n";
             return;
         }
         for (size_t letter_i = 0; letter_i < answer.mail.size(); ++letter_i) {

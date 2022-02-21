@@ -3,14 +3,13 @@
 #include <memory>
 #include <unordered_map>
 #include <set>
-#include <queue>
 #include <forward_list>
 #include <list>
 #include <stdexcept>
 #include <cassert>
+#include <climits>
 
 
-// TODO: prettify
 namespace {
     using CompressionRule = std::unordered_map<char, std::list<bool>>;
 
