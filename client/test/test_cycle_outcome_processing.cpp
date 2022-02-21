@@ -42,7 +42,7 @@ namespace {
         assert(!sst.running);
 
         std::ostringstream expected_output;
-        expected_output << "Your mailbox is empty\n\n"
+        expected_output << " No mail found\n\n"
                         << "1.\n"
                         << "Date: " << Date::CurrentDate().AsString() << '\n'
                         << "From: a\n"
