@@ -30,8 +30,15 @@ namespace {
         assert(std::is_permutation(res3.begin(), res3.end(), ls.begin()));
 
         Answer::Any ans4 = query_processor(Query::GetMail{R"((from == "b" && body != "x") || from == "c")"});
-        auto res4 = std::get<Answer::GetMail>(ans4).mail;
-        assert(res4 == std::vector<Letter>{ls[1]});
+        Answer::Any expected4 = Answer::GetMail{{ls[1]}};
+        assert(ans4 == expected4);
+
+        // Invalid filters
+        Answer::Any ans5 = query_processor(Query::GetMail{"RANDOMTEXT"});
+        assert(std::holds_alternative<Answer::Error>(ans5));
+
+        Answer::Any ans6 = query_processor(Query::GetMail{"06.07.100 < body"});
+        assert(std::holds_alternative<Answer::Error>(ans6));
     }
 
     void TestSendLetterProcessing() {

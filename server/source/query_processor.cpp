@@ -1,4 +1,5 @@
 #include "query_processor.h"
+#include "letter_filter.h"
 
 
 QueryProcessor::QueryProcessor(Database &db, SessionState &session_state)
@@ -8,7 +9,18 @@ Answer::Any QueryProcessor::operator()(Query::GetMail query) {
     if (!session_state_.user_id) {
         return Answer::Error{"Not authorized"};
     }
-    return Query::GetMail::Answer{db_.GetMail(*session_state_.user_id, query.letter_filter)};
+    Answer::Any result;
+
+    try {
+        auto mail = db_.GetMail(*session_state_.user_id, query.letter_filter);
+        result = Query::GetMail::Answer{std::move(mail)};
+    } catch (const LetterFilter::ParseError& e) {
+        result = Answer::Error{std::string("Failed to parse filter: ") + e.what()};
+    } catch (const LetterFilter::ExecutionError& e) {
+        result = Answer::Error{std::string("Filter execution failed: ") + e.what()};
+    }
+
+    return result;
 }
 
 // TODO: maybe forbid sending letter to yourself
