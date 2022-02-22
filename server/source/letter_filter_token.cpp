@@ -23,7 +23,7 @@ namespace LetterFilter::Token {
                 {">" , MakeToken<Greater>},
                 {"<=", MakeToken<LessEqual>},
                 {">=", MakeToken<GreaterEqual>},
-                {"IN", MakeToken<ContainedIn>}, // TODO: maybe lowercase
+                {"in", MakeToken<ContainedIn>},
                 {"(" , MakeToken<LeftParenthesis>},
                 {")" , MakeToken<RightParenthesis>},
                 {"from", MakeToken<FromProperty>},
