@@ -41,7 +41,7 @@ namespace LetterFilter::Token {
 
             std::string_view largest_token;
             for (const auto &[token_str, _]: constant_tokens) {
-                if (token_str.size() > largest_token.size() && filter_str.starts_with(token_str)) {
+                if (token_str.size() > largest_token.size() && filter_str.substr(0, token_str.size()) == token_str) {
                     largest_token = token_str;
                 }
             }
