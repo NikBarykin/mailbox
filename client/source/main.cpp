@@ -6,7 +6,11 @@
 
 int main(int argc, char* argv[]) {
     WSALib wsa_lib;
-    // TODO: throw exception in case of invalid number of command-line arguments
+    if (argc != 3) {
+        std::cout << "Wrong number of command-line arguments, "
+                     "should be 2 (nodename, servname)" << std::endl;
+        return 0;
+    }
     RunSession(argv[1], argv[2], std::cin, std::cout);
     return 0;
 }

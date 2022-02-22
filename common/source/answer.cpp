@@ -27,11 +27,10 @@ namespace Answer {
         std::vector<Letter> mail;
         mail.reserve(n_letters);
         for (size_t letter_i = 0; letter_i < n_letters; ++letter_i) {
-            mail.emplace_back(ans_fields[letter_i * LETTER_FIELDS_N],
-                              ans_fields[letter_i * LETTER_FIELDS_N + 1],
-                              ans_fields[letter_i * LETTER_FIELDS_N + 2],
-                              Date::ParseFrom(ans_fields[letter_i * LETTER_FIELDS_N + 3]));
-
+            mail.push_back({ans_fields[letter_i * LETTER_FIELDS_N],
+                            ans_fields[letter_i * LETTER_FIELDS_N + 1],
+                            ans_fields[letter_i * LETTER_FIELDS_N + 2],
+                            Date::ParseFrom(ans_fields[letter_i * LETTER_FIELDS_N + 3])});
         }
         return {mail};
     }

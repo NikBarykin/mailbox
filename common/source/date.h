@@ -8,7 +8,7 @@ struct DateError : public std::runtime_error {
     explicit DateError(const std::string &msg)
              : std::runtime_error(msg) {}
 };
-// TODO:
+
 class Date {
     int day_, month_, year_;
 public:
