@@ -1,5 +1,4 @@
 #include "build_query.h"
-#include "common/source/utils.h"
 
 #include <unordered_map>
 #include <functional>

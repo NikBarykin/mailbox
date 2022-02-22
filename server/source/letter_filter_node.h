@@ -94,12 +94,11 @@ namespace LetterFilter::Node {
         bool Evaluate(const Letter &letter) const final {
             PropertyT lhs = left->GetProperty(letter);
             PropertyT rhs = right->GetProperty(letter);
-            return std::visit<bool>([this, &rhs]<typename PT>(const PT &lhs) {
-                if (!std::holds_alternative<PT>(rhs)) {
-                    // TODO: name lhs and rhs types
-                    throw ExecutionError("Operand types differ");
-                }
-                return this->visitor(lhs, std::get<PT>(rhs));
+            if (lhs.index() != rhs.index()) {
+                throw ExecutionError("Operand types differ");
+            }
+            return std::visit([this, &rhs](auto lhs) {
+                return this->visitor(lhs, std::get<decltype(lhs)>(rhs));
             }, lhs);
         }
     };
@@ -114,14 +113,14 @@ namespace LetterFilter::Node {
     struct ContainedInVisitor {
         template<typename T>
         bool operator()(const T &source, const T &target) const {
-            throw ExecutionError("ContainedIn isn't allowed for type: " + std::string{typeid(T).name()});
+            throw ExecutionError(std::string{"ContainedIn isn't allowed for type: "} + typeid(T).name());
         }
     };
 
     template<>
     inline bool ContainedInVisitor::operator()<std::string>(const std::string &source,
                                                             const std::string &target) const {
-            return target.contains(source);
+        return target.find(source) != std::string::npos;
     }
 
     using ContainedIn = Condition<ContainedInVisitor>;

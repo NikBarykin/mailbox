@@ -16,19 +16,19 @@ namespace LetterFilter::Token {
     using TokenHandler = std::shared_ptr<Token>;
 
     struct Operator : public Token {
-        constexpr virtual int Precedence() const = 0;
+        virtual int Precedence() const = 0;
     };
 
     struct LogicalAnd : public Operator {
-        constexpr int Precedence() const final { return 1; };
+        int Precedence() const final { return 1; };
     };
 
     struct LogicalOr : public Operator {
-        constexpr int Precedence() const final { return 0; };
+        int Precedence() const final { return 0; };
     };
 
     struct Condition : public Operator {
-        constexpr int Precedence() const final { return 2; };
+        int Precedence() const final { return 2; };
     };
 
     struct Equal        : public Condition {};

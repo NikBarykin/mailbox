@@ -1,12 +1,9 @@
 #include "protocol.h"
-#include "utils.h"
-
 
 #include <sstream>
 #include <stdexcept>
 
 
-// TODO: discard repeating strings like "output << EncodeSpecialSymbols(str) << "\n""
 namespace Protocol {
     namespace {
         std::string SerializeTokens(const std::vector<std::string> & tokens) {
@@ -30,9 +27,6 @@ namespace Protocol {
             return tokens;
         }
     }
-
-
-//    Query::Query(std::string name): name(name) {}
 
     std::string Query::Serialize() const {
         std::vector<std::string> tokens(1 + arguments.size());

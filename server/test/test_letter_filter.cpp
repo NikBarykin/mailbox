@@ -15,7 +15,7 @@ namespace {
         auto filter = LetterFilter::ParseFilter(R"((from == "A"          && body == "B")
                                                 || (body == "X"          && date < 11.04.2013)
                                                 || (date >= 12.12.2012   && from > "D")
-                                                || "SUS" IN body)");
+                                                || "SUS" in body)");
         Letter valid_letters[] = {{"A", "_", "B", {10, 03, 2100}},
                                   {"C", "_", "X", {10, 04, 2013}},
                                   {"E", "_", "Z", {12, 12, 2012}},
@@ -59,7 +59,7 @@ namespace {
         }
 
         std::string execution_error_filters[] = {"\'Different literal types\' == 11.09.2002",
-                                                 "date IN 21.03.2003"};
+                                                 "date in 21.03.2003"};
 
         for (const auto &bad_filter_str : execution_error_filters) {
             auto bad_filter = LetterFilter::ParseFilter(bad_filter_str);
