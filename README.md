@@ -63,7 +63,7 @@ Terminate
 >
 ```
 
-client.exe B
+client B
 ```
 > client.exe localhost 8080
 > Query name:
