@@ -100,7 +100,7 @@ GetMail
 > Query name:
 GetMailFiltered
 > Letter filter:
-"you" in body && from == "A"
+("you" in body && from == "A") || date < 20.01.2022
 > 
 > 1.
 > Date: 23.02.2022
